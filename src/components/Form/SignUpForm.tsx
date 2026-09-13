@@ -2,8 +2,12 @@ import { Box } from '@mui/material'
 import FormTextField from './components/FormTextField'
 import Label from './components/Label'
 import SubmitBtn from './components/SubmitBtn'
+import { useFormContext } from 'react-hook-form'
+import type { SignUpType } from '../../schemas/auth/signUp'
 
 export default function SignUpForm() {
+	const { control } = useFormContext<SignUpType>()
+
 	return (
 		<Box
 			sx={{
@@ -11,23 +15,44 @@ export default function SignUpForm() {
 				flexDirection: 'column',
 				width: '100%',
 				gap: '10px',
+				
 			}}
 		>
 			<div>
 				<Label text='FULL NAME' />
-				<FormTextField type='text' label='Your name' />
+				<FormTextField
+					control={control}
+					name='name'
+					type='text'
+					label='Your name'
+				/>
 			</div>
 			<div>
 				<Label text='EMAIL' />
-				<FormTextField type='text' label='you@example.com' />
+				<FormTextField
+					control={control}
+					name='email'
+					type='text'
+					label='you@example.com'
+				/>
 			</div>
 			<div>
 				<Label text='PASSWORD' />
-				<FormTextField type='password' label='••••••••' />
+				<FormTextField
+					control={control}
+					name='password'
+					type='password'
+					label='••••••••'
+				/>
 			</div>
 			<div>
 				<Label text='CONFIRM PASSWORD' />
-				<FormTextField type='password' label='••••••••' />
+				<FormTextField
+					control={control}
+					name='confirmPassword'
+					type='password'
+					label='••••••••'
+				/>
 			</div>
 
 			<SubmitBtn label='Create Account' />
