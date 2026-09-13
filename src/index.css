@@ -1,1 +1,30 @@
 @import 'tailwindcss';
+
+@layer utilities {
+	.secondaryCol {
+		@apply text-[#6B6B80];
+	}
+}
+
+body {
+	background-color: black;
+
+	font-family: 'Lato', sans-serif;
+	font-style: normal;
+}
+
+.backgroundRadial {
+	background: radial-gradient(
+		80% 60% at 50% -10%,
+		rgba(124, 92, 252, 0.15) 0%,
+		rgba(0, 0, 0, 0) 70%
+	);
+}
+
+.messageUI {
+	background: linear-gradient(135deg, rgb(124, 92, 252), rgb(0, 212, 170));
+}
+
+.registration {
+	width: clamp(20rem, 100%, 448px);
+}
