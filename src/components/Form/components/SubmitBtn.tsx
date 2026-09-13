@@ -13,6 +13,8 @@ export default function SubmitBtn({
 				width: '100%',
 				borderRadius: '10px',
 
+				marginTop: '10px',
+
 				background: 'linear-gradient(90deg, #7654E8 0%, #5437C9 100%)',
 
 				color: '#fff',

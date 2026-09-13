@@ -7,7 +7,6 @@ import {
 	type FieldPath,
 	type FieldValues,
 } from 'react-hook-form'
-import type { SignUpType } from '../../../schemas/auth/signUp'
 
 interface Props<T extends FieldValues> {
 	label: string

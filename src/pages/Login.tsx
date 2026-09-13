@@ -1,9 +1,9 @@
-import { RiMessage2Fill } from 'react-icons/ri'
-import TypeOfAuth from '../components/TypeOfAuth'
 import { Box } from '@mui/material'
+import { RiMessage2Fill } from 'react-icons/ri'
+import LoginForm from '../components/Form/LoginForm'
 import OAuthBtn from '../components/OAuthBtn'
 import OrWithEmail from '../components/OrWithEmail'
-import LoginForm from '../components/Form/LoginForm'
+import TypeOfAuth from '../components/TypeOfAuth'
 
 export default function Login() {
 	return (
