@@ -2,11 +2,17 @@ import Button from '@mui/material/Button'
 import GoogleIcon from '@mui/icons-material/Google'
 import GitHubIcon from '@mui/icons-material/GitHub'
 
-export default function OAuthBtn({ type }: { type: 'Google' | 'GitHub' }) {
+interface Props {
+	type: 'Google' | 'GitHub'
+	onClick: () => Promise<void>
+	isSubmitting: boolean
+}
+
+export default function OAuthBtn({ type, onClick, isSubmitting }: Props) {
 	return (
 		<Button
 			variant='outlined'
-			startIcon={type === 'GitHub' ? <GitHubIcon /> : <GoogleIcon />}
+			onClick={onClick}
 			sx={{
 				width: '100%',
 				height: '100%',
@@ -22,8 +28,21 @@ export default function OAuthBtn({ type }: { type: 'Google' | 'GitHub' }) {
 					borderColor: '#444',
 				},
 			}}
+			className='flex justify-center items-center gap-2'
 		>
-			{type === 'GitHub' ? 'GitHub' : 'Google'}
+			{isSubmitting ? (
+				<div className='loader' />
+			) : type === 'GitHub' ? (
+				<>
+					<GitHubIcon />
+					GitHub
+				</>
+			) : (
+				<>
+					<GoogleIcon />
+					Google
+				</>
+			)}
 		</Button>
 	)
 }
