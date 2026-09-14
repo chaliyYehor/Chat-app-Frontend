@@ -26,7 +26,7 @@ body {
 }
 
 .registration, .forgotPassword {
-	width: clamp(20rem, 100%, 448px);
+	width: clamp(20rem, 90%, 448px);
 }
 
 input:-webkit-autofill,
