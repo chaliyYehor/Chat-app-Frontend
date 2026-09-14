@@ -6,6 +6,7 @@ import { Form, FormProvider, useForm } from 'react-hook-form'
 import { signUpSchema, type SignUpType } from './schemas/auth/signUp'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema, type LoginType } from './schemas/auth/login'
+import NotFound from './pages/NotFound'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -29,15 +30,26 @@ function App() {
 
 	return (
 		<>
-			<FormProvider {...signUpMethods}>
-				<FormProvider {...loginMethods}>
-					<Routes>
-						<Route path='/' element={<Home />} />
-						<Route path='/login' element={<Login />} />
-						<Route path='/signUp' element={<SignUp />} />
-					</Routes>
-				</FormProvider>
-			</FormProvider>
+			<Routes>
+				<Route path='/' element={<Home />} />
+				<Route
+					path='/login'
+					element={
+						<FormProvider {...loginMethods}>
+							<Login />
+						</FormProvider>
+					}
+				/>
+				<Route
+					path='/signUp'
+					element={
+						<FormProvider {...signUpMethods}>
+							<SignUp />
+						</FormProvider>
+					}
+				/>
+				<Route path='*' element={<NotFound />} />
+			</Routes>
 		</>
 	)
 }
