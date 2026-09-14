@@ -23,38 +23,46 @@ export default function SignUpForm() {
 		>
 			<form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-2.5'>
 				<div>
-					<Label text='FULL NAME' />
+					<Label text='FULL NAME' htmlFor='name' />
 					<FormTextField
 						control={control}
 						name='name'
 						type='text'
+						ariaLabel='Full name'
+						autoComplete='name'
 						label='Your name'
 					/>
 				</div>
 				<div>
-					<Label text='EMAIL' />
+					<Label text='EMAIL' htmlFor='email' />
 					<FormTextField
 						control={control}
 						name='email'
-						type='text'
+						type='email'
 						label='you@example.com'
+						ariaLabel='Email address'
+						autoComplete='email'
 					/>
 				</div>
 				<div>
-					<Label text='PASSWORD' />
+					<Label text='PASSWORD' htmlFor='password' />
 					<FormTextField
 						control={control}
 						name='password'
 						type='password'
+						ariaLabel='Password'
+						autoComplete='new-password'
 						label='••••••••'
 					/>
 				</div>
 				<div>
-					<Label text='CONFIRM PASSWORD' />
+					<Label text='CONFIRM PASSWORD' htmlFor='confirmPassword' />
 					<FormTextField
 						control={control}
 						name='confirmPassword'
 						type='password'
+						ariaLabel='Confirm password'
+						autoComplete='new-password'
 						label='••••••••'
 					/>
 				</div>

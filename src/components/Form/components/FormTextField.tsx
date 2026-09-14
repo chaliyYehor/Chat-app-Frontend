@@ -10,13 +10,17 @@ import {
 
 interface Props<T extends FieldValues> {
 	label: string
-	type: 'password' | 'text'
+	ariaLabel: string
+	autoComplete: string
+	type: 'email' | 'password' | 'text'
 	control: Control<T>
 	name: FieldPath<T>
 }
 
 export default function FormTextField<T extends FieldValues>({
 	label,
+	ariaLabel,
+	autoComplete,
 	type,
 	control,
 	name,
@@ -31,12 +35,15 @@ export default function FormTextField<T extends FieldValues>({
 				render={({ field, fieldState }) => (
 					<TextField
 						{...field}
+						id={name}
 						inputRef={field.ref}
+						slotProps={{ htmlInput: { 'aria-label': ariaLabel } }}
+						autoComplete={autoComplete}
 						placeholder={label}
 						variant='outlined'
 						error={!!fieldState.error}
 						helperText={fieldState.error?.message}
-						type={type === 'password' && !isVisible ? 'password' : 'text'}
+						type={type === 'password' && !isVisible ? 'password' : type}
 						sx={{
 							width: '100%',
 							'& .MuiOutlinedInput-root': {
@@ -70,6 +77,8 @@ export default function FormTextField<T extends FieldValues>({
 			{type === 'password' && (
 				<button
 					type='button'
+					aria-label={isVisible ? 'Hide password' : 'Show password'}
+					aria-pressed={isVisible}
 					className='absolute flex justify-center items-center right-5 top-6 cursor-pointer text-[#6B6B80]'
 					onClick={() => setIsVisible(prev => !prev)}
 				>

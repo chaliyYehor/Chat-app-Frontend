@@ -9,6 +9,7 @@ export default function TypeOfAuth() {
 	const selected = location.pathname === '/login' ? 'signIn' : 'signUp'
 	return (
 		<ToggleButtonGroup
+			aria-label='Authentication mode'
 			exclusive
 			value={selected}
 			onChange={(_, value) => {

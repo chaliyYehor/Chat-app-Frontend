@@ -37,12 +37,14 @@ export default function ForgotPassword() {
 				</div>
 
 				<div>
-					<Label text='EMAIL ADDRESS' />
+					<Label text='EMAIL ADDRESS' htmlFor='email' />
 					<FormTextField
 						control={control}
 						name='email'
-						type='text'
+						type='email'
 						label='you@example.com'
+						ariaLabel='Email address'
+						autoComplete='email'
 					/>
 				</div>
 

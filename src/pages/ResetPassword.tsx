@@ -38,20 +38,24 @@ export default function ResetPassword() {
 				</div>
 
 				<div>
-					<Label text='PASSWORD' />
+					<Label text='PASSWORD' htmlFor='password' />
 					<FormTextField
 						control={control}
 						name='password'
 						type='password'
+						ariaLabel='New password'
+						autoComplete='new-password'
 						label='••••••••'
 					/>
 				</div>
 				<div>
-					<Label text='CONFIRM PASSWORD' />
+					<Label text='CONFIRM PASSWORD' htmlFor='confirmPassword' />
 					<FormTextField
 						control={control}
 						name='confirmPassword'
 						type='password'
+						ariaLabel='Confirm new password'
+						autoComplete='new-password'
 						label='••••••••'
 					/>
 				</div>
