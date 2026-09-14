@@ -8,9 +8,12 @@ import { authClient } from '../../lib/auth-client'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-export default function SignUpForm() {
-	const [globalError, setGlobalError] = useState('')
+interface Props {
+	globalError: string,
+	setGlobalError: React.Dispatch<React.SetStateAction<string>>
+}
 
+export default function SignUpForm({globalError, setGlobalError}: Props) {
 	const navigate = useNavigate()
 
 	const {
