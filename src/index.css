@@ -25,6 +25,20 @@ body {
 	background: linear-gradient(135deg, rgb(124, 92, 252), rgb(0, 212, 170));
 }
 
-.registration {
+.registration, .forgotPassword {
 	width: clamp(20rem, 100%, 448px);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	-webkit-box-shadow: 0 0 0 1000px #202027 inset !important;
+	-webkit-text-fill-color: white !important;
+	caret-color: white;
+}
+
+.err {
+	font-family: 'DM Mono', monospace;
+	font-style: normal;
 }
