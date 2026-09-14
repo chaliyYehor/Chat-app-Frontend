@@ -4,8 +4,33 @@ import LoginForm from '../components/Form/LoginForm'
 import OAuthBtn from '../components/OAuthBtn'
 import OrWithEmail from '../components/OrWithEmail'
 import TypeOfAuth from '../components/TypeOfAuth'
+import { useEffect, useState } from 'react'
+import { useGoogleAuth } from '../hooks/useGoogleAuth'
+import { useGithubAuth } from '../hooks/useGithubAuth'
 
 export default function Login() {
+	const [globalError, setGlobalError] = useState('')
+
+	const {
+		error: googleError,
+		isLoading: isGoogleLoading,
+		signInWithGoogle,
+	} = useGoogleAuth()
+	const {
+		error: githubError,
+		isLoading: isGithubLoading,
+		signInWithGithub,
+	} = useGithubAuth()
+
+	useEffect(() => {
+		if (googleError) {
+			setGlobalError(googleError.message!)
+		}
+		if (githubError) {
+			setGlobalError(githubError.message!)
+		}
+	}, [googleError, githubError])
+
 	return (
 		<div className='registrationContainer h-dvh w-screen backgroundRadial flex justify-center items-center'>
 			<div className='registration flex flex-col gap-5 justify-center items-center'>
@@ -27,13 +52,21 @@ export default function Login() {
 						marginBottom: '10px',
 					}}
 				>
-					<OAuthBtn type='Google' />
-					<OAuthBtn type='GitHub' />
+					<OAuthBtn
+						isSubmitting={isGoogleLoading}
+						onClick={signInWithGoogle}
+						type='Google'
+					/>
+					<OAuthBtn
+						isSubmitting={isGithubLoading}
+						onClick={signInWithGithub}
+						type='GitHub'
+					/>
 				</Box>
 
 				<OrWithEmail />
 
-				<LoginForm />
+				<LoginForm globalError={globalError} setGlobalError={setGlobalError} />
 			</div>
 		</div>
 	)
