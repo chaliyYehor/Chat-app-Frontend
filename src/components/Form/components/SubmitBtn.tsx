@@ -2,13 +2,16 @@ import { Button } from '@mui/material'
 
 export default function SubmitBtn({
 	label,
+	onClick,
 }: {
-	label?: 'Sign In' | 'Create Account'
+	label?: 'Sign In' | 'Create Account',
+	onClick?: () => void
 }) {
 	return (
 		<Button
 			type='submit'
 			variant='contained'
+			onClick={onClick}
 			sx={{
 				width: '100%',
 				borderRadius: '10px',
