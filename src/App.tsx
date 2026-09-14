@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema, type LoginType } from './schemas/auth/login'
 import NotFound from './pages/NotFound'
 import ForgotPassword from './pages/ForgotPassword'
+import Verify from './pages/Verify'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -50,6 +51,7 @@ function App() {
 					}
 				/>
 				<Route path='/forgotPassword' element={<ForgotPassword />} />
+				<Route path='/verify' element={<Verify />} />
 				<Route path='*' element={<NotFound />} />
 			</Routes>
 		</>
