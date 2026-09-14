@@ -7,6 +7,7 @@ import { signUpSchema, type SignUpType } from './schemas/auth/signUp'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { loginSchema, type LoginType } from './schemas/auth/login'
 import NotFound from './pages/NotFound'
+import ForgotPassword from './pages/ForgotPassword'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -48,6 +49,7 @@ function App() {
 						</FormProvider>
 					}
 				/>
+				<Route path='/forgotPassword' element={<ForgotPassword />} />
 				<Route path='*' element={<NotFound />} />
 			</Routes>
 		</>
