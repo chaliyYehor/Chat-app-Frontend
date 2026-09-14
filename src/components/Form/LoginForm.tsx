@@ -4,12 +4,37 @@ import Label from './components/Label'
 import SubmitBtn from './components/SubmitBtn'
 import { useFormContext, type SubmitHandler } from 'react-hook-form'
 import type { LoginType } from '../../schemas/auth/login'
+import { authClient } from '../../lib/auth-client'
+import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 export default function LoginForm() {
-	const { control, handleSubmit } = useFormContext<LoginType>()
+	const [globalError, setGlobalError] = useState('')
 
-	const onSubmit: SubmitHandler<LoginType> = data => {
-		console.log(data)
+	const navigate = useNavigate()
+
+	const {
+		control,
+		handleSubmit,
+		formState: { isSubmitting },
+	} = useFormContext<LoginType>()
+
+	const onSubmit: SubmitHandler<LoginType> = async data => {
+		const { email, password } = data
+
+		const { error } = await authClient.signIn.email(
+			{ email, password },
+			{
+				onSuccess: () => {
+					navigate('/')
+				},
+			},
+		)
+
+		if (error) {
+			setGlobalError(error.message!)
+			return
+		}
 	}
 
 	return (
@@ -45,7 +70,11 @@ export default function LoginForm() {
 					/>
 				</div>
 
-				<SubmitBtn label='Sign In' />
+				<SubmitBtn isSubmitting={isSubmitting} label='Sign In' />
+
+				<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center'>
+					{globalError || '\u00A0'}
+				</p>
 			</form>
 		</Box>
 	)

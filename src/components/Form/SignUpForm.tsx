@@ -4,12 +4,36 @@ import Label from './components/Label'
 import SubmitBtn from './components/SubmitBtn'
 import { useFormContext, type SubmitHandler } from 'react-hook-form'
 import type { SignUpType } from '../../schemas/auth/signUp'
+import { authClient } from '../../lib/auth-client'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export default function SignUpForm() {
-	const { control, handleSubmit } = useFormContext<SignUpType>()
+	const [globalError, setGlobalError] = useState('')
 
-	const onSubmit: SubmitHandler<SignUpType> = data => {
-		console.log(data)
+	const navigate = useNavigate()
+
+	const {
+		control,
+		handleSubmit,
+		formState: { isSubmitting },
+	} = useFormContext<SignUpType>()
+
+	const onSubmit: SubmitHandler<SignUpType> = async data => {
+		const { name, email, password } = data
+
+		const { error } = await authClient.signUp.email({
+			email,
+			password,
+			name,
+			callbackURL: `${window.location.origin}/login`,
+		})
+
+		if (error) {
+			setGlobalError(error.message!)
+			return
+		}
+		navigate('/verify')
 	}
 
 	return (
@@ -67,7 +91,11 @@ export default function SignUpForm() {
 					/>
 				</div>
 
-				<SubmitBtn label='Create Account' />
+				<SubmitBtn label='Create Account' isSubmitting={isSubmitting} />
+
+				<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center'>
+					{globalError || '\u00A0'}
+				</p>
 			</form>
 		</Box>
 	)

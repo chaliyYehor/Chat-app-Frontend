@@ -3,9 +3,11 @@ import { Button } from '@mui/material'
 export default function SubmitBtn({
 	label,
 	onClick,
+	isSubmitting
 }: {
 	label?: 'Sign In' | 'Create Account',
-	onClick?: () => void
+	onClick?: () => void,
+	isSubmitting: boolean
 }) {
 	return (
 		<Button
@@ -38,7 +40,7 @@ export default function SubmitBtn({
 				},
 			}}
 		>
-			{label}
+			{isSubmitting ? <div className='loader' /> : label}
 		</Button>
 	)
 }
