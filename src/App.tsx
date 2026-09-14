@@ -9,6 +9,7 @@ import { loginSchema, type LoginType } from './schemas/auth/login'
 import NotFound from './pages/NotFound'
 import ForgotPassword from './pages/ForgotPassword'
 import Verify from './pages/Verify'
+import ResetPassword from './pages/ResetPassword'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -51,6 +52,7 @@ function App() {
 					}
 				/>
 				<Route path='/forgotPassword' element={<ForgotPassword />} />
+				<Route path='/resetPassword' element={<ResetPassword />} />
 				<Route path='/verify' element={<Verify />} />
 				<Route path='*' element={<NotFound />} />
 			</Routes>
