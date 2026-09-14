@@ -6,7 +6,6 @@ import { useFormContext, type SubmitHandler } from 'react-hook-form'
 import type { LoginType } from '../../schemas/auth/login'
 import { authClient } from '../../lib/auth-client'
 import { useNavigate } from 'react-router-dom'
-import { useState } from 'react'
 
 interface Props {
 	globalError: string
