@@ -43,7 +43,7 @@ export default function FormTextField<T extends FieldValues>({
 						variant='outlined'
 						error={!!fieldState.error}
 						helperText={fieldState.error?.message}
-						type={type === 'password' && !isVisible ? 'password' : type}
+						type={type === 'password' && !isVisible ? 'password' : type !== 'password' ? type : 'text'}
 						sx={{
 							width: '100%',
 							'& .MuiOutlinedInput-root': {

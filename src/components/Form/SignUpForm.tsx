@@ -5,7 +5,6 @@ import SubmitBtn from './components/SubmitBtn'
 import { useFormContext, type SubmitHandler } from 'react-hook-form'
 import type { SignUpType } from '../../schemas/auth/signUp'
 import { authClient } from '../../lib/auth-client'
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 interface Props {

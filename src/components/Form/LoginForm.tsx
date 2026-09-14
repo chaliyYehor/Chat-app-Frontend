@@ -28,7 +28,7 @@ export default function LoginForm({globalError, setGlobalError}:Props) {
 			{ email, password },
 			{
 				onSuccess: () => {
-					navigate('/')
+					navigate('/', { replace: true })
 				},
 			},
 		)
