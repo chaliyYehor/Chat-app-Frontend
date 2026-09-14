@@ -69,10 +69,11 @@ export default function FormTextField<T extends FieldValues>({
 			/>
 			{type === 'password' && (
 				<button
+					type='button'
 					className='absolute flex justify-center items-center right-5 top-6 cursor-pointer text-[#6B6B80]'
 					onClick={() => setIsVisible(prev => !prev)}
 				>
-					{!isVisible ? (
+					{isVisible ? (
 						<Eye size={20} className='absolute' />
 					) : (
 						<EyeOff size={20} className='absolute' />
