@@ -9,20 +9,36 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import Button from '@mui/material/Button'
 import BackToSignUp from '../components/BackToSignUp'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { authClient } from '../lib/auth-client'
 
 export default function ForgotPassword() {
-	const { control, handleSubmit } = useForm<ForgotPasswordType>({
+	const [globalError, setGlobalError] = useState('')
+
+	const {
+		control,
+		handleSubmit,
+		formState: { isSubmitting },
+	} = useForm<ForgotPasswordType>({
 		resolver: zodResolver(forgotPasswordSchema),
 		defaultValues: {
 			email: '',
 		},
 	})
 
-	const onSubmit: SubmitHandler<ForgotPasswordType> = data => {
-		console.log(data)
+	const onSubmit: SubmitHandler<ForgotPasswordType> = async data => {
+		const { email } = data
+
+		const { error } = await authClient.requestPasswordReset({
+			email,
+			redirectTo: `${window.location.origin}/reset-password`,
+		})
+
+		if (error) {
+			setGlobalError(error.message!)
+			return
+		}
 	}
 
 	const { data: session, isPending } = authClient.useSession()
@@ -70,6 +86,7 @@ export default function ForgotPassword() {
 					<Button
 						type='submit'
 						variant='contained'
+						disabled={isSubmitting}
 						sx={{
 							width: '100%',
 							borderRadius: '10px',
@@ -96,10 +113,14 @@ export default function ForgotPassword() {
 							},
 						}}
 					>
-						Send Reset Link
+						{isSubmitting ? <div className='loader' /> : 'Send Reset Link'}
 					</Button>
 
 					<BackToSignUp />
+
+					<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center'>
+						{globalError || '\u00A0'}
+					</p>
 				</div>
 			</form>
 		</div>

@@ -11,10 +11,18 @@ import { Button } from '@mui/material'
 import BackToSignUp from '../components/BackToSignUp'
 import { authClient } from '../lib/auth-client'
 import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+
+const token = new URLSearchParams(window.location.search).get('token')
 
 export default function ResetPassword() {
-	const { handleSubmit, control } = useForm<ResetPasswordType>({
+	const [globalError, setGlobalError] = useState('')
+
+	const {
+		handleSubmit,
+		control,
+		formState: { isSubmitting },
+	} = useForm<ResetPasswordType>({
 		resolver: zodResolver(resetPasswordSchema),
 		defaultValues: {
 			confirmPassword: '',
@@ -22,8 +30,31 @@ export default function ResetPassword() {
 		},
 	})
 
-	const onSubmit: SubmitHandler<ResetPasswordType> = data => {
-		console.log(data)
+	const onSubmit: SubmitHandler<ResetPasswordType> = async data => {
+		if (!token) {
+			setGlobalError('Invalid or missing token')
+			navigate('/')
+			return
+		}
+
+		const { password } = data
+
+		const { error } = await authClient.resetPassword(
+			{
+				newPassword: password,
+				token,
+			},
+			{
+				onSuccess: () => {
+					navigate('/login')
+				},
+			},
+		)
+
+		if (error) {
+			setGlobalError(error.message!)
+			return
+		}
 	}
 
 	const { data: session, isPending } = authClient.useSession()
@@ -82,6 +113,7 @@ export default function ResetPassword() {
 					<Button
 						type='submit'
 						variant='contained'
+						disabled={isSubmitting}
 						sx={{
 							width: '100%',
 							borderRadius: '10px',
@@ -108,10 +140,14 @@ export default function ResetPassword() {
 							},
 						}}
 					>
-						Reset Password
+						{isSubmitting ? <div className='loader' /> : 'Reset Password'}
 					</Button>
 
 					<BackToSignUp />
+
+					<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center'>
+						{globalError || '\u00A0'}
+					</p>
 				</div>
 			</form>
 		</div>

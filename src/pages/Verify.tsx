@@ -28,7 +28,8 @@ export default function Verify() {
 				</div>
 				<h1 className='text-white text-2xl font-bold'>Verify Your Email</h1>
 				<p className='secondaryCol text-md'>
-					We sent a verification email to{' '}
+					We've sent a verification email to your email address. Please check
+					your inbox and follow the link to verify your account.
 					<span className='text-white font-bold'>email</span>
 				</p>
 			</div>

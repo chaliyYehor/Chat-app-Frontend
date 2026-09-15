@@ -12,7 +12,7 @@ interface Props {
 	setGlobalError: React.Dispatch<React.SetStateAction<string>>
 }
 
-export default function LoginForm({globalError, setGlobalError}:Props) {
+export default function LoginForm({ globalError, setGlobalError }: Props) {
 	const navigate = useNavigate()
 
 	const {
@@ -61,7 +61,16 @@ export default function LoginForm({globalError, setGlobalError}:Props) {
 					/>
 				</div>
 				<div>
-					<Label text='PASSWORD' htmlFor='password' />
+					<div className='flex justify-between items-center'>
+						<Label text='PASSWORD' htmlFor='password' />
+						<button
+							onClick={() => navigate('/forgot-password')}
+							type='button'
+							className='text-[#7C5CFC] text-sm font-medium hover:underline cursor-pointer'
+						>
+							Forgot password?
+						</button>
+					</div>
 					<FormTextField
 						control={control}
 						name='password'

@@ -13,6 +13,7 @@ export default function SubmitBtn({
 		<Button
 			type='submit'
 			variant='contained'
+			disabled={isSubmitting}
 			onClick={onClick}
 			sx={{
 				width: '100%',

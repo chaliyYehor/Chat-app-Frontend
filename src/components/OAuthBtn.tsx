@@ -11,7 +11,10 @@ interface Props {
 export default function OAuthBtn({ type, onClick, isSubmitting }: Props) {
 	return (
 		<Button
+			aria-label={`Sign in with ${type}`}
+			aria-busy={isSubmitting}
 			variant='outlined'
+			disabled={isSubmitting}
 			onClick={onClick}
 			sx={{
 				width: '100%',
@@ -31,7 +34,7 @@ export default function OAuthBtn({ type, onClick, isSubmitting }: Props) {
 			className='flex justify-center items-center gap-2'
 		>
 			{isSubmitting ? (
-				<div className='loader' />
+				<div className='loader' role='status' aria-label={`Signing in with ${type}`} />
 			) : type === 'GitHub' ? (
 				<>
 					<GitHubIcon />
