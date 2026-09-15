@@ -64,6 +64,7 @@ export default function LoginForm({ globalError, setGlobalError }: Props) {
 					<div className='flex justify-between items-center'>
 						<Label text='PASSWORD' htmlFor='password' />
 						<button
+							aria-label='Forgot password'
 							onClick={() => navigate('/forgot-password')}
 							type='button'
 							className='text-[#7C5CFC] text-sm font-medium hover:underline cursor-pointer'
