@@ -9,6 +9,9 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import Button from '@mui/material/Button'
 import BackToSignUp from '../components/BackToSignUp'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { authClient } from '../lib/auth-client'
 
 export default function ForgotPassword() {
 	const { control, handleSubmit } = useForm<ForgotPasswordType>({
@@ -20,6 +23,21 @@ export default function ForgotPassword() {
 
 	const onSubmit: SubmitHandler<ForgotPasswordType> = data => {
 		console.log(data)
+	}
+
+	const { data: session, isPending } = authClient.useSession()
+	const navigate = useNavigate()
+	useEffect(() => {
+		if (!isPending && session) {
+			navigate('/')
+		}
+	}, [isPending, session, navigate])
+	if (isPending) {
+		return (
+			<div className='w-screen h-screen absolute top-0 left-0 flex justify-center items-center'>
+				<div className='loader dark:bg-white bg-black' />
+			</div>
+		)
 	}
 
 	return (

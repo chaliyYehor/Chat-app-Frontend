@@ -9,6 +9,9 @@ import Label from '../components/Form/components/Label'
 import FormTextField from '../components/Form/components/FormTextField'
 import { Button } from '@mui/material'
 import BackToSignUp from '../components/BackToSignUp'
+import { authClient } from '../lib/auth-client'
+import { useNavigate } from 'react-router-dom'
+import { useEffect } from 'react'
 
 export default function ResetPassword() {
 	const { handleSubmit, control } = useForm<ResetPasswordType>({
@@ -21,6 +24,21 @@ export default function ResetPassword() {
 
 	const onSubmit: SubmitHandler<ResetPasswordType> = data => {
 		console.log(data)
+	}
+
+	const { data: session, isPending } = authClient.useSession()
+	const navigate = useNavigate()
+	useEffect(() => {
+		if (!isPending && session) {
+			navigate('/')
+		}
+	}, [isPending, session, navigate])
+	if (isPending) {
+		return (
+			<div className='w-screen h-screen absolute top-0 left-0 flex justify-center items-center'>
+				<div className='loader dark:bg-white bg-black' />
+			</div>
+		)
 	}
 
 	return (

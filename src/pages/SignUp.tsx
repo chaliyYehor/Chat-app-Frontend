@@ -7,9 +7,14 @@ import SignUpForm from '../components/Form/SignUpForm'
 import { useGoogleAuth } from '../hooks/useGoogleAuth'
 import { useGithubAuth } from '../hooks/useGithubAuth'
 import { useEffect, useState } from 'react'
+import { authClient } from '../lib/auth-client'
+import { useNavigate } from 'react-router-dom'
 
 export default function SignUp() {
 	const [globalError, setGlobalError] = useState('')
+
+	const { data: session, isPending } = authClient.useSession()
+	const navigate = useNavigate()
 
 	const {
 		error: googleError,
@@ -30,6 +35,19 @@ export default function SignUp() {
 			setGlobalError(githubError.message!)
 		}
 	}, [googleError, githubError])
+
+	useEffect(() => {
+		if (!isPending && session) {
+			navigate('/')
+		}
+	}, [isPending, session, navigate])
+	if (isPending) {
+		return (
+			<div className='w-screen h-screen absolute top-0 left-0 flex justify-center items-center'>
+				<div className='loader dark:bg-white bg-black' />
+			</div>
+		)
+	}
 
 	return (
 		<div className='registrationContainer h-dvh w-screen backgroundRadial flex justify-center items-center'>
