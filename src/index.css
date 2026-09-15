@@ -1,1 +1,145 @@
 @import 'tailwindcss';
+
+@layer utilities {
+	.secondaryCol {
+		@apply text-[#6B6B80];
+	}
+}
+
+body {
+	background-color: black;
+
+	font-family: 'Lato', sans-serif;
+	font-style: normal;
+}
+
+:focus-visible {
+	outline: 2px solid #00d4aa;
+	outline-offset: 3px;
+}
+
+.backgroundRadial {
+	background: radial-gradient(
+		80% 60% at 50% -10%,
+		rgba(124, 92, 252, 0.15) 0%,
+		rgba(0, 0, 0, 0) 70%
+	);
+}
+
+.messageUI {
+	background: linear-gradient(135deg, rgb(124, 92, 252), rgb(0, 212, 170));
+}
+
+.registration,
+.forgotPassword {
+	width: clamp(20rem, 90%, 448px);
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	-webkit-box-shadow: 0 0 0 1000px #202027 inset !important;
+	-webkit-text-fill-color: white !important;
+	caret-color: white;
+}
+
+.err {
+	font-family: 'DM Mono', monospace;
+	font-style: normal;
+}
+
+.loader {
+	width: 28px;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	border: 3px solid white;
+	animation:
+		l20-1 0.8s infinite linear alternate,
+		l20-2 1.6s infinite linear;
+}
+@keyframes l20-1 {
+	0% {
+		clip-path: polygon(50% 50%, 0 0, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
+	}
+	12.5% {
+		clip-path: polygon(
+			50% 50%,
+			0 0,
+			50% 0%,
+			100% 0%,
+			100% 0%,
+			100% 0%,
+			100% 0%
+		);
+	}
+	25% {
+		clip-path: polygon(
+			50% 50%,
+			0 0,
+			50% 0%,
+			100% 0%,
+			100% 100%,
+			100% 100%,
+			100% 100%
+		);
+	}
+	50% {
+		clip-path: polygon(
+			50% 50%,
+			0 0,
+			50% 0%,
+			100% 0%,
+			100% 100%,
+			50% 100%,
+			0% 100%
+		);
+	}
+	62.5% {
+		clip-path: polygon(
+			50% 50%,
+			100% 0,
+			100% 0%,
+			100% 0%,
+			100% 100%,
+			50% 100%,
+			0% 100%
+		);
+	}
+	75% {
+		clip-path: polygon(
+			50% 50%,
+			100% 100%,
+			100% 100%,
+			100% 100%,
+			100% 100%,
+			50% 100%,
+			0% 100%
+		);
+	}
+	100% {
+		clip-path: polygon(
+			50% 50%,
+			50% 100%,
+			50% 100%,
+			50% 100%,
+			50% 100%,
+			50% 100%,
+			0% 100%
+		);
+	}
+}
+@keyframes l20-2 {
+	0% {
+		transform: scaleY(1) rotate(0deg);
+	}
+	49.99% {
+		transform: scaleY(1) rotate(135deg);
+	}
+	50% {
+		transform: scaleY(-1) rotate(0deg);
+	}
+	100% {
+		transform: scaleY(-1) rotate(-135deg);
+	}
+}
