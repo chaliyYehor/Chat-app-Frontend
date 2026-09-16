@@ -37,7 +37,7 @@ export default function MessageSectionBtn({
 				${
 					isActive
 						? 'bg-transparent text-[#7C5CFC]'
-						: 'text-[#6B6B80] hover:text-white bg-transparent'
+						: 'text-[#6B6B80] hover:text-white hover:bg-[#1e1e26]'
 				}`
 					}
 					title='Chats'
