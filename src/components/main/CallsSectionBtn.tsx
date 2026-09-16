@@ -12,7 +12,7 @@ export default function CallsSectionBtn({
 		<>
 			{!isSmallScreen ? (
 				<NavLink
-					to={'#'}
+					to={'/calls'}
 					type='button'
 					onClick={onClick}
 					className={({ isActive }) =>
@@ -29,7 +29,7 @@ export default function CallsSectionBtn({
 				</NavLink>
 			) : (
 				<NavLink
-					to={'#'}
+					to={'/calls'}
 					type='button'
 					onClick={onClick}
 					className={({ isActive }) =>

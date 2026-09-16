@@ -5,6 +5,7 @@ import MessageSectionBtn from '../components/main/MessageSectionBtn'
 import GroupsSectionBtn from '../components/main/GroupsSectionBtn'
 import { RiMessage2Fill } from 'react-icons/ri'
 import CallsSectionBtn from '../components/main/CallsSectionBtn'
+import SettingsSectionBtn from '../components/main/SettingsSectionBtn'
 
 export default function Home() {
 	const navigate = useNavigate()
@@ -31,12 +32,16 @@ export default function Home() {
 	// }
 	return (
 		<nav className='flex flex-col gap-5 w-25 items-center'>
-			<Link to={'/'} className='messageUI w-14 h-14 rounded-2xl flex justify-center items-center'>
+			<Link
+				to={'/'}
+				className='messageUI w-14 h-14 rounded-2xl flex justify-center items-center'
+			>
 				<RiMessage2Fill color='white' size={30} />
 			</Link>
 			<MessageSectionBtn isSmallScreen={false} />
 			<GroupsSectionBtn isSmallScreen={false} />
 			<CallsSectionBtn isSmallScreen={false} />
+			<SettingsSectionBtn isSmallScreen={false} />
 		</nav>
 	)
 }

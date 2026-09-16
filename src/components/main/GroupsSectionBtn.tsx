@@ -12,7 +12,7 @@ export default function GroupsSectionBtn({
 		<>
 			{!isSmallScreen ? (
 				<NavLink
-					to={'#'}
+					to={'/groups'}
 					type='button'
 					onClick={onClick}
 					className={({ isActive }) =>
@@ -29,7 +29,7 @@ export default function GroupsSectionBtn({
 				</NavLink>
 			) : (
 				<NavLink
-					to={'#'}
+					to={'/groups'}
 					type='button'
 					onClick={onClick}
 					className={({ isActive }) =>
