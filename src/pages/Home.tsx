@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { authClient } from '../lib/auth-client'
 import { useEffect } from 'react'
+import MessageSectionBtn from '../components/main/MessageSectionBtn'
 
 export default function Home() {
 	const navigate = useNavigate()
@@ -26,11 +27,9 @@ export default function Home() {
 		navigate('/login', { replace: true })
 	}
 	return (
-		<button
-			className='bg-red-500 text-white px-4 py-2 rounded-md'
-			onClick={logout}
-		>
-			Logout
-		</button>
+		<nav>
+			<div>logo</div>
+			<MessageSectionBtn isSmallScreen={false} />
+		</nav>
 	)
 }
