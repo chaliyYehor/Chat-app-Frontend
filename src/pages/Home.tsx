@@ -1,7 +1,9 @@
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { authClient } from '../lib/auth-client'
 import { useEffect } from 'react'
 import MessageSectionBtn from '../components/main/MessageSectionBtn'
+import GroupsSectionBtn from '../components/main/GroupsSectionBtn'
+import { RiMessage2Fill } from 'react-icons/ri'
 
 export default function Home() {
 	const navigate = useNavigate()
@@ -27,9 +29,12 @@ export default function Home() {
 		navigate('/login', { replace: true })
 	}
 	return (
-		<nav>
-			<div>logo</div>
+		<nav className='flex flex-col gap-5 w-25 items-center'>
+			<Link to={'/'} className='messageUI w-14 h-14 rounded-2xl flex justify-center items-center'>
+				<RiMessage2Fill color='white' size={30} />
+			</Link>
 			<MessageSectionBtn isSmallScreen={false} />
+			<GroupsSectionBtn isSmallScreen={false} />
 		</nav>
 	)
 }

@@ -26,7 +26,6 @@ export default function MessageSectionBtn({
 					title='Chats'
 				>
 					<MessageSquare size={30} />
-					{isSmallScreen && <span>Chats</span>}
 				</NavLink>
 			) : (
 				<NavLink
