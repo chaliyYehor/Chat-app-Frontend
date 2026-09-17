@@ -37,7 +37,7 @@ export default function Login() {
 
 	useEffect(() => {
 		if (!isPending && session) {
-			navigate('/')
+			navigate('/chats')
 		}
 	}, [isPending, session, navigate])
 	if (isPending) {

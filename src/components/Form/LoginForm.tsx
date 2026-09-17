@@ -1,11 +1,11 @@
 import { Box } from '@mui/material'
-import FormTextField from './components/FormTextField'
-import Label from './components/Label'
-import SubmitBtn from './components/SubmitBtn'
 import { useFormContext, type SubmitHandler } from 'react-hook-form'
 import type { LoginType } from '../../schemas/auth/login'
 import { authClient } from '../../lib/auth-client'
 import { useNavigate } from 'react-router-dom'
+import Label from './components/Label'
+import FormTextField from './components/FormTextField'
+import SubmitBtn from './components/SubmitBtn'
 
 interface Props {
 	globalError: string
@@ -28,7 +28,7 @@ export default function LoginForm({ globalError, setGlobalError }: Props) {
 			{ email, password },
 			{
 				onSuccess: () => {
-					navigate('/', { replace: true })
+					navigate('/chats', { replace: true })
 				},
 			},
 		)

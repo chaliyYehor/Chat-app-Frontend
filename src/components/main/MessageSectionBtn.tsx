@@ -12,7 +12,7 @@ export default function MessageSectionBtn({
 		<>
 			{!isSmallScreen ? (
 				<NavLink
-					to={'/'}
+					to={'/chats'}
 					type='button'
 					onClick={onClick}
 					className={({ isActive }) =>

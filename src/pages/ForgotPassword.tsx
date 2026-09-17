@@ -5,13 +5,14 @@ import { useEffect, useState } from 'react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import BackToSignUp from '../components/BackToSignUp'
-import FormTextField from '../components/form/components/FormTextField'
-import Label from '../components/form/components/Label'
+
 import { authClient } from '../lib/auth-client'
 import {
 	forgotPasswordSchema,
 	type ForgotPasswordType,
 } from '../schemas/auth/ForgotPassword'
+import Label from '../components/form/components/Label'
+import FormTextField from '../components/form/components/FormTextField'
 
 export default function ForgotPassword() {
 	const [globalError, setGlobalError] = useState('')
@@ -45,7 +46,7 @@ export default function ForgotPassword() {
 	const navigate = useNavigate()
 	useEffect(() => {
 		if (!isPending && session) {
-			navigate('/')
+			navigate('/chats')
 		}
 	}, [isPending, session, navigate])
 	if (isPending) {

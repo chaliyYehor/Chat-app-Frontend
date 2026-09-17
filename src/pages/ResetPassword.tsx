@@ -33,7 +33,7 @@ export default function ResetPassword() {
 	const onSubmit: SubmitHandler<ResetPasswordType> = async data => {
 		if (!token) {
 			setGlobalError('Invalid or missing token')
-			navigate('/')
+			navigate('/chats')
 			return
 		}
 
@@ -61,7 +61,7 @@ export default function ResetPassword() {
 	const navigate = useNavigate()
 	useEffect(() => {
 		if (!isPending && session) {
-			navigate('/')
+			navigate('/chats')
 		}
 	}, [isPending, session, navigate])
 	if (isPending) {

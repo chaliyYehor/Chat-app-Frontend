@@ -38,7 +38,7 @@ export default function SignUp() {
 
 	useEffect(() => {
 		if (!isPending && session) {
-			navigate('/')
+			navigate('/chats')
 		}
 	}, [isPending, session, navigate])
 	if (isPending) {
