@@ -147,3 +147,11 @@ input:-webkit-autofill:active {
 		transform: scaleY(-1) rotate(-135deg);
 	}
 }
+
+.messageIco {
+	background: linear-gradient(
+		135deg,
+		rgba(124, 92, 252, 0.2),
+		rgba(0, 212, 170, 0.1)
+	);
+}

@@ -10,6 +10,7 @@ import NotFound from './pages/NotFound'
 import ForgotPassword from './pages/ForgotPassword'
 import Verify from './pages/Verify'
 import ResetPassword from './pages/ResetPassword'
+import Chats from './pages/Chats'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -34,9 +35,8 @@ function App() {
 	return (
 		<>
 			<Routes>
-
-				<Route path='/chats' element={<Home />} >
-					
+				<Route path='/' element={<Home />}>
+					<Route path='/chats' element={<Chats />} />
 				</Route>
 				<Route
 					path='/login'

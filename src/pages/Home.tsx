@@ -7,6 +7,7 @@ import { RiMessage2Fill } from 'react-icons/ri'
 import CallsSectionBtn from '../components/main/CallsSectionBtn'
 import SettingsSectionBtn from '../components/main/SettingsSectionBtn'
 import Profile from '../components/main/Profile'
+import SelectConvoUi from '../components/main/SelectConvoUi'
 
 export default function Home() {
 	const navigate = useNavigate()
@@ -32,18 +33,26 @@ export default function Home() {
 	// 	navigate('/login', { replace: true })
 	// }
 	return (
-		<nav className='flex flex-col gap-5 w-25 items-center justify-between h-dvh py-4'>
-			<div className='w-full flex flex-col justify-center items-center gap-2'>
-				<div className='messageUI w-14 h-14 rounded-2xl flex justify-center items-center mb-3'>
-					<RiMessage2Fill color='white' size={30} />
-				</div>
-				<MessageSectionBtn isSmallScreen={false} />
-				<GroupsSectionBtn isSmallScreen={false} />
-				<CallsSectionBtn isSmallScreen={false} />
-				<SettingsSectionBtn isSmallScreen={false} />
-			</div>
+		<>
+			<div className='w-screen h-dvh flex'>
+				<nav className='flex flex-col gap-5 w-25 items-center justify-between h-dvh py-4'>
+					<div className='w-full flex flex-col justify-center items-center gap-2'>
+						<div className='messageUI w-14 h-14 rounded-2xl flex justify-center items-center mb-3'>
+							<RiMessage2Fill color='white' size={30} />
+						</div>
+						<MessageSectionBtn isSmallScreen={false} />
+						<GroupsSectionBtn isSmallScreen={false} />
+						<CallsSectionBtn isSmallScreen={false} />
+						<SettingsSectionBtn isSmallScreen={false} />
+					</div>
 
-			<Profile />
-		</nav>
+					<Profile />
+				</nav>
+
+				<main>
+					<SelectConvoUi />
+				</main>
+			</div>
+		</>
 	)
 }
