@@ -1,17 +1,17 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Button } from '@mui/material'
+import { Lock } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+import BackToSignUp from '../components/BackToSignUp'
+import FormTextField from '../components/form/components/FormTextField'
+import Label from '../components/form/components/Label'
+import { authClient } from '../lib/auth-client'
 import {
 	resetPasswordSchema,
 	type ResetPasswordType,
 } from '../schemas/auth/ResetPassword'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Lock } from 'lucide-react'
-import Label from '../components/Form/components/Label'
-import FormTextField from '../components/Form/components/FormTextField'
-import { Button } from '@mui/material'
-import BackToSignUp from '../components/BackToSignUp'
-import { authClient } from '../lib/auth-client'
-import { useNavigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
 
 const token = new URLSearchParams(window.location.search).get('token')
 

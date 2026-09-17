@@ -12,7 +12,7 @@ export default function MessageSectionBtn({
 		<>
 			{!isSmallScreen ? (
 				<NavLink
-					to={'/chats'}
+					to={'/'}
 					type='button'
 					onClick={onClick}
 					className={({ isActive }) =>
@@ -20,7 +20,7 @@ export default function MessageSectionBtn({
 				${
 					isActive
 						? 'bg-[#7C5CFC] text-white hover:bg-[#4f34bd]'
-						: 'text-[#6B6B80] hover:text-white'
+						: 'text-[#6B6B80] hover:text-white hover:bg-[#1e1e26]'
 				}`
 					}
 					title='Chats'
@@ -37,7 +37,7 @@ export default function MessageSectionBtn({
 				${
 					isActive
 						? 'bg-transparent text-[#7C5CFC]'
-						: 'text-[#6B6B80] hover:text-white hover:bg-[#1e1e26]'
+						: 'text-[#6B6B80] hover:text-white'
 				}`
 					}
 					title='Chats'

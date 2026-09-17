@@ -1,5 +1,4 @@
 import { Settings } from 'lucide-react'
-import React from 'react'
 import { NavLink } from 'react-router-dom'
 
 export default function SettingsSectionBtn({
@@ -21,7 +20,7 @@ export default function SettingsSectionBtn({
 				${
 					isActive
 						? 'bg-[#7C5CFC] text-white hover:bg-[#4f34bd]'
-						: 'text-[#6B6B80] hover:text-white'
+						: 'text-[#6B6B80] hover:text-white hover:bg-[#1e1e26]'
 				}`
 					}
 					title='Settings'
@@ -38,7 +37,7 @@ export default function SettingsSectionBtn({
 				${
 					isActive
 						? 'bg-transparent text-[#7C5CFC]'
-						: 'text-[#6B6B80] hover:text-white hover:bg-[#1e1e26]'
+						: 'text-[#6B6B80] hover:text-white'
 				}`
 					}
 					title='Settings'

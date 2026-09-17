@@ -1,17 +1,17 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import Button from '@mui/material/Button'
 import { Lock } from 'lucide-react'
-import Label from '../components/Form/components/Label'
-import FormTextField from '../components/Form/components/FormTextField'
+import { useEffect, useState } from 'react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+import BackToSignUp from '../components/BackToSignUp'
+import FormTextField from '../components/form/components/FormTextField'
+import Label from '../components/form/components/Label'
+import { authClient } from '../lib/auth-client'
 import {
 	forgotPasswordSchema,
 	type ForgotPasswordType,
 } from '../schemas/auth/ForgotPassword'
-import { zodResolver } from '@hookform/resolvers/zod'
-import Button from '@mui/material/Button'
-import BackToSignUp from '../components/BackToSignUp'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { authClient } from '../lib/auth-client'
 
 export default function ForgotPassword() {
 	const [globalError, setGlobalError] = useState('')
