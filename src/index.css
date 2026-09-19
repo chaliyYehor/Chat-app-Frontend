@@ -17,6 +17,11 @@ body {
 	font-style: normal;
 }
 
+.font-inter {
+	font-family: 'Inter', sans-serif;
+	font-optical-sizing: auto;
+}
+
 :focus-visible {
 	outline: 2px solid #00d4aa;
 	outline-offset: 3px;
@@ -154,4 +159,13 @@ input:-webkit-autofill:active {
 		rgba(124, 92, 252, 0.2),
 		rgba(0, 212, 170, 0.1)
 	);
+}
+
+.upper {
+	width: clamp(20rem, 100%, 400px);
+}
+
+.chatListContainer {
+	overflow-y: auto;
+	scrollbar-width: none;
 }
