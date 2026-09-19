@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { authClient } from '../lib/auth-client'
 import { useEffect } from 'react'
 import MessageSectionBtn from '../components/main/MessageSectionBtn'
@@ -49,7 +49,10 @@ export default function Home() {
 					<Profile />
 				</nav>
 
-				<main>
+				<main className='flex-1 flex min-w-0'>
+					<div className='w-100 shrink-0'>
+						<Outlet />
+					</div>
 					<SelectConvoUi />
 				</main>
 			</div>
