@@ -1,8 +1,11 @@
 import { Button } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import { authClient } from '../lib/auth-client'
 
 export default function NotFound() {
 	const navigate = useNavigate()
+
+	const { data: session } = authClient.useSession()
 	return (
 		<div className='w-screen h-dvh flex flex-col justify-center items-center gap-6'>
 			<h2 className='text-[#7C5CFC] text-7xl font-bold err'>404</h2>
@@ -42,7 +45,7 @@ export default function NotFound() {
 					},
 				}}
 			>
-				Back to Sign Up
+				{session ? 'Go Back' : 'Back to Sign Up'}
 			</Button>
 		</div>
 	)
