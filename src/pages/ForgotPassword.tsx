@@ -10,7 +10,7 @@ import { authClient } from '../lib/auth-client'
 import {
 	forgotPasswordSchema,
 	type ForgotPasswordType,
-} from '../schemas/auth/ForgotPassword'
+} from '../schemas/auth/forgotPassword'
 import Label from '../components/form/components/Label'
 import FormTextField from '../components/form/components/FormTextField'
 

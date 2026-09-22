@@ -2,6 +2,7 @@ import Avatar from '../../Avatar'
 import CallButon from './CallButon'
 import Message from './Message'
 import MoreInfoButton from './MoreInfoButton'
+import SendAMessage from './SendAMessage'
 import VideoCallBtn from './VideoCallBtn'
 
 export function Chat() {
@@ -33,6 +34,8 @@ export function Chat() {
 				<Message isMe={false} />
 				<Message isMe={true} />
 			</div>
+
+			<SendAMessage />
 		</div>
 	)
 }

@@ -11,9 +11,9 @@ import ForgotPassword from './pages/ForgotPassword'
 import Verify from './pages/Verify'
 import ResetPassword from './pages/ResetPassword'
 import Chats from './pages/Chats'
-import { chatSearchSchema, type ChatSearch } from './schemas/main/chatSearch'
 import { Chat } from './components/main/chats-page/chat/Chat'
 import SelectConvoUi from './components/main/SelectConvoUi'
+import { chatSearchSchema, type ChatSearch } from './schemas/main/chatSearch'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({

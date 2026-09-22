@@ -11,7 +11,7 @@ import { authClient } from '../lib/auth-client'
 import {
 	resetPasswordSchema,
 	type ResetPasswordType,
-} from '../schemas/auth/ResetPassword'
+} from '../schemas/auth/resetPassword'
 
 const token = new URLSearchParams(window.location.search).get('token')
 
