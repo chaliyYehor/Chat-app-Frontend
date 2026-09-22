@@ -7,7 +7,6 @@ import { RiMessage2Fill } from 'react-icons/ri'
 import CallsSectionBtn from '../components/main/CallsSectionBtn'
 import SettingsSectionBtn from '../components/main/SettingsSectionBtn'
 import Profile from '../components/main/Profile'
-import SelectConvoUi from '../components/main/SelectConvoUi'
 
 export default function Home() {
 	const navigate = useNavigate()
@@ -50,10 +49,7 @@ export default function Home() {
 				</nav>
 
 				<main className='flex-1 flex min-w-0'>
-					<div className='w-100 shrink-0'>
-						<Outlet />
-					</div>
-					<SelectConvoUi />
+					<Outlet />
 				</main>
 			</div>
 		</>
