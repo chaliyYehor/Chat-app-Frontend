@@ -12,6 +12,8 @@ import Verify from './pages/Verify'
 import ResetPassword from './pages/ResetPassword'
 import Chats from './pages/Chats'
 import { chatSearchSchema, type ChatSearch } from './schemas/main/chatSearch'
+import { Chat } from './components/main/chats-page/chat/Chat'
+import SelectConvoUi from './components/main/SelectConvoUi'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -38,10 +40,12 @@ function App() {
 			search: '',
 		},
 	})
+
 	return (
 		<>
 			<Routes>
 				<Route path='/' element={<Home />}>
+					<Route index element={<SelectConvoUi />} />
 					<Route
 						path='/chats'
 						element={
@@ -49,7 +53,10 @@ function App() {
 								<Chats />
 							</FormProvider>
 						}
-					></Route>
+					>
+						<Route index element={<SelectConvoUi />} />
+						<Route path=':chatId' element={<Chat />} />
+					</Route>
 				</Route>
 				<Route
 					path='/login'
