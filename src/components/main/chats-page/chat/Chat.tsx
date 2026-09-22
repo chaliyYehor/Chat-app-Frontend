@@ -1,5 +1,6 @@
 import Avatar from '../../Avatar'
 import CallButon from './CallButon'
+import ImageMessage from './ImageMessage'
 import Message from './Message'
 import MoreInfoButton from './MoreInfoButton'
 import SendAMessage from './SendAMessage'
@@ -33,6 +34,8 @@ export function Chat() {
 				<Message isMe={true} />
 				<Message isMe={false} />
 				<Message isMe={true} />
+				<ImageMessage isMe={true} />
+				<ImageMessage isMe={false} />
 			</div>
 
 			<SendAMessage />
