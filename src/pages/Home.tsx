@@ -1,6 +1,12 @@
-import { useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 import { authClient } from '../lib/auth-client'
 import { useEffect } from 'react'
+import MessageSectionBtn from '../components/main/MessageSectionBtn'
+import GroupsSectionBtn from '../components/main/GroupsSectionBtn'
+import { RiMessage2Fill } from 'react-icons/ri'
+import CallsSectionBtn from '../components/main/CallsSectionBtn'
+import SettingsSectionBtn from '../components/main/SettingsSectionBtn'
+import Profile from '../components/main/Profile'
 
 export default function Home() {
 	const navigate = useNavigate()
@@ -21,16 +27,31 @@ export default function Home() {
 		)
 	}
 
-	async function logout() {
-		await authClient.signOut()
-		navigate('/login', { replace: true })
-	}
+	// async function logout() {
+	// 	await authClient.signOut()
+	// 	navigate('/login', { replace: true })
+	// }
 	return (
-		<button
-			className='bg-red-500 text-white px-4 py-2 rounded-md'
-			onClick={logout}
-		>
-			Logout
-		</button>
+		<>
+			<div className='w-screen h-dvh flex'>
+				<nav className='flex flex-col gap-5 w-25 items-center justify-between h-dvh py-4'>
+					<div className='w-full flex flex-col justify-center items-center gap-2'>
+						<div className='messageUI w-14 h-14 rounded-2xl flex justify-center items-center mb-3'>
+							<RiMessage2Fill color='white' size={30} />
+						</div>
+						<MessageSectionBtn isSmallScreen={false} />
+						<GroupsSectionBtn isSmallScreen={false} />
+						<CallsSectionBtn isSmallScreen={false} />
+						<SettingsSectionBtn isSmallScreen={false} />
+					</div>
+
+					<Profile />
+				</nav>
+
+				<main className='flex-1 flex min-w-0'>
+					<Outlet />
+				</main>
+			</div>
+		</>
 	)
 }

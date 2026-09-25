@@ -1,14 +1,14 @@
-import { RiMessage2Fill } from 'react-icons/ri'
-import TypeOfAuth from '../components/TypeOfAuth'
 import { Box } from '@mui/material'
+import { useEffect, useState } from 'react'
+import { RiMessage2Fill } from 'react-icons/ri'
+import { useNavigate } from 'react-router-dom'
 import OAuthBtn from '../components/OAuthBtn'
 import OrWithEmail from '../components/OrWithEmail'
-import SignUpForm from '../components/Form/SignUpForm'
-import { useGoogleAuth } from '../hooks/useGoogleAuth'
+import TypeOfAuth from '../components/TypeOfAuth'
+import SignUpForm from '../components/form/SignUpForm'
 import { useGithubAuth } from '../hooks/useGithubAuth'
-import { useEffect, useState } from 'react'
+import { useGoogleAuth } from '../hooks/useGoogleAuth'
 import { authClient } from '../lib/auth-client'
-import { useNavigate } from 'react-router-dom'
 
 export default function SignUp() {
 	const [globalError, setGlobalError] = useState('')
@@ -38,7 +38,7 @@ export default function SignUp() {
 
 	useEffect(() => {
 		if (!isPending && session) {
-			navigate('/')
+			navigate('/chats')
 		}
 	}, [isPending, session, navigate])
 	if (isPending) {

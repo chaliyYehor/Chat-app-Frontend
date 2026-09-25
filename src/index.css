@@ -6,11 +6,24 @@
 	}
 }
 
+html {
+	background-color: black;
+}
+
 body {
 	background-color: black;
 
 	font-family: 'Lato', sans-serif;
 	font-style: normal;
+}
+
+.font-inter {
+	font-family: 'Inter', sans-serif;
+	font-optical-sizing: auto;
+}
+
+:focus {
+	outline: none;
 }
 
 :focus-visible {
@@ -142,4 +155,32 @@ input:-webkit-autofill:active {
 	100% {
 		transform: scaleY(-1) rotate(-135deg);
 	}
+}
+
+.messageIco {
+	background: linear-gradient(
+		135deg,
+		rgba(124, 92, 252, 0.2),
+		rgba(0, 212, 170, 0.1)
+	);
+}
+
+.upper {
+	width: clamp(20rem, 100%, 400px);
+}
+
+.chatListContainer,
+.messages {
+	overflow-y: auto;
+	scrollbar-width: none;
+}
+
+.suggestedPeople {
+	overflow-y: auto;
+	scrollbar-width: thin;
+}
+
+.myMessage {
+	background: linear-gradient(135deg, rgb(124, 92, 252), rgb(91, 63, 219));
+	border: 1px solid purple;
 }

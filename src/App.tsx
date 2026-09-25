@@ -10,6 +10,10 @@ import NotFound from './pages/NotFound'
 import ForgotPassword from './pages/ForgotPassword'
 import Verify from './pages/Verify'
 import ResetPassword from './pages/ResetPassword'
+import Chats from './pages/Chats'
+import { Chat } from './components/main/chats-page/chat/Chat'
+import SelectConvoUi from './components/main/SelectConvoUi'
+import { chatSearchSchema, type ChatSearch } from './schemas/main/chatSearch'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -30,11 +34,30 @@ function App() {
 		},
 		mode: 'onSubmit',
 	})
+	const chatSearchMethods = useForm<ChatSearch>({
+		resolver: zodResolver(chatSearchSchema),
+		defaultValues: {
+			search: '',
+		},
+	})
 
 	return (
 		<>
 			<Routes>
-				<Route path='/' element={<Home />} />
+				<Route path='/' element={<Home />}>
+					<Route index element={<SelectConvoUi />} />
+					<Route
+						path='/chats'
+						element={
+							<FormProvider {...chatSearchMethods}>
+								<Chats />
+							</FormProvider>
+						}
+					>
+						<Route index element={<SelectConvoUi />} />
+						<Route path=':chatId' element={<Chat />} />
+					</Route>
+				</Route>
 				<Route
 					path='/login'
 					element={
