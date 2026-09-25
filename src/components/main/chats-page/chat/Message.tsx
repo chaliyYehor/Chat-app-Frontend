@@ -21,7 +21,7 @@ export default function Message({ isMe = true }: { isMe: boolean }) {
 		<>
 			{isPreviewOpen && (
 				<ViewImage
-					src='/rozvrh3.png'
+					src='/rozvrh.png'
 					alt='Preview'
 					setShowPreview={setIsPreviewOpen}
 				/>
@@ -65,7 +65,7 @@ export default function Message({ isMe = true }: { isMe: boolean }) {
 							>
 								<img
 									className='w-full max-h-60 lg:max-h-120 object-cover'
-									src='/rozvrh2.png'
+									src='/rozvrh.png'
 									alt=''
 								/>
 							</button>
