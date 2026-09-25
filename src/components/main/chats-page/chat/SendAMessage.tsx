@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod/dist/zod.js'
 import heic2any from 'heic2any'
-import { Paperclip, Send } from 'lucide-react'
+import { Image, Send } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import {
@@ -143,7 +143,7 @@ export default function SendAMessage() {
 					id='fileInput'
 				/>
 				<label htmlFor='fileInput'>
-					<Paperclip className='hover:text-white cursor-pointer transition' />
+					<Image className='hover:text-white cursor-pointer transition' />
 				</label>
 				<input
 					type='text'
