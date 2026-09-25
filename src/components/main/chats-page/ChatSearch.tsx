@@ -17,7 +17,7 @@ interface Props<T extends FieldValues> {
 export function ChatSearch<T extends FieldValues>({
 	control,
 	name,
-	isChatSearch
+	isChatSearch,
 }: Props<T>) {
 	return (
 		<Controller
@@ -29,7 +29,9 @@ export function ChatSearch<T extends FieldValues>({
 					id={name}
 					inputRef={field.ref}
 					variant='outlined'
-					placeholder={isChatSearch ? 'Search contacts...': 'Search messages...'}
+					placeholder={
+						isChatSearch ? 'Search contacts...' : 'Search messages...'
+					}
 					slotProps={{
 						input: {
 							startAdornment: (
@@ -39,7 +41,9 @@ export function ChatSearch<T extends FieldValues>({
 							),
 						},
 						htmlInput: {
-							'aria-label': 'Search chats',
+							'aria-label': isChatSearch
+								? 'Search contacts'
+								: 'Search messages',
 						},
 					}}
 					error={!!fieldState.error}

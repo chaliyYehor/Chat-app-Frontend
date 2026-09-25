@@ -1,5 +1,5 @@
 import Avatar from '../../Avatar'
-import CallButon from './CallButon'
+import CallButon from './CallButton'
 import Message from './Message'
 import MoreInfoButton from './MoreInfoButton'
 import SendAMessage from './SendAMessage'
