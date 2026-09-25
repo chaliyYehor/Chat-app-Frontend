@@ -2,6 +2,9 @@ import z from 'zod'
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024
 
+const isImageFile = (file: File) =>
+	file.type.startsWith('image/') || /\.(heic|heif)$/i.test(file.name)
+
 export const sendAMessageSchema = z
 	.object({
 		message: z.string().max(1500, 'Message is too long'),
@@ -14,7 +17,7 @@ export const sendAMessageSchema = z
 					.refine(file => file.size <= MAX_FILE_SIZE, {
 						message: 'Max image size is 5MB',
 					})
-					.refine(file => file.type.startsWith('image/'), {
+					.refine(isImageFile, {
 						message: 'Only images are allowed',
 					}),
 			)

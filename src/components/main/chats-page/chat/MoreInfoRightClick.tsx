@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { Pin, Trash2, Search, UserRound } from 'lucide-react'
+import { Pin, Trash2, Search } from 'lucide-react'
 
 interface MoreInfoRightClickProps {
 	position: { x: number; y: number }
