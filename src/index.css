@@ -184,3 +184,16 @@ input:-webkit-autofill:active {
 	background: linear-gradient(135deg, rgb(124, 92, 252), rgb(91, 63, 219));
 	border: 1px solid purple;
 }
+
+.profileGrad {
+	background: linear-gradient(
+		135deg,
+		rgb(124, 92, 252) 0%,
+		rgb(0, 212, 170) 100%
+	);
+}
+
+.sharedMedia {
+	overflow-x: auto;
+	scrollbar-width: none;
+}
