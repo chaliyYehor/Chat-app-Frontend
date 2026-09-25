@@ -1,8 +1,14 @@
 import { Button } from '@mui/material'
+import type { Dispatch, SetStateAction } from 'react'
 
-export default function AddChatBtn() {
+export default function AddChatBtn({
+	onClick,
+}: {
+	onClick: Dispatch<SetStateAction<boolean>>
+}) {
 	return (
 		<Button
+			onClick={() => onClick(true)}
 			variant='contained'
 			type='button'
 			sx={{
@@ -20,7 +26,7 @@ export default function AddChatBtn() {
 			}}
 			title='Add Chat'
 		>
-			+ 
+			+
 		</Button>
 	)
 }
