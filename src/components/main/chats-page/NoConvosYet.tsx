@@ -15,10 +15,10 @@ export default function NoConvosYet({
 				</div>
 
 				<p className='text-[#F0F0F5] font-semibold text-xl text-center'>
-					Select a conversation
+					No conversations yet
 				</p>
 				<p className='text-md text-[#6B6B80] text-center'>
-					Choose from your chats to start messaging
+					Start a new chat to connect with someone
 				</p>
 			</div>
 			<Button

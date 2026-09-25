@@ -5,7 +5,6 @@ import AddChat from './AddChat'
 import AddChatBtn from './AddChatBtn'
 import { ChatSearch } from './ChatSearch'
 import NoConvosYet from './NoConvosYet'
-import Message from './chat/Message'
 import ChatPreview from './chat/ChatPreview'
 
 export default function ChatList() {
