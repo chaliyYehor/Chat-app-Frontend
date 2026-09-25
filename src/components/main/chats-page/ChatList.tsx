@@ -29,22 +29,14 @@ export default function ChatList() {
 			<section className='px-4 font-semibold text-sm mb-5'>
 				<p className='text-[#6B6B80] font-inter mb-3'>PINNED</p>
 				<div className='flex flex-col gap-4'>
-					<ChatPreview />
-					<ChatPreview />
-					<ChatPreview />
-					<ChatPreview />
-					<ChatPreview />
+
 				</div>
 				<hr className='text-gray-500/50 mt-3' />
 			</section>
 			<section className='px-4 font-semibold text-sm'>
 				<p className='text-[#6B6B80] font-inter mb-3'>ALL MESSAGES</p>
 				<div className='flex flex-col gap-4'>
-					<ChatPreview />
-					<ChatPreview />
-					<ChatPreview />
-					<ChatPreview />
-					<ChatPreview />
+
 				</div>
 			</section>
 
