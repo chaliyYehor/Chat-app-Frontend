@@ -11,11 +11,13 @@ import { Search } from 'lucide-react'
 interface Props<T extends FieldValues> {
 	control: Control<T>
 	name: FieldPath<T>
+	isChatSearch: boolean
 }
 
-export default function ChatSearch<T extends FieldValues>({
+export function ChatSearch<T extends FieldValues>({
 	control,
 	name,
+	isChatSearch
 }: Props<T>) {
 	return (
 		<Controller
@@ -27,7 +29,7 @@ export default function ChatSearch<T extends FieldValues>({
 					id={name}
 					inputRef={field.ref}
 					variant='outlined'
-					placeholder='Search messages...'
+					placeholder={isChatSearch ? 'Search contacts...': 'Search messages...'}
 					slotProps={{
 						input: {
 							startAdornment: (

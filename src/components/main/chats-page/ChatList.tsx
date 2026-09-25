@@ -1,14 +1,15 @@
 import { useFormContext, type SubmitHandler } from 'react-hook-form'
 import AddChatBtn from './AddChatBtn'
-import ChatSearch from './ChatSearch'
+import { ChatSearch } from './ChatSearch'
 import type { ChatSearch as ChatSearchType } from '../../../schemas/main/chatSearch'
 import ChatPreview from './chat/ChatPreview'
+import { useState } from 'react'
+import AddChat from './AddChat'
 
 export default function ChatList() {
-	const {
-		control,
-		handleSubmit,
-	} = useFormContext<ChatSearchType>()
+	const [isAdding, setIsAdding] = useState(false)
+
+	const { control, handleSubmit } = useFormContext<ChatSearchType>()
 
 	const onSubmit: SubmitHandler<ChatSearchType> = data => {
 		console.log(data)
@@ -18,10 +19,10 @@ export default function ChatList() {
 			<div className='upper mb-10 flex flex-col gap-4 mt-5'>
 				<div className='flex items-center justify-between px-4 py-2'>
 					<h2 className='text-white text-3xl font-bold '>Messages</h2>
-					<AddChatBtn />
+					<AddChatBtn onClick={setIsAdding} />
 				</div>
 				<form onSubmit={handleSubmit(onSubmit)}>
-					<ChatSearch control={control} name='search' />
+					<ChatSearch control={control} name='search' isChatSearch={false} />
 				</form>
 			</div>
 
@@ -46,6 +47,8 @@ export default function ChatList() {
 					<ChatPreview />
 				</div>
 			</section>
+
+			{isAdding && <AddChat setIsAdding={setIsAdding} />}
 		</div>
 	)
 }
