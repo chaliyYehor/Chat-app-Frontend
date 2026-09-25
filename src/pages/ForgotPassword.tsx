@@ -6,13 +6,13 @@ import { useForm, type SubmitHandler } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import BackToSignUp from '../components/BackToSignUp'
 
+import FormTextField from '../components/form/components/FormTextField'
+import Label from '../components/form/components/Label'
 import { authClient } from '../lib/auth-client'
 import {
 	forgotPasswordSchema,
 	type ForgotPasswordType,
 } from '../schemas/auth/forgotPassword'
-import Label from '../components/form/components/Label'
-import FormTextField from '../components/form/components/FormTextField'
 
 export default function ForgotPassword() {
 	const [globalError, setGlobalError] = useState('')
