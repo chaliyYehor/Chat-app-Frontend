@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod/dist/zod.js'
-import { Paperclip, Send } from 'lucide-react'
+import heic2any from 'heic2any'
+import { Image, Send } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import {
@@ -8,11 +9,17 @@ import {
 	type SendAMessageType,
 } from '../../../../schemas/main/sendAMessage'
 
+const isImageFile = (file: File) =>
+	file.type.startsWith('image/') || /\.(heic|heif)$/i.test(file.name)
+
+const isHeicFile = (file: File) => /\.(heic|heif)$/i.test(file.name)
+
 export default function SendAMessage() {
 	const [image, setImage] = useState<File | undefined>(undefined)
 	const [imagePreview, setImagePreview] = useState<string | undefined>(
 		undefined,
 	)
+	const [imagePreviewError, setImagePreviewError] = useState(false)
 	const fileInputRef = useRef<HTMLInputElement>(null)
 
 	const { register, handleSubmit, setValue } = useForm<
@@ -27,15 +34,42 @@ export default function SendAMessage() {
 		},
 	})
 	useEffect(() => {
+		let previewUrl: string | undefined
+		let cancelled = false
+
 		if (!image) {
-			setImagePreview(undefined)
-			return
+			return () => undefined
 		}
 
-		const previewUrl = URL.createObjectURL(image)
-		setImagePreview(previewUrl)
+		const createPreview = async () => {
+			try {
+				let previewBlob: Blob = image
 
-		return () => URL.revokeObjectURL(previewUrl)
+				if (isHeicFile(image)) {
+					const converted = await heic2any({
+						blob: image,
+						toType: 'image/jpeg',
+						quality: 0.8,
+					})
+					previewBlob = Array.isArray(converted) ? converted[0] : converted
+				}
+
+				if (cancelled) return
+				previewUrl = URL.createObjectURL(previewBlob)
+				setImagePreview(previewUrl)
+			} catch {
+				if (cancelled) return
+				setImagePreview(undefined)
+				setImagePreviewError(true)
+			}
+		}
+
+		void createPreview()
+
+		return () => {
+			cancelled = true
+			if (previewUrl) URL.revokeObjectURL(previewUrl)
+		}
 	}, [image])
 
 	const onSubmit: SubmitHandler<SendAMessageType> = data => {
@@ -43,6 +77,8 @@ export default function SendAMessage() {
 	}
 	const clearImage = () => {
 		setImage(undefined)
+		setImagePreview(undefined)
+		setImagePreviewError(false)
 		setValue('image', undefined, { shouldValidate: true })
 		if (fileInputRef.current) fileInputRef.current.value = ''
 	}
@@ -50,7 +86,7 @@ export default function SendAMessage() {
 
 	return (
 		<div className='p-4 shrink-0 flex flex-col w-full gap-4 border-t border-gray-700/60'>
-			{imagePreview && (
+			{imagePreview ? (
 				<div className='relative w-fit'>
 					<img
 						className='max-w-40 max-h-40 object-cover rounded-xl border border-white/50'
@@ -65,7 +101,21 @@ export default function SendAMessage() {
 						x
 					</button>
 				</div>
-			)}
+			) : imagePreviewError && image ? (
+				<div className='relative max-w-40 rounded-xl border border-white/50 bg-[#1e1e26] p-3 text-white'>
+					<p className='truncate text-sm'>{image.name}</p>
+					<p className='mt-1 text-xs text-[#6B6B80]'>
+						Preview is not supported for this HEIC file
+					</p>
+					<button
+						onClick={clearImage}
+						type='button'
+						className='absolute right-1 top-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded-2xl bg-white text-black'
+					>
+						x
+					</button>
+				</div>
+			) : null}
 			<form
 				onSubmit={handleSubmit(onSubmit, errors => console.log(errors))}
 				className='messageInput w-full bg-[#1e1e26] flex items-center gap-4 rounded-2xl px-4 py-2 text-[#6B6B80]'
@@ -79,21 +129,22 @@ export default function SendAMessage() {
 					onChange={event => {
 						const file = event.target.files?.[0]
 
-						if (!file || !file.type.startsWith('image/')) {
+						if (!file || !isImageFile(file)) {
 							clearImage()
 							return
 						}
 
+						setImagePreviewError(false)
 						setImage(file)
 						imageInput.onChange(event)
 					}}
 					type='file'
-					accept='image/*'
+					accept='image/*,.heic,.heif'
 					className='hidden'
 					id='fileInput'
 				/>
 				<label htmlFor='fileInput'>
-					<Paperclip className='hover:text-white cursor-pointer transition' />
+					<Image className='hover:text-white cursor-pointer transition' />
 				</label>
 				<input
 					type='text'

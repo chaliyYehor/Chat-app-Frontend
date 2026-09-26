@@ -12,7 +12,7 @@ export default function SelectConvoUi() {
 					Select a conversation
 				</p>
 				<p className='text-md text-[#6B6B80] text-center'>
-					Choose from your chats to start messaging
+					Choose from your chats or groups to start messaging
 				</p>
 			</div>
 		</div>

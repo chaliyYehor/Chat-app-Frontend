@@ -1,9 +1,9 @@
 import { Button } from '@mui/material'
 import { X } from 'lucide-react'
-import { ChatSearch } from './ChatSearch'
 import { useFormContext, type SubmitHandler } from 'react-hook-form'
 import type { ChatSearch as ChatSearchType } from '../../../schemas/main/chatSearch'
 import Person from './chat/Person'
+import { ChatSearch } from './ChatSearch'
 
 export default function AddChat({
 	setIsAdding,
@@ -16,10 +16,11 @@ export default function AddChat({
 		console.log(data)
 	}
 	return (
-		<button
+		<div
 			onClick={() => {
 				setIsAdding(false)
 			}}
+			role='presentation'
 			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex items-start justify-center z-50 backdrop-blur-xs'
 		>
 			<div
@@ -79,6 +80,6 @@ export default function AddChat({
 					</div>
 				</div>
 			</div>
-		</button>
+		</div>
 	)
 }
