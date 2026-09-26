@@ -209,3 +209,11 @@ input:-webkit-autofill:active {
 	overflow-x: auto;
 	scrollbar-width: none;
 }
+
+.groupsPFP {
+	background: linear-gradient(
+		135deg,
+		rgb(124, 92, 252) 0%,
+		rgb(0, 212, 170) 100%
+	);
+}
