@@ -5,11 +5,13 @@ import { useEffect, useRef } from 'react'
 interface ChatRightClickProps {
 	position: { x: number; y: number }
 	onClose: () => void
+	isGroup?: boolean
 }
 
 export default function ChatRightClick({
 	position,
 	onClose,
+	isGroup,
 }: ChatRightClickProps) {
 	const menuRef = useRef<HTMLDivElement>(null)
 
@@ -17,6 +19,17 @@ export default function ChatRightClick({
 		{ icon: Pin, label: 'Pin', onClick: () => onClose() },
 		{ icon: Trash2, label: 'Delete', danger: true, onClick: () => onClose() },
 	]
+
+	const groupMenuItems = [
+		{
+			icon: Trash2,
+			label: 'Leave Group',
+			danger: true,
+			onClick: () => onClose(),
+		},
+	]
+
+	const itemsToRender = isGroup ? groupMenuItems : menuItems
 
 	useEffect(() => {
 		function handleClickOutside(e: MouseEvent) {
@@ -75,7 +88,7 @@ export default function ChatRightClick({
 			}}
 			className='fixed bg-[#16161B] w-48 rounded-2xl z-50 border border-white/20 shadow-2xl p-1.5 overflow-hidden flex flex-col gap-0.5 text-white select-none'
 		>
-			{menuItems.map((item, index) => {
+			{itemsToRender.map((item, index) => {
 				const Icon = item.icon
 				return (
 					<button
