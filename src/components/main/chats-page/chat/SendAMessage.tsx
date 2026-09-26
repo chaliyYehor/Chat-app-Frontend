@@ -58,6 +58,7 @@ export default function SendAMessage() {
 				previewUrl = URL.createObjectURL(previewBlob)
 				setImagePreview(previewUrl)
 			} catch {
+				if (cancelled) return
 				setImagePreview(undefined)
 				setImagePreviewError(true)
 			}
