@@ -1,10 +1,12 @@
-import { Button } from '@mui/material'
 import { MessageSquare } from 'lucide-react'
 import type { Dispatch, SetStateAction } from 'react'
+import NewGroupChatBtn from './groups/NewGroupChatBtn'
 
 export default function NoConvosYet({
 	onClick,
+	isGroup,
 }: {
+	isGroup?: boolean
 	onClick: Dispatch<SetStateAction<boolean>>
 }) {
 	return (
@@ -15,45 +17,15 @@ export default function NoConvosYet({
 				</div>
 
 				<p className='text-[#F0F0F5] font-semibold text-xl text-center'>
-					No conversations yet
+					{isGroup ? 'No groups yet' : 'No conversations yet'}
 				</p>
 				<p className='text-md text-[#6B6B80] text-center'>
-					Start a new chat to connect with someone
+					{isGroup
+						? 'Start a new group to connect with others'
+						: 'Start a new chat to connect with someone'}
 				</p>
 			</div>
-			<Button
-				onClick={() => onClick(true)}
-				type='submit'
-				variant='contained'
-				sx={{
-					width: '158px',
-					height: '40px',
-					borderRadius: '10px',
-
-					marginTop: '10px',
-
-					background: 'linear-gradient(90deg, #7654E8 0%, #5437C9 100%)',
-
-					color: '#fff',
-					fontSize: '16px',
-					fontWeight: 600,
-					padding: '12px 0',
-					textTransform: 'none',
-
-					boxShadow: 'none',
-
-					'&:hover': {
-						background: 'linear-gradient(90deg, #7654E8 0%, #5437C9 100%)',
-						boxShadow: 'none',
-					},
-
-					'&:active': {
-						transform: 'scale(0.99)',
-					},
-				}}
-			>
-				+ New Message
-			</Button>
+			<NewGroupChatBtn isGroup={isGroup} onClick={onClick} />
 		</div>
 	)
 }
