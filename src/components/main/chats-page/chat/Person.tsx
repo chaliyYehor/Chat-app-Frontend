@@ -1,11 +1,18 @@
 import { Link } from 'react-router-dom'
 import Avatar from '../../Avatar'
 
-export default function Person() {
+export default function Person({
+	isListItem = false,
+}: {
+	isListItem?: boolean
+}) {
 	return (
 		<Link
 			to={'#'}
-			className='chatPreview w-full h-17.5 flex justify-center items-center gap-3 hover:bg-[#1e1e26] p-2 rounded-lg transition-all duration-200 ease-in-out'
+			style={{
+				padding: isListItem ? '0' : '8px',
+			}}
+			className='chatPreview w-full h-17.5 flex justify-center items-center gap-3 hover:bg-[#1e1e26] rounded-lg transition-all duration-200 ease-in-out'
 		>
 			<Avatar />
 			<div className='flex-1 min-w-0 flex flex-col items-start text-white'>

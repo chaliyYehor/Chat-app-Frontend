@@ -3,7 +3,11 @@ import { EllipsisVertical } from 'lucide-react'
 import { useState } from 'react'
 import MoreInfoRightClick from './MoreInfoRightClick'
 
-export default function MoreInfoButton() {
+export default function MoreInfoButton({
+	isGroup = false,
+}: {
+	isGroup?: boolean
+}) {
 	const [chatToolsPosition, setChatToolsPosition] = useState<{
 		x: number
 		y: number
@@ -20,6 +24,7 @@ export default function MoreInfoButton() {
 				<MoreInfoRightClick
 					position={chatToolsPosition}
 					onClose={() => setChatToolsPosition(null)}
+					isGroup={isGroup}
 				/>
 			)}
 			<Button
