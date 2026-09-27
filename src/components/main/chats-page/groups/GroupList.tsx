@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import AddChat from '../AddChat'
 import NoConvosYet from '../NoConvosYet'
 import GroupPreview from './GroupPreview'
 import NewGroupChatBtn from './NewGroupChatBtn'
+import CreateGroup from './CreateGroup'
 
 export default function GroupList() {
 	const [isAdding, setIsAdding] = useState(false)
@@ -34,7 +34,7 @@ export default function GroupList() {
 					</section>
 				</>
 			)}
-			{isAdding && <AddChat setIsAdding={setIsAdding} />}
+			{isAdding && <CreateGroup setIsAdding={setIsAdding} />}
 		</div>
 	)
 }
