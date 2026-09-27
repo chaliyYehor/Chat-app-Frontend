@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom'
 import { Chat } from './components/main/chats-page/chat/Chat'
 import Group from './components/main/chats-page/groups/Group'
 import SelectConvoUi from './components/main/SelectConvoUi'
+import Calls from './pages/Calls'
 import Chats from './pages/Chats'
 import ForgotPassword from './pages/ForgotPassword'
 import Groups from './pages/Groups'
@@ -11,6 +12,9 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
 import ResetPassword from './pages/ResetPassword'
+import SetEditProfilePage from './pages/SetEditProfilePage'
+import SetSecurityPage from './pages/SetSecurityPage'
+import Settings from './pages/Settings'
 import SignUp from './pages/SignUp'
 import Verify from './pages/Verify'
 import { loginSchema, type LoginType } from './schemas/auth/login'
@@ -20,10 +24,6 @@ import {
 	groupCreationSchema,
 	type GroupCreation,
 } from './schemas/main/groupCreation'
-import Calls from './pages/Calls'
-import Settings from './pages/Settings'
-import SettingsEditProfile from './components/main/settings/SettingsEditProfile'
-import SetEditProfilePage from './pages/SetEditProfilePage'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -91,16 +91,22 @@ function App() {
 					</Route>
 					<Route path='/settings' element={<Settings />}>
 						<Route index element={<SelectConvoUi />} />
-					</Route>
-					<Route
-						path='/editProfile'
-						element={
-							<FormProvider {...groupCreationMethods}>
-								<SetEditProfilePage />
-							</FormProvider>
-						}
-					>
-						<Route index element={<SelectConvoUi />} />
+						<Route
+							path='editProfile'
+							element={
+								<FormProvider {...groupCreationMethods}>
+									<SetEditProfilePage />
+								</FormProvider>
+							}
+						/>
+						<Route
+							path='security'
+							element={
+								<FormProvider {...groupCreationMethods}>
+									<SetSecurityPage />
+								</FormProvider>
+							}
+						/>
 					</Route>
 				</Route>
 				<Route
