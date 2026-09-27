@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import UserInfo from '../../UserInfo'
-import Avatar from '../../Avatar'
 import CallButon from '../chat/CallButton'
 import VideoCallBtn from '../chat/VideoCallBtn'
 import MoreInfoButton from '../chat/MoreInfoButton'
 import Message from '../chat/Message'
 import SendAMessage from '../chat/SendAMessage'
 import GroupPfp from './GroupPfp'
+import GroupInfo from './GroupInfo'
 
 export default function Group() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
@@ -16,16 +15,14 @@ export default function Group() {
 			<div className='p-4 shrink-0 flex w-full justify-between items-center border-b border-gray-700/60'>
 				<div className='flex justify-center items-center gap-3'>
 					{isProfileOpened && (
-						<UserInfo
-							sharedMedia={true}
-							isYourProfile={false}
+						<GroupInfo
 							setIsProfileOpened={setIsProfileOpened}
 						/>
 					)}
 					<button
 						onClick={() => setIsProfileOpened(true)}
 						type='button'
-						className='cursor-pointer hover:outline-2 hover:outline-[#7C5CFC] transition-all duration-200 ease-in-out rounded-full'
+						className='cursor-pointer hover:outline-2 hover:outline-[#7C5CFC] transition-all duration-200 ease-in-out rounded-2xl'
 					>
 						<GroupPfp />
 					</button>
