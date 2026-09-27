@@ -3,7 +3,7 @@ import { useState } from 'react'
 import ViewImage from './ViewImage'
 import RightClick from './RightClick'
 
-export default function ImageMessage({ isMe = true }: { isMe: boolean }) {
+export default function ImageMessage({ isMe = true, isGroup = false }: { isMe: boolean; isGroup?: boolean }) {
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
 
 	const [toolsPosition, setToolsPosition] = useState<{
@@ -49,6 +49,11 @@ export default function ImageMessage({ isMe = true }: { isMe: boolean }) {
 						</div>
 					)}
 					<div className='flex-1 min-w-0 flex flex-col'>
+						{!isMe && isGroup && (
+							<p className='text-[#6B6B80] text-[12px] font-medium font-inter ml-2 mb-1'>
+								Priya Nair
+							</p>
+						)}
 						<div
 							className={clsx(
 								isMe

@@ -2,9 +2,18 @@ import clsx from 'clsx'
 import { useState } from 'react'
 import RightClick from './RightClick'
 import ViewImage from './ViewImage'
+import UserInfo from '../../UserInfo'
 
-export default function Message({ isMe = true }: { isMe: boolean }) {
+export default function Message({
+	isMe = true,
+	isGroup = false,
+}: {
+	isMe: boolean
+	isGroup?: boolean
+}) {
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+
+	const [isProfileOpen, setIsProfileOpen] = useState(false)
 
 	const [toolsPosition, setToolsPosition] = useState<{
 		x: number
@@ -26,10 +35,17 @@ export default function Message({ isMe = true }: { isMe: boolean }) {
 					setShowPreview={setIsPreviewOpen}
 				/>
 			)}
+			{isProfileOpen && (
+				<UserInfo
+					setIsProfileOpened={setIsProfileOpen}
+					isYourProfile={isMe}
+					sharedMedia={true}
+				/>
+			)}
 			<div
 				className={clsx(
 					isMe ? 'justify-end' : 'justify-start',
-					'w-full flex message',
+					'w-full flex message relative',
 				)}
 				onContextMenu={handleContextMenu}
 			>
@@ -41,14 +57,22 @@ export default function Message({ isMe = true }: { isMe: boolean }) {
 				)}
 				<div className='max-w-[70%] min-w-0 flex relative gap-2'>
 					{!isMe && (
-						<div
-							className={`sticky bottom-0 self-end w-10 h-10 rounded-[50%] text-white flex justify-center items-center border-2 border-gray-700 shrink-0`.trim()}
-						>
-							PFP
-							<div className='w-3 h-3 bg-green-500 border border-white rounded-[50%] absolute right-0 top-[68%]' />
-						</div>
+						<>
+							<button
+								onClick={() => setIsProfileOpen(true)}
+								className={`cursor-pointer sticky bottom-0 self-end w-10 h-10 rounded-[50%] text-white flex justify-center items-center border-2 border-gray-700 shrink-0`.trim()}
+							>
+								PFP
+								<div className='w-3 h-3 bg-green-500 border border-white rounded-[50%] absolute right-0 top-[68%]' />
+							</button>
+						</>
 					)}
 					<div className='flex-1 min-w-0 flex flex-col'>
+						{!isMe && isGroup && (
+							<p className='text-[#6B6B80] text-[12px] font-medium font-inter ml-2 mb-1'>
+								Priya Nair
+							</p>
+						)}
 						<div
 							className={clsx(
 								isMe
