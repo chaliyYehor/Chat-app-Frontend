@@ -15,6 +15,7 @@ import { Chat } from './components/main/chats-page/chat/Chat'
 import SelectConvoUi from './components/main/SelectConvoUi'
 import { chatSearchSchema, type ChatSearch } from './schemas/main/chatSearch'
 import Groups from './pages/Groups'
+import Group from './components/main/chats-page/groups/Group'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -67,7 +68,7 @@ function App() {
 						}
 					>
 						<Route index element={<SelectConvoUi />} />
-						<Route path=':groupId' element={<Chat />} />
+						<Route path=':groupId' element={<Group />} />
 					</Route>
 				</Route>
 				<Route

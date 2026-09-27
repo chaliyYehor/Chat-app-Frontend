@@ -5,11 +5,13 @@ import { Pin, Trash2, Search } from 'lucide-react'
 interface MoreInfoRightClickProps {
 	position: { x: number; y: number }
 	onClose: () => void
+	isGroup?: boolean
 }
 
 export default function MoreInfoRightClick({
 	position,
 	onClose,
+	isGroup = false,
 }: MoreInfoRightClickProps) {
 	const menuRef = useRef<HTMLDivElement>(null)
 
@@ -24,6 +26,17 @@ export default function MoreInfoRightClick({
 		},
 	]
 
+	const groupMenuItems = [
+		{ icon: Search, label: 'Search in chat', onClick: () => onClose() },
+		{
+			icon: Trash2,
+			label: 'Clear chat',
+			danger: true,
+			onClick: () => onClose(),
+		},
+	]
+
+	const menuItemsToRender = isGroup ? groupMenuItems : menuItems
 	useEffect(() => {
 		function handleClickOutside(e: MouseEvent) {
 			if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -81,7 +94,7 @@ export default function MoreInfoRightClick({
 			}}
 			className='fixed bg-[#16161B] w-48 rounded-2xl z-50 border border-white/20 shadow-2xl p-1.5 overflow-hidden flex flex-col gap-0.5 text-white select-none'
 		>
-			{menuItems.map((item, index) => {
+			{menuItemsToRender.map((item, index) => {
 				const Icon = item.icon
 				return (
 					<button
