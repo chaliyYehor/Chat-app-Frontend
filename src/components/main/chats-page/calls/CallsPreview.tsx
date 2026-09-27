@@ -47,7 +47,7 @@ export default function CallsPreview({
 	const IconComponent = itemsToDisplay ? itemsToDisplay.icon : null
 	return (
 		<Link
-			to={'#'}
+			to={'/chats/123'}
 			style={{
 				padding: '0',
 			}}
@@ -76,7 +76,7 @@ export default function CallsPreview({
 				)}
 			</div>
 			<div className='flex flex-col justify-between items-center gap-1'>
-				<p className='text-[#6B6B80] self-end text-sm font-mono text-[12px] flex justify-center items-center gap-1'>
+				<p className='text-[#6B6B80] mr-1 self-end text-sm font-mono text-[12px] flex justify-center items-center gap-1'>
 					Today
 				</p>
 				<div className='flex justify-center items-center gap-2 mt-1'>
