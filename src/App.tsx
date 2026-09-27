@@ -20,6 +20,7 @@ import {
 	groupCreationSchema,
 	type GroupCreation,
 } from './schemas/main/groupCreation'
+import Calls from './pages/Calls'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -79,6 +80,10 @@ function App() {
 							</FormProvider>
 						}
 					>
+						<Route index element={<SelectConvoUi />} />
+						<Route path=':groupId' element={<Group />} />
+					</Route>
+					<Route path='/calls' element={<Calls />}>
 						<Route index element={<SelectConvoUi />} />
 						<Route path=':groupId' element={<Group />} />
 					</Route>
