@@ -1,21 +1,25 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { FormProvider, useForm } from 'react-hook-form'
 import { Route, Routes } from 'react-router-dom'
+import { Chat } from './components/main/chats-page/chat/Chat'
+import Group from './components/main/chats-page/groups/Group'
+import SelectConvoUi from './components/main/SelectConvoUi'
+import Chats from './pages/Chats'
+import ForgotPassword from './pages/ForgotPassword'
+import Groups from './pages/Groups'
 import Home from './pages/Home'
 import Login from './pages/Login'
-import SignUp from './pages/SignUp'
-import { FormProvider, useForm } from 'react-hook-form'
-import { signUpSchema, type SignUpType } from './schemas/auth/signUp'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { loginSchema, type LoginType } from './schemas/auth/login'
 import NotFound from './pages/NotFound'
-import ForgotPassword from './pages/ForgotPassword'
-import Verify from './pages/Verify'
 import ResetPassword from './pages/ResetPassword'
-import Chats from './pages/Chats'
-import { Chat } from './components/main/chats-page/chat/Chat'
-import SelectConvoUi from './components/main/SelectConvoUi'
+import SignUp from './pages/SignUp'
+import Verify from './pages/Verify'
+import { loginSchema, type LoginType } from './schemas/auth/login'
+import { signUpSchema, type SignUpType } from './schemas/auth/signUp'
 import { chatSearchSchema, type ChatSearch } from './schemas/main/chatSearch'
-import Groups from './pages/Groups'
-import Group from './components/main/chats-page/groups/Group'
+import {
+	groupCreationSchema,
+	type GroupCreation,
+} from './schemas/main/groupCreation'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -42,6 +46,14 @@ function App() {
 			search: '',
 		},
 	})
+	const groupCreationMethods = useForm<GroupCreation>({
+		resolver: zodResolver(groupCreationSchema),
+		defaultValues: {
+			groupName: '',
+			search: '',
+			peopleToAdd: [],
+		},
+	})
 
 	return (
 		<>
@@ -62,7 +74,7 @@ function App() {
 					<Route
 						path='/groups'
 						element={
-							<FormProvider {...chatSearchMethods}>
+							<FormProvider {...groupCreationMethods}>
 								<Groups />
 							</FormProvider>
 						}
