@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import NoConvosYet from '../NoConvosYet'
-import GroupPreview from '../groups/GroupPreview'
 import CreateGroup from '../groups/CreateGroup'
 import { ToggleButton, ToggleButtonGroup } from '@mui/material'
-import Person from '../chat/Person'
 import CallsPreview from './CallsPreview'
 
 export default function CallsList() {
