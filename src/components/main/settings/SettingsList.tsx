@@ -1,12 +1,3 @@
-import { useState } from 'react'
-import AddChat from '../chats-page/AddChat'
-import AddChatBtn from '../chats-page/AddChatBtn'
-import ChatPreview from '../chats-page/chat/ChatPreview'
-import { ChatSearch } from '../chats-page/ChatSearch'
-import NoConvosYet from '../chats-page/NoConvosYet'
-import { useFormContext, type SubmitHandler } from 'react-hook-form'
-import type { ChatSearch as ChatSearchType } from '../../../schemas/main/chatSearch'
-
 export default function SettingsList() {
 	return (
 		<div className='chatListContainer h-dvh w-full min-w-0 bg-[#16161b]'>
