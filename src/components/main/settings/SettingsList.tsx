@@ -2,6 +2,7 @@ import SettingsLabel from './SettingsLabel'
 import SettingsPrivacy from './SettingsPrivacy'
 import SettingsProfile from './SettingsProfile'
 import SettingsSounds from './SettingsSounds'
+import SettingsTheme from './SettingsTheme'
 
 export default function SettingsList() {
 	return (
@@ -13,15 +14,19 @@ export default function SettingsList() {
 			</div>
 			<SettingsProfile />
 			<div className='flex flex-col'>
-				<SettingsLabel label={'SOUNDS'} />
+				<SettingsLabel label={'sounds'} />
 				<SettingsSounds />
 			</div>
-			
+
 			<div className='flex flex-col'>
-				<SettingsLabel label={'PRIVACY'} />
+				<SettingsLabel label={'privacy'} />
 				<SettingsPrivacy />
 			</div>
 
+			<div className='flex flex-col'>
+				<SettingsLabel label={'appearance'} />
+				<SettingsTheme />
+			</div>
 		</div>
 	)
 }
