@@ -11,6 +11,7 @@ import {
 } from '../../../schemas/main/changeUserInfo'
 import { zodResolver } from '@hookform/resolvers/zod'
 import PersonalInfo from './PersonalInfo'
+import ContactInfo from './ContactInfo'
 
 export default function SettingsEditProfile() {
 	const methods = useForm<ChangeUserInfoInput, unknown, ChangeUserInfo>({
@@ -29,7 +30,7 @@ export default function SettingsEditProfile() {
 	}
 
 	return (
-		<div className='chatListContainer h-dvh w-full min-w-0 bg-[#16161b]'>
+		<div className='chatListContainer h-dvh w-full min-w-0 overflow-y-auto scrollbar-none bg-[#16161b]'>
 			<div className='upper mb-10 flex flex-col mt-5 gap-2'>
 				<Link
 					to='/settings'
@@ -53,6 +54,11 @@ export default function SettingsEditProfile() {
 					<div className='flex flex-col'>
 						<SettingsLabel label={'personal info'} />
 						<PersonalInfo />
+					</div>
+
+					<div className='flex flex-col'>
+						<SettingsLabel label={'contact'} />
+						<ContactInfo />
 					</div>
 				</form>
 			</FormProvider>
