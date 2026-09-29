@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import SettingsLabel from './SettingsLabel'
 import SettingsChangePassword from './SettingsChangePassword'
 import SettingsActSess from './SettingsActSess'
+import SettingsDanger from './SettingsDanger'
 
 export default function SettingsSecurity() {
 	return (
@@ -18,15 +19,21 @@ export default function SettingsSecurity() {
 					<h2 className='text-white text-3xl font-bold '>Security</h2>
 				</div>
 			</div>
+			<div className='flex flex-col gap-4'>
+				<div className='flex flex-col'>
+					<SettingsLabel label={'Authentication'} />
+					<SettingsChangePassword />
+				</div>
 
-			<div className='flex flex-col'>
-				<SettingsLabel label={'Authentication'} />
-				<SettingsChangePassword />
-			</div>
+				<div className='flex flex-col'>
+					<SettingsLabel label={'active sessions'} />
+					<SettingsActSess />
+				</div>
 
-			<div className='flex flex-col'>
-				<SettingsLabel label={'active sessions'} />
-				<SettingsActSess />
+				<div className='flex flex-col'>
+					<SettingsLabel label={'danger zone'} />
+					<SettingsDanger />
+				</div>
 			</div>
 		</div>
 	)
