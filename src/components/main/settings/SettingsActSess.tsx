@@ -1,5 +1,4 @@
 import { Monitor, Smartphone, Ellipsis } from 'lucide-react'
-import SettingsSwitch from './SettingsSwitch'
 
 export default function SettingsActSess() {
 	const items = [
