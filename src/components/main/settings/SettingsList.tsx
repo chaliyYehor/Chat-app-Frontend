@@ -1,4 +1,6 @@
+import SettingsLabel from './SettingsLabel'
 import SettingsProfile from './SettingsProfile'
+import SettingsSounds from './SettingsSounds'
 
 export default function SettingsList() {
 	return (
@@ -9,7 +11,10 @@ export default function SettingsList() {
 				</div>
 			</div>
 			<SettingsProfile />
-			{/* Settings content goes here */}
+			<div className='flex flex-col'>
+				<SettingsLabel label={'SOUNDS'} />
+				<SettingsSounds />
+			</div>
 		</div>
 	)
 }
