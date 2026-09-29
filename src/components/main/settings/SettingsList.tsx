@@ -1,4 +1,5 @@
 import SettingsLabel from './SettingsLabel'
+import SettingsPrivacy from './SettingsPrivacy'
 import SettingsProfile from './SettingsProfile'
 import SettingsSounds from './SettingsSounds'
 
@@ -15,6 +16,12 @@ export default function SettingsList() {
 				<SettingsLabel label={'SOUNDS'} />
 				<SettingsSounds />
 			</div>
+			
+			<div className='flex flex-col'>
+				<SettingsLabel label={'PRIVACY'} />
+				<SettingsPrivacy />
+			</div>
+
 		</div>
 	)
 }
