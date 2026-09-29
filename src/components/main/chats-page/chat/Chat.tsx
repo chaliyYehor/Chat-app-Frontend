@@ -6,6 +6,7 @@ import MoreInfoButton from './MoreInfoButton'
 import SendAMessage from './SendAMessage'
 import VideoCallBtn from './VideoCallBtn'
 import UserInfo from '../../UserInfo'
+import ImageMessage from './ImageMessage'
 
 export function Chat() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
@@ -45,8 +46,9 @@ export function Chat() {
 			</div>
 
 			<div className='messages w-full min-h-0 flex-1 flex flex-col text-white p-5'>
-				<Message isMe={true} />
-				<Message isMe={false} />
+				<Message isSeen isMe={true} />
+				<Message isSeen isMe={false} />
+				<ImageMessage isMe />
 			</div>
 
 			<SendAMessage />
