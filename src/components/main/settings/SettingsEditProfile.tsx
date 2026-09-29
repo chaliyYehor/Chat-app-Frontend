@@ -10,16 +10,17 @@ import {
 	type ChangeUserInfoInput,
 } from '../../../schemas/main/changeUserInfo'
 import { zodResolver } from '@hookform/resolvers/zod'
+import PersonalInfo from './PersonalInfo'
 
 export default function SettingsEditProfile() {
 	const methods = useForm<ChangeUserInfoInput, unknown, ChangeUserInfo>({
 		resolver: zodResolver(changeUserInfoSchema),
 		defaultValues: {
 			status: 'online',
-			displayName: '',
-			username: '',
-			bio: '',
-			email: '',
+			displayName: 'Alex Rivera',
+			username: 'alexrivera',
+			bio: 'I am a software developer.',
+			email: 'alex.rivera@example.com',
 			file: undefined,
 		},
 	})
@@ -47,6 +48,11 @@ export default function SettingsEditProfile() {
 					<div className='flex flex-col'>
 						<SettingsLabel label={'status'} />
 						<EditProfileStatus />
+					</div>
+
+					<div className='flex flex-col'>
+						<SettingsLabel label={'personal info'} />
+						<PersonalInfo />
 					</div>
 				</form>
 			</FormProvider>
