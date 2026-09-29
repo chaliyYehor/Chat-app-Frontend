@@ -1,3 +1,5 @@
+import SettingsProfile from './SettingsProfile'
+
 export default function SettingsList() {
 	return (
 		<div className='chatListContainer h-dvh w-full min-w-0 bg-[#16161b]'>
@@ -6,7 +8,7 @@ export default function SettingsList() {
 					<h2 className='text-white text-3xl font-bold '>Settings</h2>
 				</div>
 			</div>
-
+			<SettingsProfile />
 			{/* Settings content goes here */}
 		</div>
 	)
