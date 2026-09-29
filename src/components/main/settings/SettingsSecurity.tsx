@@ -1,5 +1,7 @@
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import SettingsLabel from './SettingsLabel'
+import SettingsChangePassword from './SettingsChangePassword'
 
 export default function SettingsSecurity() {
 	return (
@@ -16,7 +18,10 @@ export default function SettingsSecurity() {
 				</div>
 			</div>
 
-			{/* Settings content goes here */}
+			<div className='flex flex-col'>
+				<SettingsLabel label={'Authentication'} />
+				<SettingsChangePassword />
+			</div>
 		</div>
 	)
 }
