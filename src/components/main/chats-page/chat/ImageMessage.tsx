@@ -2,8 +2,17 @@ import clsx from 'clsx'
 import { useState } from 'react'
 import ViewImage from './ViewImage'
 import RightClick from './RightClick'
+import { Check, CheckCheck } from 'lucide-react'
 
-export default function ImageMessage({ isMe = true, isGroup = false }: { isMe: boolean; isGroup?: boolean }) {
+export default function ImageMessage({
+	isMe = true,
+	isGroup = false,
+	isSeen,
+}: {
+	isMe: boolean
+	isGroup?: boolean
+	isSeen?: boolean
+}) {
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
 
 	const [toolsPosition, setToolsPosition] = useState<{
@@ -78,10 +87,16 @@ export default function ImageMessage({ isMe = true, isGroup = false }: { isMe: b
 						<p
 							className={clsx(
 								isMe ? 'self-end' : 'self-start',
-								'text-[#6B6B80] text-[13px] font-mono ml-1',
+								'text-[#6B6B80] text-[13px] font-mono ml-1 flex justify-center items-center gap-1',
 							)}
 						>
-							When
+							When{' '}
+							{!isGroup && isSeen && isMe && (
+								<CheckCheck color='#7c5cfc' size={13} />
+							)}
+							{!isGroup && !isSeen && isMe && (
+								<Check color='#6B6B80' size={13} />
+							)}
 						</p>
 					</div>
 				</div>

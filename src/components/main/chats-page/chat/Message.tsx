@@ -3,13 +3,16 @@ import { useState } from 'react'
 import RightClick from './RightClick'
 import ViewImage from './ViewImage'
 import UserInfo from '../../UserInfo'
+import { Check, CheckCheck } from 'lucide-react'
 
 export default function Message({
 	isMe = true,
 	isGroup = false,
+	isSeen,
 }: {
 	isMe: boolean
 	isGroup?: boolean
+	isSeen?: boolean
 }) {
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
 
@@ -167,10 +170,16 @@ export default function Message({
 						<p
 							className={clsx(
 								isMe ? 'self-end' : 'self-start',
-								'text-[#6B6B80] text-[13px] font-mono ml-1',
+								'text-[#6B6B80] text-[13px] font-mono ml-1 flex justify-center items-center gap-1',
 							)}
 						>
 							When
+							{!isGroup && isSeen && isMe && (
+								<CheckCheck color='#7c5cfc' size={13} />
+							)}
+							{!isGroup && !isSeen && isMe && (
+								<Check color='#6B6B80' size={13} />
+							)}
 						</p>
 					</div>
 				</div>

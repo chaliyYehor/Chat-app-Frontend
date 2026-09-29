@@ -5,8 +5,10 @@ import NewGroupChatBtn from './groups/NewGroupChatBtn'
 export default function NoConvosYet({
 	onClick,
 	isGroup,
+	isCall,
 }: {
 	isGroup?: boolean
+	isCall?: boolean
 	onClick: Dispatch<SetStateAction<boolean>>
 }) {
 	return (
@@ -17,15 +19,21 @@ export default function NoConvosYet({
 				</div>
 
 				<p className='text-[#F0F0F5] font-semibold text-xl text-center'>
-					{isGroup ? 'No groups yet' : 'No conversations yet'}
+					{isGroup
+						? 'No groups yet'
+						: isCall
+							? 'No calls yet'
+							: 'No conversations yet'}
 				</p>
 				<p className='text-md text-[#6B6B80] text-center'>
 					{isGroup
 						? 'Start a new group to connect with others'
-						: 'Start a new chat to connect with someone'}
+						: isCall
+							? 'Start a new call to connect with someone'
+							: 'Start a new chat to connect with someone'}
 				</p>
 			</div>
-			<NewGroupChatBtn isGroup={isGroup} onClick={onClick} />
+			{!isCall && <NewGroupChatBtn isGroup={isGroup} onClick={onClick} />}
 		</div>
 	)
 }

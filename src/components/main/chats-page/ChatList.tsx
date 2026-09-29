@@ -12,7 +12,7 @@ export default function ChatList() {
 
 	const { control, handleSubmit } = useFormContext<ChatSearchType>()
 
-	const chats = false // Replace with actual logic to determine if there are chats
+	const chats = true // Replace with actual logic to determine if there are chats
 
 	const onSubmit: SubmitHandler<ChatSearchType> = data => {
 		console.log(data)

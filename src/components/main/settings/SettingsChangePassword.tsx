@@ -1,0 +1,47 @@
+import { SquarePen } from 'lucide-react'
+import UIArrowRight from './UIArrowRight'
+
+export default function SettingsChangePassword() {
+	const items = [
+		{
+			icon: SquarePen,
+			label: 'Change Password',
+		},
+	]
+	return (
+		<>
+			<div className='outline mx-4 mb-4 outline-white/7  rounded-2xl flex flex-col overflow-hidden'>
+				{items.map((item, index) => (
+					<button
+						key={index}
+						style={{
+							borderBottom:
+								index !== items.length - 1
+									? '1px solid rgba(255, 255, 255, 0.07)'
+									: 'none',
+						}}
+						className={`flex border-b items-center border-white/7 w-full h-full p-4 text-left transition-colors cursor-pointer ${
+							'hover:bg-[#7C5CFC]/10'
+						}`}
+					>
+						<div className='flex-1 flex items-center gap-1'>
+							<item.icon
+								size={18}
+								color={'#6B6B80'}
+							/>
+							<div className='flex flex-col'>
+								<span
+									style={{ color: '#FFFFFF' }}
+									className='ml-2 font-medium font-inter'
+								>
+									{item.label}
+								</span>
+							</div>
+						</div>
+						<UIArrowRight />
+					</button>
+				))}
+			</div>
+		</>
+	)
+}

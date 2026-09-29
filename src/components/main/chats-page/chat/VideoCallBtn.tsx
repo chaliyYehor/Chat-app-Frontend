@@ -1,19 +1,20 @@
 import { Button } from '@mui/material'
 import { Video } from 'lucide-react'
 
-export default function VideoCallBtn() {
+export default function VideoCallBtn({ size = 20 }: { size?: number }) {
 	return (
 		<Button
 			sx={{
-				width: '50px',
+				width: size === 20 ? '50px' : '40px',
 				minWidth: '0',
-				height: '50px',
+				height: size === 20 ? '50px' : '40px',
 				borderRadius: '10px',
 				fontSize: '1rem',
 				textTransform: 'none',
 				color: '#6B6B80',
 				borderColor: '#333',
 				transition: 'all 0.2s ease-in-out',
+				backgroundColor: size !== 20 ? '#1f1f26' : 'transparent',
 
 				'&:hover': {
 					backgroundColor: '#1f1f26',
@@ -22,7 +23,7 @@ export default function VideoCallBtn() {
 				},
 			}}
 		>
-			<Video />
+			<Video size={size} />
 		</Button>
 	)
 }

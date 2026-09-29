@@ -6,6 +6,7 @@ import Message from '../chat/Message'
 import SendAMessage from '../chat/SendAMessage'
 import GroupPfp from './GroupPfp'
 import GroupInfo from './GroupInfo'
+import ImageMessage from '../chat/ImageMessage'
 
 export default function Group() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
@@ -43,8 +44,9 @@ export default function Group() {
 			</div>
 
 			<div className='messages w-full min-h-0 flex-1 flex flex-col text-white p-5'>
-				<Message isMe={true} />
-				<Message isMe={false} />
+				<Message isGroup isMe={true} />
+				<Message isGroup isMe={false} />
+				<ImageMessage isMe isGroup />
 			</div>
 
 			<SendAMessage />
