@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom'
 import Avatar from '../Avatar'
 import Status from './Status'
+import UIArrowRight from './UIArrowRight'
 
 export default function SettingsProfile() {
 	return (
 		<Link
-			to='/editProfile'
+			to='editProfile'
 			className='outline mx-4 mb-4 outline-white/7 hover:outline-[#7C5CFC]/60 p-4 rounded-2xl flex'
 		>
 			<div className='flex gap-4 w-full h-full items-center'>
@@ -19,9 +20,7 @@ export default function SettingsProfile() {
 					</p>
 					<Status status='online' />
 				</div>
-				<span className='text-[#6B6B80] font-semibold font-mono shrink-0'>
-					{'>'}
-				</span>
+				<UIArrowRight />
 			</div>
 		</Link>
 	)

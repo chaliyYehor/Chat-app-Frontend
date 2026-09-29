@@ -1,3 +1,4 @@
+import SettingsAccount from './SettingsAccount'
 import SettingsLabel from './SettingsLabel'
 import SettingsPrivacy from './SettingsPrivacy'
 import SettingsProfile from './SettingsProfile'
@@ -26,6 +27,11 @@ export default function SettingsList() {
 			<div className='flex flex-col'>
 				<SettingsLabel label={'appearance'} />
 				<SettingsTheme />
+			</div>
+
+			<div className='flex flex-col'>
+				<SettingsLabel label={'account'} />
+				<SettingsAccount />
 			</div>
 		</div>
 	)
