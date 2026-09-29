@@ -12,6 +12,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod'
 import PersonalInfo from './PersonalInfo'
 import ContactInfo from './ContactInfo'
+import { Button } from '@mui/material'
 
 export default function SettingsEditProfile() {
 	const methods = useForm<ChangeUserInfoInput, unknown, ChangeUserInfo>({
@@ -43,7 +44,7 @@ export default function SettingsEditProfile() {
 				</div>
 			</div>
 			<FormProvider {...methods}>
-				<form className='w-full' onSubmit={methods.handleSubmit(onSubmit)}>
+				<form className='w-full flex flex-col pb-15' onSubmit={methods.handleSubmit(onSubmit)}>
 					<EditProfileChangePhoto />
 
 					<div className='flex flex-col'>
@@ -60,6 +61,41 @@ export default function SettingsEditProfile() {
 						<SettingsLabel label={'contact'} />
 						<ContactInfo />
 					</div>
+
+					<Button
+						type='submit'
+						variant='contained'
+						disabled={methods.formState.isSubmitting || !methods.formState.isDirty}
+						sx={{
+							width: '90%',
+							height: '50px',
+							borderRadius: '10px',
+							alignSelf: 'center',
+
+							marginTop: '10px',
+
+							background: 'linear-gradient(90deg, #7654E8 0%, #5437C9 100%)',
+
+							color: '#fff',
+							fontSize: '16px',
+							fontWeight: 600,
+							padding: '12px 0',
+							textTransform: 'none',
+
+							boxShadow: 'none',
+
+							'&:hover': {
+								background: 'linear-gradient(90deg, #7654E8 0%, #5437C9 100%)',
+								boxShadow: 'none',
+							},
+
+							'&:active': {
+								transform: 'scale(0.99)',
+							},
+						}}
+					>
+						Save Changes
+					</Button>
 				</form>
 			</FormProvider>
 		</div>
