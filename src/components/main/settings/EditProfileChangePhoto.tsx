@@ -1,10 +1,8 @@
-import { zodResolver } from '@hookform/resolvers/zod/dist/zod.js'
 import heic2any from 'heic2any'
 import { Camera } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { useForm, useFormContext } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import {
-	changeUserInfoSchema,
 	type ChangeUserInfo,
 	type ChangeUserInfoInput,
 } from '../../../schemas/main/changeUserInfo'
