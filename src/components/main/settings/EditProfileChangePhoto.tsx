@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod/dist/zod.js'
 import heic2any from 'heic2any'
 import { Camera } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, useFormContext } from 'react-hook-form'
 import {
 	changeUserInfoSchema,
 	type ChangeUserInfo,
@@ -27,10 +27,7 @@ export default function EditProfileChangePhoto() {
 		setError,
 		clearErrors,
 		formState: { errors },
-	} = useForm<ChangeUserInfoInput, unknown, ChangeUserInfo>({
-		resolver: zodResolver(changeUserInfoSchema),
-		defaultValues: { file: undefined },
-	})
+	} = useFormContext<ChangeUserInfoInput, unknown, ChangeUserInfo>()
 
 	useEffect(() => {
 		let previewUrl: string | undefined
