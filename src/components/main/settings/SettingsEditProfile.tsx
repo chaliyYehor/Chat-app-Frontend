@@ -1,5 +1,6 @@
 import { ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import EditProfileChangePhoto from './EditProfileChangePhoto'
 
 export default function SettingsEditProfile() {
 	return (
@@ -16,7 +17,7 @@ export default function SettingsEditProfile() {
 				</div>
 			</div>
 
-			{/* Settings content goes here */}
+			<EditProfileChangePhoto />
 		</div>
 	)
 }

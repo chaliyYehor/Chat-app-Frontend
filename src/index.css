@@ -217,3 +217,7 @@ input:-webkit-autofill:active {
 		rgb(0, 212, 170) 100%
 	);
 }
+
+.cameraUI {
+	background: linear-gradient(135deg, rgb(124, 92, 252), rgb(91, 63, 219));
+}
