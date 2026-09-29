@@ -1,18 +1,6 @@
-import { TextField } from '@mui/material'
-import SettingsLabel from './SettingsLabel'
-import { useFormContext } from 'react-hook-form'
-import type {
-	ChangeUserInfo,
-	ChangeUserInfoInput,
-} from '../../../schemas/main/changeUserInfo'
 import PersonalInfoItem from './PersonalInfoItem'
 
 export default function PersonalInfo() {
-	const { register } = useFormContext<
-		ChangeUserInfoInput,
-		unknown,
-		ChangeUserInfo
-	>()
 	return (
 		<>
 			<div className='outline mx-4 mb-4 outline-white/7  rounded-2xl flex flex-col'>
