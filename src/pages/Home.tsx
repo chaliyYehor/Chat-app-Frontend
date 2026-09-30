@@ -35,7 +35,7 @@ export default function Home() {
 		<>
 			<div className='w-screen h-dvh flex'>
 				<nav
-					className='flex flex-col gap-5 w-25 items-center justify-between h-dvh py-4'
+					className='flex flex-col gap-5 w-25 items-center justify-between h-dvh py-4 dark:bg-black bg-[#f5f5f8]'
 					aria-label='Main navigation'
 				>
 					<div className='w-full flex flex-col justify-center items-center gap-2'>
@@ -54,7 +54,7 @@ export default function Home() {
 					<Profile />
 				</nav>
 
-				<main className=' dark:bg-black bg-white flex-1 flex min-w-0'>
+				<main className=' dark:bg-black bg-[#f5f5f8] flex-1 flex min-w-0'>
 					<Outlet />
 				</main>
 			</div>
