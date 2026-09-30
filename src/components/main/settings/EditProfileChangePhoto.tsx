@@ -115,7 +115,7 @@ export default function EditProfileChangePhoto() {
 			/>
 			<label
 				htmlFor='profilePhotoInput'
-				className='relative block w-28 h-28 cursor-pointer rounded-3xl border border-white/7'
+				className='relative block w-28 h-28 cursor-pointer rounded-3xl border dark:border-white/7'
 			>
 				<img
 					className='w-full h-full object-cover rounded-3xl'
