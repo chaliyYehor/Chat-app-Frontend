@@ -120,7 +120,7 @@ export default function SendAMessage() {
 			) : null}
 			<form
 				onSubmit={handleSubmit(onSubmit, errors => console.log(errors))}
-				className='messageInput w-full bg-[#1e1e26] flex items-center gap-4 rounded-2xl px-4 py-2 text-[#6B6B80]'
+				className='messageInput w-full dark:bg-[#1e1e26] bg-[#ebebf0] flex items-center gap-4 rounded-2xl px-4 py-2 text-[#6B6B80]'
 			>
 				<input
 					{...imageInput}
@@ -148,7 +148,7 @@ export default function SendAMessage() {
 				/>
 				<label htmlFor='fileInput' aria-label='Attach an image'>
 					<Image
-						className='hover:text-white cursor-pointer transition'
+						className='dark:hover:text-white hover:text-black cursor-pointer transition'
 						aria-hidden='true'
 					/>
 				</label>
@@ -158,7 +158,7 @@ export default function SendAMessage() {
 					placeholder='Message...'
 					aria-label='Message'
 					{...register('message')}
-					className='flex-1 text-white bg-transparent text-md py-2 focus-visible:outline-none!'
+					className='flex-1 dark:text-white bg-transparent text-md py-2 focus-visible:outline-none!'
 				/>
 				<button
 					onClick={() => console.log('clicked')}
@@ -166,7 +166,7 @@ export default function SendAMessage() {
 					aria-label='Send message'
 				>
 					<Send
-						className='hover:text-white cursor-pointer transition'
+						className='dark:hover:text-white hover:text-black cursor-pointer transition'
 						aria-hidden='true'
 					/>
 				</button>

@@ -31,7 +31,7 @@ export function Chat() {
 						<Avatar />
 					</button>
 					<div className='w-[70%]'>
-						<p className='font-semibold font-inter text-md truncate text-white'>
+						<p className='font-semibold font-inter text-md truncate dark:text-white'>
 							Sofia Chen
 						</p>
 						<p className='text-[#6B6B80] text-[13px] font-inter text-xs'>

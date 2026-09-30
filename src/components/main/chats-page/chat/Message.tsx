@@ -4,6 +4,8 @@ import { useState } from 'react'
 import UserInfo from '../../UserInfo'
 import RightClick from './RightClick'
 import ViewImage from './ViewImage'
+import type { RootType } from '../../../../store/store'
+import { useSelector } from 'react-redux'
 
 export default function Message({
 	isMe = true,
@@ -28,6 +30,8 @@ export default function Message({
 		e.stopPropagation()
 		setToolsPosition({ x: e.clientX, y: e.clientY })
 	}
+
+	const appTheme = useSelector((state: RootType) => state.theme.mode)
 
 	return (
 		<>
@@ -65,7 +69,7 @@ export default function Message({
 								type='button'
 								onClick={() => setIsProfileOpen(true)}
 								aria-label='Open sender profile'
-								className={`cursor-pointer sticky bottom-0 self-end w-10 h-10 rounded-[50%] text-white flex justify-center items-center border-2 border-gray-700 shrink-0`.trim()}
+								className={`cursor-pointer sticky bottom-0 self-end w-10 h-10 rounded-[50%] dark:text-white text-black flex justify-center items-center border-2 border-gray-700 shrink-0`.trim()}
 							>
 								PFP
 								<div className='w-3 h-3 bg-green-500 border border-white rounded-[50%] absolute right-0 top-[68%]' />
@@ -82,7 +86,7 @@ export default function Message({
 							className={clsx(
 								isMe
 									? 'rounded-br-sm myMessage'
-									: 'rounded-bl-sm bg-[#1E1E26] border border-gray-600',
+									: 'rounded-bl-sm dark:bg-[#1E1E26] bg-[#EBEBF0] border border-gray-600',
 								'rounded-2xl overflow-hidden',
 							)}
 						>
@@ -102,6 +106,9 @@ export default function Message({
 							</button>
 
 							<p
+							style={{
+								color: isMe ? 'white' : appTheme === 'dark' ? 'white' : 'black'
+							}}
 								className={
 									'font-inter px-3.5 py-2 text-sm leading-relaxed wrap-anywhere whitespace-pre-wrap'
 								}
