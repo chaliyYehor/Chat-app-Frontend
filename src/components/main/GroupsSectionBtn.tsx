@@ -24,8 +24,9 @@ export default function GroupsSectionBtn({
 				}`
 					}
 					title='Groups'
+					aria-label='Groups'
 				>
-					<Users size={30} />
+					<Users size={30} aria-hidden='true' />
 				</NavLink>
 			) : (
 				<NavLink
@@ -41,8 +42,9 @@ export default function GroupsSectionBtn({
 				}`
 					}
 					title='Groups'
+					aria-label='Groups'
 				>
-					<Users size={30} />
+					<Users size={30} aria-hidden='true' />
 					<span>Groups</span>
 				</NavLink>
 			)}

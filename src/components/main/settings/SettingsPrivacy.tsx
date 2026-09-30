@@ -33,7 +33,7 @@ export default function SettingsPrivacy() {
 							</span>
 						</div>
 						<div className='self-end'>
-							<SettingsSwitch />
+							<SettingsSwitch label={item.label} />
 						</div>
 					</div>
 				))}

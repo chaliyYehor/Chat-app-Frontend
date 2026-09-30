@@ -24,8 +24,9 @@ export default function CallsSectionBtn({
 				}`
 					}
 					title='Calls'
+					aria-label='Calls'
 				>
-					<Phone size={30} />
+					<Phone size={30} aria-hidden='true' />
 				</NavLink>
 			) : (
 				<NavLink
@@ -41,8 +42,9 @@ export default function CallsSectionBtn({
 				}`
 					}
 					title='Calls'
+					aria-label='Calls'
 				>
-					<Phone size={30} />
+					<Phone size={30} aria-hidden='true' />
 					<span>Calls</span>
 				</NavLink>
 			)}

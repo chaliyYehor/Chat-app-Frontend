@@ -33,7 +33,7 @@ export default function SettingsSounds() {
 							</span>
 						</div>
 						<div className='self-end'>
-							<SettingsSwitch />
+							<SettingsSwitch label={item.label} />
 						</div>
 					</div>
 				))}

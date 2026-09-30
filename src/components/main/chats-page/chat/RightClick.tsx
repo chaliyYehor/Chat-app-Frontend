@@ -1,6 +1,6 @@
+import { Copy, Pin, Reply, Trash2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { Reply, Copy, Pin, Trash2 } from 'lucide-react'
 
 interface RightClickProps {
 	position: { x: number; y: number }
@@ -68,6 +68,8 @@ export default function RightClick({ position, onClose }: RightClickProps) {
 	return createPortal(
 		<div
 			ref={menuRef}
+			role='menu'
+			aria-label='Message actions'
 			style={{ top: `${top}px`, left: `${left}px` }}
 			onContextMenu={e => {
 				e.preventDefault()
@@ -79,6 +81,8 @@ export default function RightClick({ position, onClose }: RightClickProps) {
 				const Icon = item.icon
 				return (
 					<button
+						type='button'
+						role='menuitem'
 						key={index}
 						onClick={e => {
 							e.stopPropagation()
@@ -90,12 +94,12 @@ export default function RightClick({ position, onClose }: RightClickProps) {
 								: 'text-[#E0E0E6] hover:bg-white/10'
 						}`}
 					>
-						<Icon size={16} className='shrink-0' />
+						<Icon size={16} className='shrink-0' aria-hidden='true' />
 						<span>{item.label}</span>
 					</button>
 				)
 			})}
 		</div>,
-		document.body
+		document.body,
 	)
 }

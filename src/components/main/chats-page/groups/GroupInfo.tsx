@@ -1,7 +1,7 @@
 import { Button } from '@mui/material'
 import { X } from 'lucide-react'
-import GroupPfp from './GroupPfp'
 import Person from '../chat/Person'
+import GroupPfp from './GroupPfp'
 
 export default function GroupInfo({
 	setIsProfileOpened,
@@ -13,7 +13,10 @@ export default function GroupInfo({
 			onClick={() => {
 				setIsProfileOpened(false)
 			}}
-			role='presentation'
+			role='dialog'
+			aria-modal='true'
+			aria-label='Group information'
+			tabIndex={-1}
 			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex items-start justify-center z-50 backdrop-blur-xs'
 		>
 			<div
@@ -45,6 +48,7 @@ export default function GroupInfo({
 									backgroundColor: '#00000090',
 								},
 							}}
+							aria-label='Close group information'
 						>
 							<X size={16} />
 						</Button>
@@ -66,16 +70,30 @@ export default function GroupInfo({
 								ABOUT
 							</p>
 							<p className='text-[#F0F0F5] font-inter max-h-30 scrollbar-none overflow-y-auto'>
-								Engineering updates, releases, and technical discussions.Engineering updates, releases, and technical discussions.Engineering updates, releases, and technical discussions.Engineering updates, releases, and technical discussions.Engineering updates, releases, and technical discussions.Engineering updates, releases, and technical discussions.
+								Engineering updates, releases, and technical
+								discussions.Engineering updates, releases, and technical
+								discussions.Engineering updates, releases, and technical
+								discussions.Engineering updates, releases, and technical
+								discussions.Engineering updates, releases, and technical
+								discussions.Engineering updates, releases, and technical
+								discussions.
 							</p>
 						</div>
 					</div>
 					<div className='w-full px-5 text-[#6B6B80] mb-5 flex-1 overflow-y-auto scrollbar-none flex flex-col gap-2'>
 						<div className='bg-[#1E1E26] w-full flex flex-col justify-center items-center rounded-2xl '>
-							<div className='w-full px-4 py-2 border-b border-black flex justify-center items-center'><Person isListItem /></div>
-							<div className='w-full px-4 py-2 border-b border-black flex justify-center items-center'><Person isListItem /></div>
-							<div className='w-full px-4 py-2 border-b border-black flex justify-center items-center'><Person isListItem /></div>
-							<div className='w-full px-4 py-2 border-b border-black flex justify-center items-center'><Person isListItem /></div>
+							<div className='w-full px-4 py-2 border-b border-black flex justify-center items-center'>
+								<Person isListItem />
+							</div>
+							<div className='w-full px-4 py-2 border-b border-black flex justify-center items-center'>
+								<Person isListItem />
+							</div>
+							<div className='w-full px-4 py-2 border-b border-black flex justify-center items-center'>
+								<Person isListItem />
+							</div>
+							<div className='w-full px-4 py-2 border-b border-black flex justify-center items-center'>
+								<Person isListItem />
+							</div>
 						</div>
 					</div>
 				</div>

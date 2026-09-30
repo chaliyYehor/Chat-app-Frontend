@@ -1,8 +1,8 @@
 import clsx from 'clsx'
-import { useState } from 'react'
-import ViewImage from './ViewImage'
-import RightClick from './RightClick'
 import { Check, CheckCheck } from 'lucide-react'
+import { useState } from 'react'
+import RightClick from './RightClick'
+import ViewImage from './ViewImage'
 
 export default function ImageMessage({
 	isMe = true,
@@ -72,7 +72,9 @@ export default function ImageMessage({
 							)}
 						>
 							<button
+								type='button'
 								className='w-full max-h-120 cursor-pointer'
+								aria-label='Open image preview'
 								onClick={() => {
 									setIsPreviewOpen(true)
 								}}
@@ -80,7 +82,7 @@ export default function ImageMessage({
 								<img
 									className='w-full max-h-60 lg:max-h-120 object-cover'
 									src='/rozvrh.png'
-									alt=''
+									alt='Message attachment'
 								/>
 							</button>
 						</div>

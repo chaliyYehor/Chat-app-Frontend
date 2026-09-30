@@ -5,6 +5,7 @@ export default function CreateGroupBtn() {
 		<Button
 			type='submit'
 			variant='contained'
+			aria-label='Create group'
 			sx={{
 				width: '100%',
 				borderRadius: '10px',

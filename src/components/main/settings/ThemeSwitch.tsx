@@ -5,7 +5,7 @@ export default function ThemeSwitch() {
 	const [selected, setSelected] = useState('dark')
 	return (
 		<ToggleButtonGroup
-			aria-label='Authentication mode'
+			aria-label='Theme'
 			exclusive
 			value={selected}
 			onChange={(_, value) => {

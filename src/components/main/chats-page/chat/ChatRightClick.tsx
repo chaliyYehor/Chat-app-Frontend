@@ -1,6 +1,6 @@
-import { createPortal } from 'react-dom'
 import { Pin, Trash2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
 interface ChatRightClickProps {
 	position: { x: number; y: number }
@@ -81,6 +81,8 @@ export default function ChatRightClick({
 	return createPortal(
 		<div
 			ref={menuRef}
+			role='menu'
+			aria-label='Chat actions'
 			style={{ top: `${top}px`, left: `${left}px` }}
 			onContextMenu={e => {
 				e.preventDefault()
@@ -92,6 +94,8 @@ export default function ChatRightClick({
 				const Icon = item.icon
 				return (
 					<button
+						type='button'
+						role='menuitem'
 						className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-inter transition-colors cursor-pointer text-left w-full ${
 							item.danger
 								? 'text-red-400 hover:bg-red-500/10'
@@ -103,7 +107,7 @@ export default function ChatRightClick({
 							item.onClick()
 						}}
 					>
-						<Icon size={16} className='shrink-0' />
+						<Icon size={16} className='shrink-0' aria-hidden='true' />
 						<span>{item.label}</span>
 					</button>
 				)

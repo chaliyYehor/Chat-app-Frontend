@@ -20,7 +20,10 @@ export default function AddChat({
 			onClick={() => {
 				setIsAdding(false)
 			}}
-			role='presentation'
+			role='dialog'
+			aria-modal='true'
+			aria-labelledby='new-message-title'
+			tabIndex={-1}
 			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex items-start justify-center z-50 backdrop-blur-xs'
 		>
 			<div
@@ -30,7 +33,10 @@ export default function AddChat({
 				<div className='addChat cursor-default bg-[#16161B] w-100 flex flex-col border border-white/50 rounded-t-3xl md:rounded-2xl overflow-hidden animate-fade-in my-20 max-h-142.5 p-3'>
 					<div className='flex justify-between items-center px-4 py-3 border-b border-white/10 relative'>
 						<div className='flex flex-col items-start text-start'>
-							<h2 className='text-[#F0F0F5] font-inter text-[20px] font-bold text-base'>
+							<h2
+								id='new-message-title'
+								className='text-[#F0F0F5] font-inter text-[20px] font-bold text-base'
+							>
 								New Message
 							</h2>
 							<p className='text-[#6B6B80] font-inter text-sm mt-0.5'>
@@ -59,6 +65,7 @@ export default function AddChat({
 									color: 'white',
 								},
 							}}
+							aria-label='Close new message dialog'
 						>
 							<X size={16} />
 						</Button>

@@ -46,11 +46,11 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 		}),
 	},
 }))
-export default function SettingsSwitch() {
+export default function SettingsSwitch({ label }: { label: string }) {
 	return (
 		<>
 			<Stack>
-				<AntSwitch />
+				<AntSwitch aria-label={label} />
 			</Stack>
 		</>
 	)

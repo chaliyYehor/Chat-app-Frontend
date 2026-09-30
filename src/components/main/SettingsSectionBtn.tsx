@@ -24,8 +24,9 @@ export default function SettingsSectionBtn({
 				}`
 					}
 					title='Settings'
+					aria-label='Settings'
 				>
-					<Settings size={30} />
+					<Settings size={30} aria-hidden='true' />
 				</NavLink>
 			) : (
 				<NavLink
@@ -41,8 +42,9 @@ export default function SettingsSectionBtn({
 				}`
 					}
 					title='Settings'
+					aria-label='Settings'
 				>
-					<Settings size={30} />
+					<Settings size={30} aria-hidden='true' />
 					<span>Settings</span>
 				</NavLink>
 			)}

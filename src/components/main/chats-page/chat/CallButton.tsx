@@ -4,6 +4,7 @@ import { Phone } from 'lucide-react'
 export default function CallButon({ size = 20 }: { size?: number }) {
 	return (
 		<Button
+			aria-label='Start voice call'
 			sx={{
 				width: size === 20 ? '50px' : '40px',
 				minWidth: '0',
@@ -23,7 +24,7 @@ export default function CallButon({ size = 20 }: { size?: number }) {
 				},
 			}}
 		>
-			<Phone size={size} />
+			<Phone size={size} aria-hidden='true' />
 		</Button>
 	)
 }

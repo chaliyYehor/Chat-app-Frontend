@@ -17,7 +17,10 @@ export default function UserInfo({
 			onClick={() => {
 				setIsProfileOpened(false)
 			}}
-			role='presentation'
+			role='dialog'
+			aria-modal='true'
+			aria-label={isYourProfile ? 'Your profile' : 'User profile'}
+			tabIndex={-1}
 			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex items-start justify-center z-50 backdrop-blur-xs'
 		>
 			<div
@@ -49,6 +52,7 @@ export default function UserInfo({
 									backgroundColor: '#00000090',
 								},
 							}}
+							aria-label='Close profile'
 						>
 							<X size={16} />
 						</Button>

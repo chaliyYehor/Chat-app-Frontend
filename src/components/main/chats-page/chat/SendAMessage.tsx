@@ -97,6 +97,7 @@ export default function SendAMessage() {
 						onClick={clearImage}
 						type='button'
 						className='bg-white text-black cursor-pointer w-5 h-5 flex justify-center items-center rounded-2xl absolute top-0 right-0'
+						aria-label='Remove image'
 					>
 						x
 					</button>
@@ -111,6 +112,7 @@ export default function SendAMessage() {
 						onClick={clearImage}
 						type='button'
 						className='absolute right-1 top-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded-2xl bg-white text-black'
+						aria-label='Remove image'
 					>
 						x
 					</button>
@@ -142,19 +144,31 @@ export default function SendAMessage() {
 					accept='image/*,.heic,.heif'
 					className='hidden'
 					id='fileInput'
+					aria-label='Attach an image'
 				/>
-				<label htmlFor='fileInput'>
-					<Image className='hover:text-white cursor-pointer transition' />
+				<label htmlFor='fileInput' aria-label='Attach an image'>
+					<Image
+						className='hover:text-white cursor-pointer transition'
+						aria-hidden='true'
+					/>
 				</label>
 				<input
 					type='text'
 					autoComplete='off'
 					placeholder='Message...'
+					aria-label='Message'
 					{...register('message')}
 					className='flex-1 text-white bg-transparent text-md py-2 focus-visible:outline-none!'
 				/>
-				<button onClick={() => console.log('clicked')} type='submit'>
-					<Send className='hover:text-white cursor-pointer transition' />
+				<button
+					onClick={() => console.log('clicked')}
+					type='submit'
+					aria-label='Send message'
+				>
+					<Send
+						className='hover:text-white cursor-pointer transition'
+						aria-hidden='true'
+					/>
 				</button>
 			</form>
 		</div>

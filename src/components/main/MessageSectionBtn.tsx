@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 
 export default function MessageSectionBtn({
 	isSmallScreen,
-	onClick
+	onClick,
 }: {
 	isSmallScreen: boolean
 	onClick?: () => void
@@ -24,8 +24,9 @@ export default function MessageSectionBtn({
 				}`
 					}
 					title='Chats'
+					aria-label='Chats'
 				>
-					<MessageSquare size={30} />
+					<MessageSquare size={30} aria-hidden='true' />
 				</NavLink>
 			) : (
 				<NavLink
@@ -41,8 +42,9 @@ export default function MessageSectionBtn({
 				}`
 					}
 					title='Chats'
+					aria-label='Chats'
 				>
-					<MessageSquare size={30} />
+					<MessageSquare size={30} aria-hidden='true' />
 					<span>Chats</span>
 				</NavLink>
 			)}

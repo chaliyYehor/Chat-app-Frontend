@@ -4,6 +4,7 @@ import { Video } from 'lucide-react'
 export default function VideoCallBtn({ size = 20 }: { size?: number }) {
 	return (
 		<Button
+			aria-label='Start video call'
 			sx={{
 				width: size === 20 ? '50px' : '40px',
 				minWidth: '0',
@@ -23,7 +24,7 @@ export default function VideoCallBtn({ size = 20 }: { size?: number }) {
 				},
 			}}
 		>
-			<Video size={size} />
+			<Video size={size} aria-hidden='true' />
 		</Button>
 	)
 }

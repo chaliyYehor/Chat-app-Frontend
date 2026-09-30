@@ -1,6 +1,6 @@
+import { Pin, Search, Trash2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { Pin, Trash2, Search } from 'lucide-react'
 
 interface MoreInfoRightClickProps {
 	position: { x: number; y: number }
@@ -87,6 +87,8 @@ export default function MoreInfoRightClick({
 	return createPortal(
 		<div
 			ref={menuRef}
+			role='menu'
+			aria-label='More conversation options'
 			style={{ top: `${top}px`, left: `${left}px` }}
 			onContextMenu={e => {
 				e.preventDefault()
@@ -98,6 +100,8 @@ export default function MoreInfoRightClick({
 				const Icon = item.icon
 				return (
 					<button
+						type='button'
+						role='menuitem'
 						className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-inter transition-colors cursor-pointer text-left w-full ${
 							item.danger
 								? 'text-red-400 hover:bg-red-500/10'
@@ -109,7 +113,7 @@ export default function MoreInfoRightClick({
 							item.onClick()
 						}}
 					>
-						<Icon size={16} className='shrink-0' />
+						<Icon size={16} className='shrink-0' aria-hidden='true' />
 						<span>{item.label}</span>
 					</button>
 				)

@@ -1,11 +1,11 @@
 import { Box } from '@mui/material'
+import { useFormContext, type SubmitHandler } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+import { authClient } from '../../lib/auth-client'
+import type { SignUpType } from '../../schemas/auth/signUp'
 import FormTextField from './components/FormTextField'
 import Label from './components/Label'
 import SubmitBtn from './components/SubmitBtn'
-import { useFormContext, type SubmitHandler } from 'react-hook-form'
-import type { SignUpType } from '../../schemas/auth/signUp'
-import { authClient } from '../../lib/auth-client'
-import { useNavigate } from 'react-router-dom'
 
 interface Props {
 	globalError: string
@@ -95,7 +95,10 @@ export default function SignUpForm({ globalError, setGlobalError }: Props) {
 
 				<SubmitBtn label='Create Account' isSubmitting={isSubmitting} />
 
-				<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center'>
+				<p
+					className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center'
+					role='alert'
+				>
 					{globalError || '\u00A0'}
 				</p>
 			</form>

@@ -25,6 +25,7 @@ export default function AddChatBtn({
 				fontSize: '1.5rem',
 			}}
 			title='Add Chat'
+			aria-label='Add chat'
 		>
 			+
 		</Button>

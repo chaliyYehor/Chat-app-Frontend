@@ -1,12 +1,11 @@
 import { InputAdornment, TextField } from '@mui/material'
+import { Search } from 'lucide-react'
 import {
 	Controller,
 	type Control,
 	type FieldPath,
 	type FieldValues,
 } from 'react-hook-form'
-import type { ChatSearch } from '../../../schemas/main/chatSearch'
-import { Search } from 'lucide-react'
 
 interface Props<T extends FieldValues> {
 	control: Control<T>

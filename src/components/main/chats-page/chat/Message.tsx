@@ -1,9 +1,9 @@
 import clsx from 'clsx'
+import { Check, CheckCheck } from 'lucide-react'
 import { useState } from 'react'
+import UserInfo from '../../UserInfo'
 import RightClick from './RightClick'
 import ViewImage from './ViewImage'
-import UserInfo from '../../UserInfo'
-import { Check, CheckCheck } from 'lucide-react'
 
 export default function Message({
 	isMe = true,
@@ -62,7 +62,9 @@ export default function Message({
 					{!isMe && (
 						<>
 							<button
+								type='button'
 								onClick={() => setIsProfileOpen(true)}
+								aria-label='Open sender profile'
 								className={`cursor-pointer sticky bottom-0 self-end w-10 h-10 rounded-[50%] text-white flex justify-center items-center border-2 border-gray-700 shrink-0`.trim()}
 							>
 								PFP
@@ -85,7 +87,9 @@ export default function Message({
 							)}
 						>
 							<button
+								type='button'
 								className='w-full max-h-120 cursor-pointer'
+								aria-label='Open image preview'
 								onClick={() => {
 									setIsPreviewOpen(true)
 								}}
