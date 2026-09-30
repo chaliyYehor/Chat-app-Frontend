@@ -18,16 +18,16 @@ export default function ThemeSwitch() {
 				}
 			}}
 			sx={{
-				bgcolor: '#1E1E26',
+				bgcolor: theme === 'dark' ? '#1E1E26' : '#EBEBF0',
 				borderRadius: '8px',
 				width: '120px',
 				height: '38px',
 				padding: '2px',
 
 				'& .MuiToggleButton-root': {
-					color: '#6B6B80',
+					color: theme === 'dark' ? '#6B6B80' : '#8080A0',
 					fontFamily: 'Inter',
-					bgcolor: '#1E1E26',
+					bgcolor: theme === 'dark' ? '#1E1E26' : '#EBEBF0',
 					textTransform: 'none',
 					fontWeight: '400',
 					border: 0,
@@ -37,8 +37,8 @@ export default function ThemeSwitch() {
 					transition: '0.3s ease',
 				},
 				'& .Mui-selected': {
-					bgcolor: '#16161B !important',
-					color: '#F0F0F5 !important',
+					bgcolor: theme === 'dark' ? '#16161B !important' : '#FFFFFF !important',
+					color: theme === 'dark' ? '#F0F0F5 !important' : '#000000 !important',
 					borderRadius: '8px',
 				},
 			}}

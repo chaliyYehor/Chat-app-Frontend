@@ -1,6 +1,10 @@
 import { Stack, styled, Switch } from '@mui/material'
+import { useSelector } from 'react-redux'
+import type { RootType } from '../../../store/store'
 
-const AntSwitch = styled(Switch)(({ theme }) => ({
+const AntSwitch = styled(Switch, {
+	shouldForwardProp: prop => prop !== 'appTheme',
+})<{ appTheme: 'light' | 'dark' }>(({ theme, appTheme }) => ({
 	width: 45,
 	height: 25,
 	padding: 0,
@@ -21,9 +25,6 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 			'& + .MuiSwitch-track': {
 				opacity: 1,
 				backgroundColor: '#7C5CFC',
-				...theme.applyStyles('dark', {
-					backgroundColor: '#7C5CFC',
-				}),
 			},
 		},
 	},
@@ -39,18 +40,16 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 	'& .MuiSwitch-track': {
 		borderRadius: 25 / 2,
 		opacity: 1,
-		backgroundColor: '#1E1E26',
 		boxSizing: 'border-box',
-		...theme.applyStyles('dark', {
-			backgroundColor: '#EBEBF0',
-		}),
+		backgroundColor: appTheme === 'dark' ? '#1E1E26' : '#EBEBF0',
 	},
 }))
 export default function SettingsSwitch({ label }: { label: string }) {
+	const appTheme = useSelector((state: RootType) => state.theme.mode)
 	return (
 		<>
 			<Stack>
-				<AntSwitch aria-label={label} />
+				<AntSwitch appTheme={appTheme} aria-label={label} />
 			</Stack>
 		</>
 	)
