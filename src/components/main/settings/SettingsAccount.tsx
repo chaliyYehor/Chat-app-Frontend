@@ -1,8 +1,11 @@
 import { CircleQuestionMark, LogOut, Shield, User } from 'lucide-react'
 import UIArrowRight from './UIArrowRight'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { authClient } from '../../../lib/auth-client'
 
 export default function SettingsAccount() {
+	const navigate = useNavigate()
+
 	const items = [
 		{
 			icon: User,
@@ -26,6 +29,10 @@ export default function SettingsAccount() {
 			label: 'Sign Out',
 			danger: true,
 			isLink: false,
+			onClick: async () => {
+				await authClient.signOut()
+				navigate('/login', { replace: true })
+			},
 		},
 	]
 	return (
@@ -70,6 +77,7 @@ export default function SettingsAccount() {
 					) : (
 						<button
 							key={index}
+							onClick={item.onClick}
 							style={{
 								borderBottom:
 									index !== items.length - 1
