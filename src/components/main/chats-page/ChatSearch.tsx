@@ -6,6 +6,8 @@ import {
 	type FieldPath,
 	type FieldValues,
 } from 'react-hook-form'
+import { useSelector } from 'react-redux'
+import type { RootType } from '../../../store/store'
 
 interface Props<T extends FieldValues> {
 	control: Control<T>
@@ -18,6 +20,8 @@ export function ChatSearch<T extends FieldValues>({
 	name,
 	isChatSearch,
 }: Props<T>) {
+	const appTheme = useSelector((state: RootType) => state.theme.mode)
+
 	return (
 		<Controller
 			control={control}
@@ -52,7 +56,7 @@ export function ChatSearch<T extends FieldValues>({
 						paddingInline: '15px',
 						'& .MuiOutlinedInput-root': {
 							borderRadius: '10px',
-							backgroundColor: '#1f1f26',
+							backgroundColor: appTheme === 'dark' ? '#1f1f26' : '#ebebf0',
 							height: '46px',
 
 							'& .MuiOutlinedInput-notchedOutline': {
@@ -60,7 +64,7 @@ export function ChatSearch<T extends FieldValues>({
 							},
 
 							'&:hover .MuiOutlinedInput-notchedOutline': {
-								borderColor: '#444',
+								borderColor: appTheme === 'dark' ? '#333' : '#ccc',
 							},
 
 							'&.Mui-focused .MuiOutlinedInput-notchedOutline': {
@@ -70,7 +74,7 @@ export function ChatSearch<T extends FieldValues>({
 						},
 
 						'& .MuiInputBase-input': {
-							color: '#eee',
+							color: appTheme === 'dark' ? '#eee' : '#333',
 						},
 					}}
 				/>
