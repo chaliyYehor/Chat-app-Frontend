@@ -31,10 +31,6 @@ export default function Home() {
 		)
 	}
 
-	// async function logout() {
-	// 	await authClient.signOut()
-	// 	navigate('/login', { replace: true })
-	// }
 	return (
 		<>
 			<div className='w-screen h-dvh flex'>
@@ -58,7 +54,7 @@ export default function Home() {
 					<Profile />
 				</nav>
 
-				<main className='flex-1 flex min-w-0'>
+				<main className=' dark:bg-black bg-white flex-1 flex min-w-0'>
 					<Outlet />
 				</main>
 			</div>

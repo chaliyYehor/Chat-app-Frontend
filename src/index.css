@@ -23,6 +23,13 @@ html {
 	background-color: black;
 }
 
+html,
+body {
+	transition:
+		background-color 0.5s ease-in-out,
+		color 0.5s ease-in-out;
+}
+
 body {
 	background-color: black;
 
