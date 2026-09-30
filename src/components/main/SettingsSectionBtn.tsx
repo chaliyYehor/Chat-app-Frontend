@@ -1,7 +1,5 @@
 import { Settings } from 'lucide-react'
-import { useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom'
-import type { RootType } from '../../store/store'
 
 export default function SettingsSectionBtn({
 	isSmallScreen,
@@ -10,7 +8,6 @@ export default function SettingsSectionBtn({
 	isSmallScreen: boolean
 	onClick?: () => void
 }) {
-	const appTheme = useSelector((state: RootType) => state.theme.mode)
 	return (
 		<>
 			{!isSmallScreen ? (

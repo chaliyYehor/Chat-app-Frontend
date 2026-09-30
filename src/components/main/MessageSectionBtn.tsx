@@ -1,7 +1,5 @@
 import { MessageSquare } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
-import type { RootType } from '../../store/store'
-import { useSelector } from 'react-redux'
 
 export default function MessageSectionBtn({
 	isSmallScreen,
@@ -10,7 +8,6 @@ export default function MessageSectionBtn({
 	isSmallScreen: boolean
 	onClick?: () => void
 }) {
-	const appTheme = useSelector((state: RootType) => state.theme.mode)
 	return (
 		<>
 			{!isSmallScreen ? (
