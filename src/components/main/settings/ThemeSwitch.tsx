@@ -1,5 +1,4 @@
 import { ToggleButton, ToggleButtonGroup } from '@mui/material'
-import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import type { AppDispatch, RootType } from '../../../store/store'
 import { setTheme } from '../../../store/slices/themeSlice'
