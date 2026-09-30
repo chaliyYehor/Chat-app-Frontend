@@ -24,6 +24,9 @@ import {
 	groupCreationSchema,
 	type GroupCreation,
 } from './schemas/main/groupCreation'
+import { useSelector } from 'react-redux'
+import type { RootType } from './store/store'
+import { useEffect } from 'react'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -58,6 +61,17 @@ function App() {
 			peopleToAdd: [],
 		},
 	})
+
+	const theme = useSelector((state: RootType) => state.theme.mode)
+
+	useEffect(() => {
+		console.log('theme changed to', theme)
+		if (theme === 'dark') {
+			document.documentElement.classList.add('dark')
+		} else {
+			document.documentElement.classList.remove('dark')
+		}
+	}, [theme])
 
 	return (
 		<>

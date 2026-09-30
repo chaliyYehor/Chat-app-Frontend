@@ -1,16 +1,21 @@
 import { ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import type { AppDispatch, RootType } from '../../../store/store'
+import { setTheme } from '../../../store/slices/themeSlice'
 
 export default function ThemeSwitch() {
-	const [selected, setSelected] = useState('dark')
+	const theme = useSelector((state: RootType) => state.theme.mode)
+	const dispatch = useDispatch<AppDispatch>()
+
 	return (
 		<ToggleButtonGroup
 			aria-label='Theme'
 			exclusive
-			value={selected}
+			value={theme}
 			onChange={(_, value) => {
 				if (value !== null) {
-					setSelected(value)
+					dispatch(setTheme(value))
 				}
 			}}
 			sx={{
