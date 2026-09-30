@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import NoConvosYet from '../NoConvosYet'
-import CreateGroup from '../groups/CreateGroup'
 import { ToggleButton, ToggleButtonGroup } from '@mui/material'
 import CallsPreview from './CallsPreview'
 import type { RootType } from '../../../../store/store'
 import { useSelector } from 'react-redux'
 
 export default function CallsList() {
-	const [isAdding, setIsAdding] = useState(false)
+	const [_, setIsAdding] = useState(false)
 	const [selected, setSelected] = useState('allCalls')
 	const chats = true // Replace with actual logic to determine if there are chats
 
