@@ -48,7 +48,7 @@ export default function SignUpForm({ globalError, setGlobalError }: Props) {
 			}}
 		>
 			<form onSubmit={handleSubmit(onSubmit)} className='flex flex-col gap-2.5'>
-				<div>
+				<div className='registrationAnim'>
 					<Label text='FULL NAME' htmlFor='name' />
 					<FormTextField
 						control={control}
@@ -59,7 +59,7 @@ export default function SignUpForm({ globalError, setGlobalError }: Props) {
 						label='Your name'
 					/>
 				</div>
-				<div>
+				<div className='registrationAnim'>
 					<Label text='EMAIL' htmlFor='email' />
 					<FormTextField
 						control={control}
@@ -70,7 +70,7 @@ export default function SignUpForm({ globalError, setGlobalError }: Props) {
 						autoComplete='email'
 					/>
 				</div>
-				<div>
+				<div className='registrationAnim'>
 					<Label text='PASSWORD' htmlFor='password' />
 					<FormTextField
 						control={control}
@@ -81,7 +81,7 @@ export default function SignUpForm({ globalError, setGlobalError }: Props) {
 						label='••••••••'
 					/>
 				</div>
-				<div>
+				<div className='registrationAnim'>
 					<Label text='CONFIRM PASSWORD' htmlFor='confirmPassword' />
 					<FormTextField
 						control={control}
