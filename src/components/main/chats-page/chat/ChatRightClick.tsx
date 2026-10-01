@@ -1,8 +1,8 @@
 import { Pin, Trash2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import type { RootType } from '../../../../store/store'
 import { useSelector } from 'react-redux'
+import type { RootType } from '../../../../store/store'
 
 interface ChatRightClickProps {
 	position: { x: number; y: number }
@@ -52,6 +52,7 @@ export default function ChatRightClick({
 
 		const timer = setTimeout(() => {
 			window.addEventListener('mousedown', handleClickOutside)
+			window.addEventListener('pointerdown', handleClickOutside)
 			window.addEventListener('contextmenu', handleClickOutside)
 			window.addEventListener('keydown', handleKeyDown)
 			window.addEventListener('scroll', handleScroll, true)
@@ -60,6 +61,7 @@ export default function ChatRightClick({
 		return () => {
 			clearTimeout(timer)
 			window.removeEventListener('mousedown', handleClickOutside)
+			window.removeEventListener('pointerdown', handleClickOutside)
 			window.removeEventListener('contextmenu', handleClickOutside)
 			window.removeEventListener('keydown', handleKeyDown)
 			window.removeEventListener('scroll', handleScroll, true)

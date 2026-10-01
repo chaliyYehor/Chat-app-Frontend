@@ -1,22 +1,32 @@
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import Avatar from '../../Avatar'
 import ChatRightClick from './ChatRightClick'
 import MessagesIndicator from './MessagesIndicator'
 
-export default function ChatPreview() {
+export interface ChatMenuPosition {
+	x: number
+	y: number
+}
+
+interface ChatPreviewProps {
+	menuPosition: ChatMenuPosition | null
+	onOpenMenu: (position: ChatMenuPosition) => void
+	onCloseMenu: () => void
+}
+
+export default function ChatPreview({
+	menuPosition,
+	onOpenMenu,
+	onCloseMenu,
+}: ChatPreviewProps) {
 	const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 	const longPressTriggered = useRef(false)
-
-	const [chatToolsPosition, setChatToolsPosition] = useState<{
-		x: number
-		y: number
-	} | null>(null)
 
 	function handleContextMenu(e: React.MouseEvent) {
 		e.preventDefault()
 		e.stopPropagation()
-		setChatToolsPosition({ x: e.clientX, y: e.clientY })
+		onOpenMenu({ x: e.clientX, y: e.clientY })
 	}
 
 	function cancelLongPress() {
@@ -33,7 +43,7 @@ export default function ChatPreview() {
 		longPressTimer.current = setTimeout(() => {
 			e.preventDefault()
 			longPressTriggered.current = true
-			setChatToolsPosition({ x: e.clientX, y: e.clientY })
+			onOpenMenu({ x: e.clientX, y: e.clientY })
 		}, 200)
 	}
 
@@ -54,11 +64,8 @@ export default function ChatPreview() {
 			onClick={handleClick}
 			className='chatPreview w-full h-17.5 flex justify-center items-center gap-3 dark:hover:bg-[#1e1e26] hover:bg-[#ebebf0] p-2 rounded-lg transition-all duration-200 ease-in-out'
 		>
-			{chatToolsPosition && (
-				<ChatRightClick
-					position={chatToolsPosition}
-					onClose={() => setChatToolsPosition(null)}
-				/>
+			{menuPosition && (
+				<ChatRightClick position={menuPosition} onClose={onCloseMenu} />
 			)}
 			<Avatar />
 			<div className='flex-1 min-w-0 flex flex-col dark:text-white'>
