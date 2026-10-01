@@ -27,6 +27,7 @@ import {
 import { useSelector } from 'react-redux'
 import type { RootType } from './store/store'
 import { useEffect } from 'react'
+import { useIsMobile } from './hooks/useIsMobile'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -65,13 +66,14 @@ function App() {
 	const theme = useSelector((state: RootType) => state.theme.mode)
 
 	useEffect(() => {
-		console.log('theme changed to', theme)
 		if (theme === 'dark') {
 			document.documentElement.classList.add('dark')
 		} else {
 			document.documentElement.classList.remove('dark')
 		}
 	}, [theme])
+
+	const isMobile = useIsMobile()
 
 	return (
 		<>
@@ -86,7 +88,7 @@ function App() {
 							</FormProvider>
 						}
 					>
-						<Route index element={<SelectConvoUi />} />
+						<Route index element={isMobile ? null : <SelectConvoUi />} />
 						<Route path=':chatId' element={<Chat />} />
 					</Route>
 					<Route
@@ -97,14 +99,14 @@ function App() {
 							</FormProvider>
 						}
 					>
-						<Route index element={<SelectConvoUi />} />
+						<Route index element={isMobile ? null : <SelectConvoUi />} />
 						<Route path=':groupId' element={<Group />} />
 					</Route>
 					<Route path='/calls' element={<Calls />}>
-						<Route index element={<SelectConvoUi />} />
+						<Route index element={isMobile ? null : <SelectConvoUi />} />
 					</Route>
 					<Route path='/settings' element={<Settings />}>
-						<Route index element={<SelectConvoUi />} />
+						<Route index element={isMobile ? null : <SelectConvoUi />} />
 						<Route
 							path='editProfile'
 							element={
