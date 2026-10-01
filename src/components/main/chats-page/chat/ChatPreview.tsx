@@ -1,10 +1,13 @@
+import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Avatar from '../../Avatar'
-import MessagesIndicator from './MessagesIndicator'
-import { useState } from 'react'
 import ChatRightClick from './ChatRightClick'
+import MessagesIndicator from './MessagesIndicator'
 
 export default function ChatPreview() {
+	const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+	const longPressTriggered = useRef(false)
+
 	const [chatToolsPosition, setChatToolsPosition] = useState<{
 		x: number
 		y: number
@@ -15,10 +18,40 @@ export default function ChatPreview() {
 		e.stopPropagation()
 		setChatToolsPosition({ x: e.clientX, y: e.clientY })
 	}
+
+	function cancelLongPress() {
+		if (longPressTimer.current) {
+			clearTimeout(longPressTimer.current)
+			longPressTimer.current = null
+		}
+	}
+
+	function handlePointerDown(e: React.PointerEvent<HTMLAnchorElement>) {
+		if (e.pointerType !== 'touch') return
+
+		longPressTriggered.current = false
+		longPressTimer.current = setTimeout(() => {
+			e.preventDefault()
+			longPressTriggered.current = true
+			setChatToolsPosition({ x: e.clientX, y: e.clientY })
+		}, 200)
+	}
+
+	function handleClick(e: React.MouseEvent<HTMLAnchorElement>) {
+		if (longPressTriggered.current) {
+			e.preventDefault()
+			longPressTriggered.current = false
+		}
+	}
 	return (
 		<Link
 			to={'/chats/123'}
 			onContextMenu={handleContextMenu}
+			onPointerDown={handlePointerDown}
+			onPointerUp={cancelLongPress}
+			onPointerCancel={cancelLongPress}
+			onPointerLeave={cancelLongPress}
+			onClick={handleClick}
 			className='chatPreview w-full h-17.5 flex justify-center items-center gap-3 dark:hover:bg-[#1e1e26] hover:bg-[#ebebf0] p-2 rounded-lg transition-all duration-200 ease-in-out'
 		>
 			{chatToolsPosition && (
