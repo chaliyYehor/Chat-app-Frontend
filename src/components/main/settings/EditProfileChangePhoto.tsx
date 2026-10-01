@@ -100,7 +100,7 @@ export default function EditProfileChangePhoto() {
 	}
 
 	return (
-		<div className='flex flex-col justify-center items-center text-center'>
+		<div className='flex flex-col justify-center md:items-center items-start md:ml-0 ml-20 text-center'>
 			<input
 				{...fileInput}
 				ref={element => {
@@ -115,7 +115,7 @@ export default function EditProfileChangePhoto() {
 			/>
 			<label
 				htmlFor='profilePhotoInput'
-				className='relative block w-28 h-28 cursor-pointer rounded-3xl border dark:border-white/7'
+				className='relative block md:ml-0 ml-3 w-28 h-28 cursor-pointer rounded-3xl border dark:border-white/7'
 			>
 				<img
 					className='w-full h-full object-cover rounded-3xl'
