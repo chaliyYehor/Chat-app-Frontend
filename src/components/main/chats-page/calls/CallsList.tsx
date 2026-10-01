@@ -13,7 +13,7 @@ export default function CallsList() {
 	const theme = useSelector((state: RootType) => state.theme.mode)
 
 	return (
-		<div className='chatListContainer h-dvh w-full min-w-0 dark:bg-[#16161b] bg-white pb-15'>
+		<div className='chatListContainer h-full w-full min-w-0 dark:bg-[#16161b] bg-white pb-15'>
 			<div className='upper mb-5 flex flex-col gap-4 mt-5'>
 				<div className='flex items-center justify-between px-4 py-2'>
 					<h2 className='dark:text-white text-3xl font-bold '>Calls</h2>
