@@ -42,7 +42,7 @@ export default function Home() {
 					className='flex flex-col gap-5 w-full md:w-25 items-center justify-between h-auto md:h-dvh py-4 dark:bg-black bg-[#f5f5f8]'
 					aria-label='Main navigation'
 				>
-					<div className='w-full flex justify-around md:justify-center md:flex-col items-center '>
+					<div className='w-full flex justify-around md:justify-center md:flex-col items-center md:gap-2'>
 						{!isMobile &&<div
 							className='messageUI w-14 h-14 rounded-2xl flex justify-center items-center mb-3'
 							aria-label='Chat App'

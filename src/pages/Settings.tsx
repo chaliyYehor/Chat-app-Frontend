@@ -3,7 +3,7 @@ import SettingsList from '../components/main/settings/SettingsList'
 
 export default function Settings() {
 	const { pathname } = useLocation()
-	const isSettingsRoot = pathname === '/settings'
+	const isSettingsRoot = pathname === '/settings' || pathname === '/settings/'
 
 	return (
 		<div className='flex w-full h-full min-h-0 min-w-0 relative'>
