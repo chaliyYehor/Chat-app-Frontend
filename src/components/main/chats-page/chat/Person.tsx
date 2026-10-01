@@ -7,7 +7,7 @@ export default function Person({
 }: {
 	isListItem?: boolean
 	setIsAdding: React.Dispatch<React.SetStateAction<boolean>>
-}) {
+}) { 
 	return (
 		<Link
 			to={'/chats/123'}

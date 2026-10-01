@@ -48,7 +48,7 @@ export default function ImageMessage({
 						onClose={() => setToolsPosition(null)}
 					/>
 				)}
-				<div className='max-w-[70%] min-w-0 flex relative gap-2'>
+				<div className='md:max-w-[70%] max-w-[90%] min-w-0 flex relative gap-2'>
 					{!isMe && (
 						<div
 							className={`sticky bottom-0 self-end w-10 h-10 rounded-[50%] text-white flex justify-center items-center border-2 border-gray-700 shrink-0`.trim()}
@@ -89,7 +89,7 @@ export default function ImageMessage({
 						<p
 							className={clsx(
 								isMe ? 'self-end' : 'self-start',
-								'text-[#6B6B80] text-[13px] font-mono ml-1 flex justify-center items-center gap-1',
+								'text-[#6B6B80] md:text-[13px] text-[15px] font-mono ml-1 flex justify-center items-center gap-1',
 							)}
 						>
 							When{' '}

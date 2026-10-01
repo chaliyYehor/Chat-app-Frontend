@@ -62,7 +62,7 @@ export default function Message({
 						onClose={() => setToolsPosition(null)}
 					/>
 				)}
-				<div className='max-w-[70%] min-w-0 flex relative gap-2'>
+				<div className='md:max-w-[70%] max-w-[90%] min-w-0 flex relative gap-2'>
 					{!isMe && (
 						<>
 							<button
@@ -110,7 +110,7 @@ export default function Message({
 								color: isMe ? 'white' : appTheme === 'dark' ? 'white' : 'black'
 							}}
 								className={
-									'font-inter px-3.5 py-2 text-sm leading-relaxed wrap-anywhere whitespace-pre-wrap'
+									'font-inter px-3.5 py-2 md:text-sm text-base leading-relaxed wrap-anywhere whitespace-pre-wrap'
 								}
 							>
 								Lorem ipsum dolor sit, amet consectetur adipisicing elit.
@@ -181,7 +181,7 @@ export default function Message({
 						<p
 							className={clsx(
 								isMe ? 'self-end' : 'self-start',
-								'text-[#6B6B80] text-[13px] font-mono ml-1 flex justify-center items-center gap-1',
+								'text-[#6B6B80] md:text-[13px] text-[15px] font-mono ml-1 flex justify-center items-center gap-1',
 							)}
 						>
 							When
