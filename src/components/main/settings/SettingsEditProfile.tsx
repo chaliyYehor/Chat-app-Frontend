@@ -13,8 +13,6 @@ import EditProfileChangePhoto from './EditProfileChangePhoto'
 import EditProfileStatus from './EditProfileStatus'
 import PersonalInfo from './PersonalInfo'
 import SettingsLabel from './SettingsLabel'
-import type { RootType } from '../../../store/store'
-import { useSelector } from 'react-redux'
 import { useIsMobile } from '../../../hooks/useIsMobile'
 
 export default function SettingsEditProfile() {

@@ -66,7 +66,13 @@ export default function SettingsAccount() {
 								/>
 								<div className='flex flex-col'>
 									<span
-										style={{ color: item.danger ? '#EF4444' : appTheme === 'dark' ? '#F0F0F5' : '#000000' }}
+										style={{
+											color: item.danger
+												? '#EF4444'
+												: appTheme === 'dark'
+													? '#F0F0F5'
+													: '#000000',
+										}}
 										className='ml-2 font-medium font-inter'
 									>
 										{item.label}
@@ -83,7 +89,7 @@ export default function SettingsAccount() {
 					) : (
 						<button
 							key={index}
-							onClick={item.onClick}
+							onClick={'onClick' in item ? item.onClick : undefined}
 							style={{
 								borderBottom:
 									index !== items.length - 1
@@ -101,7 +107,13 @@ export default function SettingsAccount() {
 								/>
 								<div className='flex flex-col'>
 									<span
-										style={{ color: item.danger ? '#EF4444' : appTheme === 'dark' ? '#F0F0F5' : '#000000' }}
+										style={{
+											color: item.danger
+												? '#EF4444'
+												: appTheme === 'dark'
+													? '#F0F0F5'
+													: '#000000',
+										}}
 										className='ml-2 font-medium font-inter'
 									>
 										{item.label}

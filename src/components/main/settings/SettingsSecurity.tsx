@@ -4,11 +4,8 @@ import SettingsLabel from './SettingsLabel'
 import SettingsChangePassword from './SettingsChangePassword'
 import SettingsActSess from './SettingsActSess'
 import SettingsDanger from './SettingsDanger'
-import { useIsMobile } from '../../../hooks/useIsMobile'
 
 export default function SettingsSecurity() {
-	const isMobile = useIsMobile()
-
 	return (
 		<div className='chatListContainer h-full w-full min-w-0 dark:bg-[#16161b] bg-white'>
 			<div className='upper mb-10 flex flex-col mt-5 gap-2'>
