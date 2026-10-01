@@ -12,7 +12,7 @@ export default function Group() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
 
 	return (
-		<div className='w-full h-full overflow-hidden flex flex-col'>
+		<div className='w-full h-full overflow-hidden flex flex-col dark:bg-[#16161b] bg-white'>
 			<div className='p-4 shrink-0 flex w-full justify-between items-center border-b border-gray-700/60'>
 				<div className='flex justify-center items-center gap-3'>
 					{isProfileOpened && (
