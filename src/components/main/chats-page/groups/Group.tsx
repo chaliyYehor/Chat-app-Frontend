@@ -1,29 +1,28 @@
 import { useState } from 'react'
 import CallButon from '../chat/CallButton'
-import VideoCallBtn from '../chat/VideoCallBtn'
-import MoreInfoButton from '../chat/MoreInfoButton'
-import Message from '../chat/Message'
-import SendAMessage from '../chat/SendAMessage'
-import GroupPfp from './GroupPfp'
-import GroupInfo from './GroupInfo'
 import ImageMessage from '../chat/ImageMessage'
+import Message from '../chat/Message'
+import MoreInfoButton from '../chat/MoreInfoButton'
+import SendAMessage from '../chat/SendAMessage'
+import VideoCallBtn from '../chat/VideoCallBtn'
+import GroupInfo from './GroupInfo'
+import GroupPfp from './GroupPfp'
 
 export default function Group() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
 
 	return (
-		<div className='w-full h-full overflow-hidden flex flex-col'>
+		<div className='w-full h-full overflow-hidden flex flex-col dark:bg-[#16161b] bg-white'>
 			<div className='p-4 shrink-0 flex w-full justify-between items-center border-b border-gray-700/60'>
 				<div className='flex justify-center items-center gap-3'>
 					{isProfileOpened && (
-						<GroupInfo
-							setIsProfileOpened={setIsProfileOpened}
-						/>
+						<GroupInfo setIsProfileOpened={setIsProfileOpened} />
 					)}
 					<button
 						onClick={() => setIsProfileOpened(true)}
 						type='button'
 						className='cursor-pointer hover:outline-2 hover:outline-[#7C5CFC] transition-all duration-200 ease-in-out rounded-2xl'
+						aria-label='Open Group information'
 					>
 						<GroupPfp />
 					</button>

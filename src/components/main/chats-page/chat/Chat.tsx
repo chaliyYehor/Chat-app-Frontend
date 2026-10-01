@@ -7,12 +7,17 @@ import SendAMessage from './SendAMessage'
 import VideoCallBtn from './VideoCallBtn'
 import UserInfo from '../../UserInfo'
 import ImageMessage from './ImageMessage'
+import { ArrowLeft } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import type { RootType } from '../../../../store/store'
 
 export function Chat() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
 
+	const appTheme = useSelector((state: RootType) => state.theme.mode)
 	return (
-		<div className='w-full h-full overflow-hidden flex flex-col'>
+		<div className='w-full h-full overflow-hidden flex flex-col dark:bg-[#16161b] bg-white'>
 			<div className='p-4 shrink-0 flex w-full justify-between items-center border-b border-gray-700/60'>
 				<div className='flex justify-center items-center gap-3'>
 					{isProfileOpened && (
@@ -22,15 +27,22 @@ export function Chat() {
 							setIsProfileOpened={setIsProfileOpened}
 						/>
 					)}
+					<Link
+						to='/chats'
+						className={`cursor-pointer transition-all duration-200 ease-in-out rounded-full ${appTheme === 'dark' ? 'hover:bg-[#2D2D3B]' : 'hover:bg-[#E5E5EA]'}`}
+					>
+						<ArrowLeft color='#6B6B80' />
+					</Link>
 					<button
 						onClick={() => setIsProfileOpened(true)}
 						type='button'
 						className='cursor-pointer hover:outline-2 hover:outline-[#7C5CFC] transition-all duration-200 ease-in-out rounded-full'
+						aria-label='Open profile'
 					>
 						<Avatar />
 					</button>
 					<div className='w-[70%]'>
-						<p className='font-semibold font-inter text-md truncate text-white'>
+						<p className='font-semibold font-inter text-md truncate dark:text-white'>
 							Sofia Chen
 						</p>
 						<p className='text-[#6B6B80] text-[13px] font-inter text-xs'>

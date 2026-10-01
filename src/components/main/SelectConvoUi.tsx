@@ -8,7 +8,7 @@ export default function SelectConvoUi() {
 					<MessageSquare size={30} strokeWidth={1} />
 				</div>
 
-				<p className='text-[#F0F0F5] font-semibold text-xl text-center'>
+				<p className='dark:text-[#F0F0F5] font-semibold text-xl text-center'>
 					Select a conversation
 				</p>
 				<p className='text-md text-[#6B6B80] text-center'>

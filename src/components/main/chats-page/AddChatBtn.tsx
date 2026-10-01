@@ -1,11 +1,14 @@
 import { Button } from '@mui/material'
 import type { Dispatch, SetStateAction } from 'react'
+import type { RootType } from '../../../store/store'
+import { useSelector } from 'react-redux'
 
 export default function AddChatBtn({
 	onClick,
 }: {
 	onClick: Dispatch<SetStateAction<boolean>>
 }) {
+	const appTheme = useSelector((state: RootType) => state.theme.mode)
 	return (
 		<Button
 			onClick={() => onClick(true)}
@@ -20,11 +23,13 @@ export default function AddChatBtn({
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',
-				backgroundColor: '#1E1E26',
+				backgroundColor: appTheme === 'dark' ? '#1E1E26' : '#f0f0f4',
 				border: 'none',
 				fontSize: '1.5rem',
+				color: appTheme === 'dark' ? 'white' : 'black',
 			}}
 			title='Add Chat'
+			aria-label='Add chat'
 		>
 			+
 		</Button>

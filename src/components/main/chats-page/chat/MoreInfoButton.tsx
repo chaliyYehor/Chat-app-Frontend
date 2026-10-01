@@ -29,6 +29,7 @@ export default function MoreInfoButton({
 			)}
 			<Button
 				onClick={handleClick}
+				aria-label='More conversation options'
 				sx={{
 					width: '50px',
 					minWidth: '0',
@@ -47,7 +48,7 @@ export default function MoreInfoButton({
 					},
 				}}
 			>
-				<EllipsisVertical />
+				<EllipsisVertical aria-hidden='true' />
 			</Button>
 		</>
 	)

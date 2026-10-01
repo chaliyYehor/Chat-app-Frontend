@@ -4,6 +4,8 @@ import { useFormContext, type SubmitHandler } from 'react-hook-form'
 import type { ChatSearch as ChatSearchType } from '../../../schemas/main/chatSearch'
 import Person from './chat/Person'
 import { ChatSearch } from './ChatSearch'
+import type { RootType } from '../../../store/store'
+import { useSelector } from 'react-redux'
 
 export default function AddChat({
 	setIsAdding,
@@ -15,22 +17,30 @@ export default function AddChat({
 	const onSubmit: SubmitHandler<ChatSearchType> = data => {
 		console.log(data)
 	}
+
+	const appTheme = useSelector((state: RootType) => state.theme.mode)
 	return (
 		<div
 			onClick={() => {
 				setIsAdding(false)
 			}}
-			role='presentation'
-			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex items-start justify-center z-50 backdrop-blur-xs'
+			role='dialog'
+			aria-modal='true'
+			aria-labelledby='new-message-title'
+			tabIndex={-1}
+			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex md:items-start justify-center z-50 backdrop-blur-xs'
 		>
 			<div
 				onClick={e => e.stopPropagation()}
 				className='relative flex justify-center'
 			>
-				<div className='addChat cursor-default bg-[#16161B] w-100 flex flex-col border border-white/50 rounded-t-3xl md:rounded-2xl overflow-hidden animate-fade-in my-20 max-h-142.5 p-3'>
+				<div className='addChat cursor-default dark:bg-[#16161B] bg-white md:w-100 flex flex-col border border-white/50 rounded-t-3xl md:rounded-2xl overflow-hidden animate-fade-in my-20 md:max-h-142.5 h-[80vh] p-3'>
 					<div className='flex justify-between items-center px-4 py-3 border-b border-white/10 relative'>
 						<div className='flex flex-col items-start text-start'>
-							<h2 className='text-[#F0F0F5] font-inter text-[20px] font-bold text-base'>
+							<h2
+								id='new-message-title'
+								className='dark:text-[#F0F0F5] font-inter text-[20px] font-bold text-base'
+							>
 								New Message
 							</h2>
 							<p className='text-[#6B6B80] font-inter text-sm mt-0.5'>
@@ -50,15 +60,16 @@ export default function AddChat({
 								display: 'flex',
 								alignItems: 'center',
 								justifyContent: 'center',
-								backgroundColor: '#1E1E26',
+								backgroundColor: appTheme === 'dark' ? '#1E1E26' : '#f0f0f4',
 								border: 'none',
-								color: '#6B6B80',
+								color: appTheme === 'dark' ? '#F0F0F5' : '#6B6B80',
 								cursor: 'pointer',
 								transition: '0.3s ease',
 								'&:hover': {
-									color: 'white',
+									color: appTheme === 'dark' ? 'white' : 'black',
 								},
 							}}
+							aria-label='Close new message dialog'
 						>
 							<X size={16} />
 						</Button>
@@ -70,13 +81,12 @@ export default function AddChat({
 						<ChatSearch isChatSearch control={control} name='search' />
 					</form>
 					<div className='suggestedPeople p-2'>
-						<Person />
-						<Person />
-						<Person />
-						<Person />
-						<Person />
-						<Person />
-						<Person />
+						<Person setIsAdding={setIsAdding} />
+						<Person setIsAdding={setIsAdding} />
+						<Person setIsAdding={setIsAdding} />
+						<Person setIsAdding={setIsAdding} />
+						<Person setIsAdding={setIsAdding} />
+						<Person setIsAdding={setIsAdding} />
 					</div>
 				</div>
 			</div>

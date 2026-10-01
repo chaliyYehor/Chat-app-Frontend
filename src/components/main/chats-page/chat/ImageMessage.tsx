@@ -1,8 +1,8 @@
 import clsx from 'clsx'
-import { useState } from 'react'
-import ViewImage from './ViewImage'
-import RightClick from './RightClick'
 import { Check, CheckCheck } from 'lucide-react'
+import { useState } from 'react'
+import RightClick from './RightClick'
+import ViewImage from './ViewImage'
 
 export default function ImageMessage({
 	isMe = true,
@@ -48,7 +48,7 @@ export default function ImageMessage({
 						onClose={() => setToolsPosition(null)}
 					/>
 				)}
-				<div className='max-w-[70%] min-w-0 flex relative gap-2'>
+				<div className='md:max-w-[70%] max-w-[90%] min-w-0 flex relative gap-2'>
 					{!isMe && (
 						<div
 							className={`sticky bottom-0 self-end w-10 h-10 rounded-[50%] text-white flex justify-center items-center border-2 border-gray-700 shrink-0`.trim()}
@@ -72,7 +72,9 @@ export default function ImageMessage({
 							)}
 						>
 							<button
+								type='button'
 								className='w-full max-h-120 cursor-pointer'
+								aria-label='Open image preview'
 								onClick={() => {
 									setIsPreviewOpen(true)
 								}}
@@ -80,14 +82,14 @@ export default function ImageMessage({
 								<img
 									className='w-full max-h-60 lg:max-h-120 object-cover'
 									src='/rozvrh.png'
-									alt=''
+									alt='Message attachment'
 								/>
 							</button>
 						</div>
 						<p
 							className={clsx(
 								isMe ? 'self-end' : 'self-start',
-								'text-[#6B6B80] text-[13px] font-mono ml-1 flex justify-center items-center gap-1',
+								'text-[#6B6B80] md:text-[13px] text-[15px] font-mono ml-1 flex justify-center items-center gap-1',
 							)}
 						>
 							When{' '}

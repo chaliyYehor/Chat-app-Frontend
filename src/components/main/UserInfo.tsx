@@ -17,14 +17,17 @@ export default function UserInfo({
 			onClick={() => {
 				setIsProfileOpened(false)
 			}}
-			role='presentation'
-			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex items-start justify-center z-50 backdrop-blur-xs'
+			role='dialog'
+			aria-modal='true'
+			aria-label={isYourProfile ? 'Your profile' : 'User profile'}
+			tabIndex={-1}
+			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex md:items-start justify-center z-50 backdrop-blur-xs'
 		>
 			<div
 				onClick={e => e.stopPropagation()}
 				className='relative flex justify-center'
 			>
-				<div className='cursor-default bg-[#16161B] w-100 flex flex-col border border-white/30 rounded-t-3xl md:rounded-2xl overflow-hidden animate-fade-in my-20 max-h-142.5'>
+				<div className='cursor-default dark:bg-[#16161B] bg-white w-90 flex flex-col border border-white/30 rounded-t-3xl md:rounded-2xl overflow-hidden animate-fade-in my-20 md:max-h-142.5 h-[90vh] pb-3 md:pb-0'>
 					<div className='profileGrad h-25 w-full flex justify-end items-start p-2'>
 						<Button
 							variant='contained'
@@ -49,12 +52,13 @@ export default function UserInfo({
 									backgroundColor: '#00000090',
 								},
 							}}
+							aria-label='Close profile'
 						>
 							<X size={16} />
 						</Button>
 					</div>
 					<div className=' flex flex-col items-start -mt-10 ml-5 mb-5'>
-						<div className='w-20 h-20  bg-[#16161B] text-white font-bold font-mono text-xl flex justify-center items-center rounded-2xl shadow-lg border border-[#0D0D0D] relative'>
+						<div className='w-20 h-20  dark:bg-[#16161B] bg-white text-white font-bold font-mono text-xl flex justify-center items-center rounded-2xl shadow-lg border dark:border-[#0D0D0D] relative'>
 							<img
 								className='w-full h-full object-cover rounded-2xl p-1'
 								src='/rozvrh.png'
@@ -65,7 +69,7 @@ export default function UserInfo({
 							)}
 						</div>
 						<div>
-							<h2 className='text-[#F0F0F5] font-bold text-xl leading-tight font-inter'>
+							<h2 className='dark:text-[#F0F0F5] font-bold text-xl leading-tight font-inter'>
 								Alex Rivera
 							</h2>
 							<p
@@ -79,38 +83,38 @@ export default function UserInfo({
 						</div>
 					</div>
 					<div className='w-full px-5 mb-5'>
-						<div className='bg-[#1E1E26] w-full flex flex-col gap-1 rounded-2xl p-4'>
+						<div className='dark:bg-[#1E1E26] bg-[#EBEBF0] w-full flex flex-col gap-1 rounded-2xl p-4'>
 							<p className='text-[#6B6B80] font-inter  font-semibold text-[10px]'>
 								ABOUT
 							</p>
-							<p className='text-[#F0F0F5] font-inter'>
+							<p className='dark:text-[#F0F0F5] font-inter'>
 								Product designer & coffee enthusiast
 							</p>
 						</div>
 					</div>
 					<div className='w-full px-5 text-[#6B6B80] mb-5'>
-						<div className='bg-[#1E1E26] w-full flex flex-col rounded-2xl gap-5'>
-							<div className='w-full p-4 border-b border-black'>
+						<div className='dark:bg-[#1E1E26] bg-[#EBEBF0] w-full flex flex-col rounded-2xl gap-5 overflow-hidden'>
+							<div className='w-full p-4 border-b dark:border-black border-gray-600/30'>
 								<div className='flex justify-start gap-4 items-center'>
 									<Mail size={15} />
 									<div>
 										<p className='text-[10px] text-[#6B6B80] font-inter font-medium'>
 											Email
 										</p>
-										<p className='text-sm text-[#F0F0F5] font-inter'>
+										<p className='text-sm dark:text-[#F0F0F5] text-black font-inter'>
 											alex.rivera@pulse.app
 										</p>
 									</div>
 								</div>
 							</div>
-							<div className='w-full px-4 pb-4 border-b border-black'>
+							<div className='w-full px-4 pb-4 border-b dark:border-black border-gray-600/30'>
 								<div className='flex justify-start gap-4 items-center '>
 									<UserRound size={15} />
 									<div>
 										<p className='text-[10px] text-[#6B6B80] font-inter font-medium'>
 											Username
 										</p>
-										<p className='text-sm text-[#F0F0F5] font-inter'>
+										<p className='text-sm dark:text-[#F0F0F5] text-black font-inter'>
 											@alexrivera
 										</p>
 									</div>

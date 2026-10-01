@@ -19,7 +19,7 @@ export default function ChatPreview() {
 		<Link
 			to={'/chats/123'}
 			onContextMenu={handleContextMenu}
-			className='chatPreview w-full h-17.5 flex justify-center items-center gap-3 hover:bg-[#1e1e26] p-2 rounded-lg transition-all duration-200 ease-in-out'
+			className='chatPreview w-full h-17.5 flex justify-center items-center gap-3 dark:hover:bg-[#1e1e26] hover:bg-[#ebebf0] p-2 rounded-lg transition-all duration-200 ease-in-out'
 		>
 			{chatToolsPosition && (
 				<ChatRightClick
@@ -28,7 +28,7 @@ export default function ChatPreview() {
 				/>
 			)}
 			<Avatar />
-			<div className='flex-1 min-w-0 flex flex-col text-white'>
+			<div className='flex-1 min-w-0 flex flex-col dark:text-white'>
 				<p className='truncate max-w-[60%] font-semibold'>Sofia Chen</p>
 				<p className='truncate max-w-[80%] text-sm'>
 					Lorem ipsum dolor sit, amet consectetur adipisicing elit. Animi quam

@@ -13,7 +13,7 @@ export default function SettingsDanger() {
 	]
 	return (
 		<>
-			<div className='outline mx-4 mb-4 outline-white/7  rounded-2xl flex flex-col overflow-hidden'>
+			<div className='outline mx-4 mb-4 dark:outline-white/7 outline-black/10  rounded-2xl flex flex-col overflow-hidden'>
 				{items.map((item, index) => (
 					<button
 						key={index}

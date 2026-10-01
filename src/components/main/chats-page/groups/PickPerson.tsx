@@ -35,16 +35,16 @@ export default function PickPerson({
 			}}
 			className={clsx(
 				isPicked ? 'bg-[#7C5CFC]/10' : '',
-				'chatPreview cursor-pointer w-full h-17.5 flex justify-center items-center gap-3 hover:bg-[#1e1e26] p-2 rounded-lg transition-all duration-200 ease-in-out',
+				'chatPreview cursor-pointer w-full h-17.5 flex justify-center items-center gap-3 dark:hover:bg-[#1e1e26] hover:bg-[#ebebf0] p-2 rounded-lg transition-all duration-200 ease-in-out',
 			)}
 		>
 			<Avatar />
-			<div className='flex-1 min-w-0 flex flex-col items-start text-white'>
+			<div className='flex-1 min-w-0 flex flex-col items-start dark:text-white'>
 				<p className='truncate max-w-[60%] font-semibold'>{person.label}</p>
 				<p className='text-[#6B6B80] text-sm font-inter text-[12px]'>Online</p>
 			</div>
 
-			<div className='border border-white/30 rounded-full w-5 h-5 overflow-hidden'>
+			<div className='border dark:border-white/30 rounded-full w-5 h-5 overflow-hidden'>
 				{isPicked && (
 					<div className='w-full h-full bg-[#7C5CFC] flex justify-center items-center transition-all text-white'>
 						<Check size={12} />

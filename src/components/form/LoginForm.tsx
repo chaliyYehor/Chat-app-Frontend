@@ -1,10 +1,10 @@
 import { Box } from '@mui/material'
 import { useFormContext, type SubmitHandler } from 'react-hook-form'
-import type { LoginType } from '../../schemas/auth/login'
-import { authClient } from '../../lib/auth-client'
 import { useNavigate } from 'react-router-dom'
-import Label from './components/Label'
+import { authClient } from '../../lib/auth-client'
+import type { LoginType } from '../../schemas/auth/login'
 import FormTextField from './components/FormTextField'
+import Label from './components/Label'
 import SubmitBtn from './components/SubmitBtn'
 
 interface Props {
@@ -84,7 +84,10 @@ export default function LoginForm({ globalError, setGlobalError }: Props) {
 
 				<SubmitBtn isSubmitting={isSubmitting} label='Sign In' />
 
-				<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center'>
+				<p
+					className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center'
+					role='alert'
+				>
 					{globalError || '\u00A0'}
 				</p>
 			</form>

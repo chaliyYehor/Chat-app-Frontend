@@ -1,8 +1,15 @@
 import { CircleQuestionMark, LogOut, Shield, User } from 'lucide-react'
 import UIArrowRight from './UIArrowRight'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { authClient } from '../../../lib/auth-client'
+import type { RootType } from '../../../store/store'
+import { useSelector } from 'react-redux'
 
 export default function SettingsAccount() {
+	const navigate = useNavigate()
+
+	const appTheme = useSelector((state: RootType) => state.theme.mode)
+
 	const items = [
 		{
 			icon: User,
@@ -26,11 +33,15 @@ export default function SettingsAccount() {
 			label: 'Sign Out',
 			danger: true,
 			isLink: false,
+			onClick: async () => {
+				await authClient.signOut()
+				navigate('/login', { replace: true })
+			},
 		},
 	]
 	return (
 		<>
-			<div className='outline mx-4 mb-4 outline-white/7  rounded-2xl flex flex-col overflow-hidden'>
+			<div className='outline mx-4 mb-4 dark:outline-white/7 outline-black/10  rounded-2xl flex flex-col overflow-hidden'>
 				{items.map((item, index) => {
 					return item.link ? (
 						<Link
@@ -38,9 +49,11 @@ export default function SettingsAccount() {
 							key={index}
 							style={{
 								borderBottom:
-									index !== items.length - 1
+									index !== items.length - 1 && appTheme === 'dark'
 										? '1px solid rgba(255, 255, 255, 0.07)'
-										: 'none',
+										: index !== items.length - 1
+											? '1px solid rgba(0, 0, 0, 0.07)'
+											: 'none',
 							}}
 							className={`flex border-b items-center border-white/7 w-full h-full p-4 text-left transition-colors cursor-pointer ${
 								item.danger ? 'hover:bg-red-500/10' : 'hover:bg-[#7C5CFC]/10'
@@ -53,7 +66,7 @@ export default function SettingsAccount() {
 								/>
 								<div className='flex flex-col'>
 									<span
-										style={{ color: item.danger ? '#EF4444' : '#FFFFFF' }}
+										style={{ color: item.danger ? '#EF4444' : appTheme === 'dark' ? '#F0F0F5' : '#000000' }}
 										className='ml-2 font-medium font-inter'
 									>
 										{item.label}
@@ -70,6 +83,7 @@ export default function SettingsAccount() {
 					) : (
 						<button
 							key={index}
+							onClick={item.onClick}
 							style={{
 								borderBottom:
 									index !== items.length - 1
@@ -87,7 +101,7 @@ export default function SettingsAccount() {
 								/>
 								<div className='flex flex-col'>
 									<span
-										style={{ color: item.danger ? '#EF4444' : '#FFFFFF' }}
+										style={{ color: item.danger ? '#EF4444' : appTheme === 'dark' ? '#F0F0F5' : '#000000' }}
 										className='ml-2 font-medium font-inter'
 									>
 										{item.label}

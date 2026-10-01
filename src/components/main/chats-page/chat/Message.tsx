@@ -1,9 +1,11 @@
 import clsx from 'clsx'
+import { Check, CheckCheck } from 'lucide-react'
 import { useState } from 'react'
+import UserInfo from '../../UserInfo'
 import RightClick from './RightClick'
 import ViewImage from './ViewImage'
-import UserInfo from '../../UserInfo'
-import { Check, CheckCheck } from 'lucide-react'
+import type { RootType } from '../../../../store/store'
+import { useSelector } from 'react-redux'
 
 export default function Message({
 	isMe = true,
@@ -28,6 +30,8 @@ export default function Message({
 		e.stopPropagation()
 		setToolsPosition({ x: e.clientX, y: e.clientY })
 	}
+
+	const appTheme = useSelector((state: RootType) => state.theme.mode)
 
 	return (
 		<>
@@ -58,12 +62,14 @@ export default function Message({
 						onClose={() => setToolsPosition(null)}
 					/>
 				)}
-				<div className='max-w-[70%] min-w-0 flex relative gap-2'>
+				<div className='md:max-w-[70%] max-w-[90%] min-w-0 flex relative gap-2'>
 					{!isMe && (
 						<>
 							<button
+								type='button'
 								onClick={() => setIsProfileOpen(true)}
-								className={`cursor-pointer sticky bottom-0 self-end w-10 h-10 rounded-[50%] text-white flex justify-center items-center border-2 border-gray-700 shrink-0`.trim()}
+								aria-label='Open sender profile'
+								className={`cursor-pointer sticky bottom-0 self-end w-10 h-10 rounded-[50%] dark:text-white text-black flex justify-center items-center border-2 border-gray-700 shrink-0`.trim()}
 							>
 								PFP
 								<div className='w-3 h-3 bg-green-500 border border-white rounded-[50%] absolute right-0 top-[68%]' />
@@ -80,12 +86,14 @@ export default function Message({
 							className={clsx(
 								isMe
 									? 'rounded-br-sm myMessage'
-									: 'rounded-bl-sm bg-[#1E1E26] border border-gray-600',
+									: 'rounded-bl-sm dark:bg-[#1E1E26] bg-[#EBEBF0] border border-gray-600',
 								'rounded-2xl overflow-hidden',
 							)}
 						>
 							<button
+								type='button'
 								className='w-full max-h-120 cursor-pointer'
+								aria-label='Open image preview'
 								onClick={() => {
 									setIsPreviewOpen(true)
 								}}
@@ -98,8 +106,11 @@ export default function Message({
 							</button>
 
 							<p
+							style={{
+								color: isMe ? 'white' : appTheme === 'dark' ? 'white' : 'black'
+							}}
 								className={
-									'font-inter px-3.5 py-2 text-sm leading-relaxed wrap-anywhere whitespace-pre-wrap'
+									'font-inter px-3.5 py-2 md:text-sm text-base leading-relaxed wrap-anywhere whitespace-pre-wrap'
 								}
 							>
 								Lorem ipsum dolor sit, amet consectetur adipisicing elit.
@@ -170,7 +181,7 @@ export default function Message({
 						<p
 							className={clsx(
 								isMe ? 'self-end' : 'self-start',
-								'text-[#6B6B80] text-[13px] font-mono ml-1 flex justify-center items-center gap-1',
+								'text-[#6B6B80] md:text-[13px] text-[15px] font-mono ml-1 flex justify-center items-center gap-1',
 							)}
 						>
 							When

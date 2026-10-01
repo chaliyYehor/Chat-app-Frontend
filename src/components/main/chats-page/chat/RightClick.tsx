@@ -1,6 +1,8 @@
+import { Copy, Pin, Reply, Trash2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { Reply, Copy, Pin, Trash2 } from 'lucide-react'
+import type { RootType } from '../../../../store/store'
+import { useSelector } from 'react-redux'
 
 interface RightClickProps {
 	position: { x: number; y: number }
@@ -65,20 +67,26 @@ export default function RightClick({ position, onClose }: RightClickProps) {
 		{ icon: Trash2, label: 'Delete', danger: true, onClick: () => onClose() },
 	]
 
+	const appTheme = useSelector((state: RootType) => state.theme.mode)
+
 	return createPortal(
 		<div
 			ref={menuRef}
+			role='menu'
+			aria-label='Message actions'
 			style={{ top: `${top}px`, left: `${left}px` }}
 			onContextMenu={e => {
 				e.preventDefault()
 				e.stopPropagation()
 			}}
-			className='fixed bg-[#16161B] w-48 rounded-2xl z-50 border border-white/20 shadow-2xl p-1.5 overflow-hidden flex flex-col gap-0.5 text-white select-none'
+			className='fixed dark:bg-[#16161B] bg-white w-48 rounded-2xl z-50 border border-white/20 shadow-2xl p-1.5 overflow-hidden flex flex-col gap-0.5 dark:text-white select-none'
 		>
 			{menuItems.map((item, index) => {
 				const Icon = item.icon
 				return (
 					<button
+						type='button'
+						role='menuitem'
 						key={index}
 						onClick={e => {
 							e.stopPropagation()
@@ -87,15 +95,17 @@ export default function RightClick({ position, onClose }: RightClickProps) {
 						className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-inter transition-colors cursor-pointer text-left w-full ${
 							item.danger
 								? 'text-red-400 hover:bg-red-500/10'
-								: 'text-[#E0E0E6] hover:bg-white/10'
+								: appTheme === 'dark'
+								? 'text-[#E0E0E6] hover:bg-white/10'
+								: 'text-[#6B6B80] hover:bg-[#ebebf0]/40'
 						}`}
 					>
-						<Icon size={16} className='shrink-0' />
+						<Icon size={16} className='shrink-0' aria-hidden='true' />
 						<span>{item.label}</span>
 					</button>
 				)
 			})}
 		</div>,
-		document.body
+		document.body,
 	)
 }

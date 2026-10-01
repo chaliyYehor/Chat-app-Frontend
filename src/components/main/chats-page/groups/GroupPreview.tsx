@@ -19,7 +19,7 @@ export default function GroupPreview() {
 		<Link
 			to={'/groups/123'}
 			onContextMenu={handleContextMenu}
-			className='chatPreview w-full h-17.5 flex justify-center items-center gap-3 hover:bg-[#1e1e26] p-2 rounded-lg transition-all duration-200 ease-in-out mt-3'
+			className='chatPreview w-full h-17.5 flex justify-center items-center gap-3 dark:hover:bg-[#1e1e26] hover:bg-[#f0f0f4] p-2 rounded-lg transition-all duration-200 ease-in-out mt-3'
 		>
 			{chatToolsPosition && (
 				<ChatRightClick
@@ -29,7 +29,7 @@ export default function GroupPreview() {
 				/>
 			)}
 			<GroupPfp />
-			<div className='flex-1 min-w-0 flex flex-col text-white'>
+			<div className='flex-1 min-w-0 flex flex-col dark:text-white'>
 				<p className='truncate max-w-[60%] font-bold font-inter text-[16px]'>Design Team</p>
 				<p className='truncate max-w-full text-sm text-[#6B6B80]'>
 					4 members

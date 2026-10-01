@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom'
 
 export default function MessageSectionBtn({
 	isSmallScreen,
-	onClick
+	onClick,
 }: {
 	isSmallScreen: boolean
 	onClick?: () => void
@@ -20,12 +20,13 @@ export default function MessageSectionBtn({
 				${
 					isActive
 						? 'bg-[#7C5CFC] text-white hover:bg-[#4f34bd]'
-						: 'text-[#6B6B80] hover:text-white hover:bg-[#1e1e26]'
+						: 'text-[#6B6B80] hover:text-[#1f1f26] hover:bg-[#ebebf0] dark:hover:text-white dark:hover:bg-[#1e1e26]'
 				}`
 					}
 					title='Chats'
+					aria-label='Chats'
 				>
-					<MessageSquare size={30} />
+					<MessageSquare strokeWidth='1.5' size={30} aria-hidden='true' />
 				</NavLink>
 			) : (
 				<NavLink
@@ -33,16 +34,17 @@ export default function MessageSectionBtn({
 					type='button'
 					onClick={onClick}
 					className={({ isActive }) =>
-						`nav-btn inline-flex cursor-pointer py-4 px-6 rounded-2xl transition flex-col justify-center items-center
+						`nav-btn inline-flex w-18.5 shrink-0 h-16  cursor-pointer py-2 px-2 rounded-2xl transition flex-col justify-center items-center
 				${
 					isActive
-						? 'bg-transparent text-[#7C5CFC]'
-						: 'text-[#6B6B80] hover:text-white'
+						? 'bg-[#7C5CFC] text-white hover:bg-[#4f34bd]'
+						: 'text-[#6B6B80] hover:text-[#1f1f26] hover:bg-[#ebebf0] dark:hover:text-white dark:hover:bg-[#1e1e26]'
 				}`
 					}
 					title='Chats'
+					aria-label='Chats'
 				>
-					<MessageSquare size={30} />
+					<MessageSquare size={24} aria-hidden='true' />
 					<span>Chats</span>
 				</NavLink>
 			)}

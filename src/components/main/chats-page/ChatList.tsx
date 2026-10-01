@@ -18,10 +18,10 @@ export default function ChatList() {
 		console.log(data)
 	}
 	return (
-		<div className='chatListContainer h-dvh w-full min-w-0 bg-[#16161b]'>
-			<div className='upper mb-10 flex flex-col gap-4 mt-5'>
+		<div className='chatListContainer h-full w-full min-w-0 dark:bg-[#16161b] bg-white pb-15'>
+			<div className=' mb-10 flex flex-col gap-4 mt-5'>
 				<div className='flex items-center justify-between px-4 py-2'>
-					<h2 className='text-white text-3xl font-bold '>Messages</h2>
+					<h2 className='dark:text-white text-3xl font-bold '>Messages</h2>
 					<AddChatBtn onClick={setIsAdding} />
 				</div>
 				<form onSubmit={handleSubmit(onSubmit)}>
@@ -34,7 +34,7 @@ export default function ChatList() {
 			) : (
 				<>
 					<section className='px-4 font-semibold text-sm mb-5'>
-						<p className='text-[#6B6B80] font-inter mb-3'>PINNED</p>
+						<h3 className='text-[#6B6B80] font-inter mb-3'>PINNED</h3>
 						<div className='flex flex-col gap-4'>
 							<ChatPreview />
 							<ChatPreview />
@@ -45,7 +45,7 @@ export default function ChatList() {
 						<hr className='text-gray-500/50 mt-3' />
 					</section>
 					<section className='px-4 font-semibold text-sm'>
-						<p className='text-[#6B6B80] font-inter mb-3'>ALL MESSAGES</p>
+						<h3 className='text-[#6B6B80] font-inter mb-3'>ALL MESSAGES</h3>
 						<div className='flex flex-col gap-4'>
 							<ChatPreview />
 							<ChatPreview />

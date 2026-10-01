@@ -1,9 +1,13 @@
 import { Button } from '@mui/material'
 import { Phone } from 'lucide-react'
+import type { RootType } from '../../../../store/store'
+import { useSelector } from 'react-redux'
 
 export default function CallButon({ size = 20 }: { size?: number }) {
+	const appTheme = useSelector((state: RootType) => state.theme.mode)
 	return (
 		<Button
+			aria-label='Start voice call'
 			sx={{
 				width: size === 20 ? '50px' : '40px',
 				minWidth: '0',
@@ -14,16 +18,21 @@ export default function CallButon({ size = 20 }: { size?: number }) {
 				color: '#6B6B80',
 				borderColor: '#333',
 				transition: 'all 0.2s ease-in-out',
-				backgroundColor: size !== 20 ? '#1f1f26' : 'transparent',
+				backgroundColor:
+					appTheme === 'dark' && size !== 20
+						? '#1f1f26'
+						: appTheme === 'light' && size !== 20
+							? '#EBEBF0'
+							: 'transparent',
 
 				'&:hover': {
-					backgroundColor: '#1f1f26',
+					backgroundColor: appTheme === 'dark' ? '#1f1f26' : '#EBEBF0',
 					borderColor: '#444',
-					color: '#eee',
+					color: '#af6bfc',
 				},
 			}}
 		>
-			<Phone size={size} />
+			<Phone size={size} aria-hidden='true' />
 		</Button>
 	)
 }
