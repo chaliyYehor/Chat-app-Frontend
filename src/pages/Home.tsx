@@ -7,9 +7,12 @@ import MessageSectionBtn from '../components/main/MessageSectionBtn'
 import Profile from '../components/main/Profile'
 import SettingsSectionBtn from '../components/main/SettingsSectionBtn'
 import { authClient } from '../lib/auth-client'
+import { useIsMobile } from '../hooks/useIsMobile'
 
 export default function Home() {
 	const navigate = useNavigate()
+
+	const isMobile = useIsMobile()
 
 	const { data: session, isPending } = authClient.useSession()
 
@@ -31,30 +34,31 @@ export default function Home() {
 		)
 	}
 
+
 	return (
 		<>
-			<div className='w-screen h-dvh flex'>
+			<div className='w-screen h-dvh flex flex-col-reverse md:flex-row'>
 				<nav
-					className='flex flex-col gap-5 w-25 items-center justify-between h-dvh py-4 dark:bg-black bg-[#f5f5f8]'
+					className='flex flex-col gap-5 w-full md:w-25 items-center justify-between h-auto md:h-dvh py-4 dark:bg-black bg-[#f5f5f8]'
 					aria-label='Main navigation'
 				>
-					<div className='w-full flex flex-col justify-center items-center gap-2'>
-						<div
+					<div className='w-full flex justify-around md:justify-center md:flex-col items-center '>
+						{!isMobile &&<div
 							className='messageUI w-14 h-14 rounded-2xl flex justify-center items-center mb-3'
 							aria-label='Chat App'
 						>
 							<RiMessage2Fill color='white' size={30} aria-hidden='true' />
-						</div>
-						<MessageSectionBtn isSmallScreen={false} />
-						<GroupsSectionBtn isSmallScreen={false} />
-						<CallsSectionBtn isSmallScreen={false} />
-						<SettingsSectionBtn isSmallScreen={false} />
+						</div>}
+						<MessageSectionBtn isSmallScreen={isMobile} />
+						<GroupsSectionBtn isSmallScreen={isMobile} />
+						<CallsSectionBtn isSmallScreen={isMobile} />
+						<SettingsSectionBtn isSmallScreen={isMobile} />
 					</div>
 
-					<Profile />
+					{!isMobile && <Profile />}
 				</nav>
 
-				<main className=' dark:bg-black bg-[#f5f5f8] flex-1 flex min-w-0'>
+				<main className='dark:bg-black bg-[#f5f5f8] flex-1 min-h-0 md:h-dvh flex min-w-0'>
 					<Outlet />
 				</main>
 			</div>

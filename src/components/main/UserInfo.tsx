@@ -21,13 +21,13 @@ export default function UserInfo({
 			aria-modal='true'
 			aria-label={isYourProfile ? 'Your profile' : 'User profile'}
 			tabIndex={-1}
-			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex items-start justify-center z-50 backdrop-blur-xs'
+			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex md:items-start justify-center z-50 backdrop-blur-xs'
 		>
 			<div
 				onClick={e => e.stopPropagation()}
 				className='relative flex justify-center'
 			>
-				<div className='cursor-default dark:bg-[#16161B] bg-white w-100 flex flex-col border border-white/30 rounded-t-3xl md:rounded-2xl overflow-hidden animate-fade-in my-20 max-h-142.5'>
+				<div className='cursor-default dark:bg-[#16161B] bg-white w-90 flex flex-col border border-white/30 rounded-t-3xl md:rounded-2xl overflow-hidden animate-fade-in my-20 md:max-h-142.5 h-[90vh] pb-3 md:pb-0'>
 					<div className='profileGrad h-25 w-full flex justify-end items-start p-2'>
 						<Button
 							variant='contained'

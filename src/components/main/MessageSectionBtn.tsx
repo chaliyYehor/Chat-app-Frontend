@@ -34,7 +34,7 @@ export default function MessageSectionBtn({
 					type='button'
 					onClick={onClick}
 					className={({ isActive }) =>
-						`nav-btn inline-flex cursor-pointer py-4 px-6 rounded-2xl transition flex-col justify-center items-center
+						`nav-btn inline-flex w-18.5 shrink-0 h-16  cursor-pointer py-2 px-2 rounded-2xl transition flex-col justify-center items-center
 				${
 					isActive
 						? 'bg-[#7C5CFC] text-white hover:bg-[#4f34bd]'
@@ -44,7 +44,7 @@ export default function MessageSectionBtn({
 					title='Chats'
 					aria-label='Chats'
 				>
-					<MessageSquare size={30} aria-hidden='true' />
+					<MessageSquare size={24} aria-hidden='true' />
 					<span>Chats</span>
 				</NavLink>
 			)}
