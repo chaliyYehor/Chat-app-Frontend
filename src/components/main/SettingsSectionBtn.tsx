@@ -1,5 +1,5 @@
 import { Settings } from 'lucide-react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 
 export default function SettingsSectionBtn({
 	isSmallScreen,
@@ -8,11 +8,14 @@ export default function SettingsSectionBtn({
 	isSmallScreen: boolean
 	onClick?: () => void
 }) {
+	const location = useLocation()
+
 	return (
 		<>
 			{!isSmallScreen ? (
 				<NavLink
 					to={'/settings'}
+					state={{ from: location.pathname }}
 					type='button'
 					onClick={onClick}
 					className={({ isActive }) =>
@@ -31,6 +34,7 @@ export default function SettingsSectionBtn({
 			) : (
 				<NavLink
 					to={'/settings'}
+					state={{ from: location.pathname }}
 					type='button'
 					onClick={onClick}
 					className={({ isActive }) =>

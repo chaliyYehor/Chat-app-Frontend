@@ -34,7 +34,7 @@ export default function SettingsEditProfile() {
 	const isMobile = useIsMobile()
 
 	return (
-		<div className='chatListContainer box-border h-full w-full min-w-0 max-w-full overflow-x-hidden overflow-y-auto scrollbar-none dark:bg-[#16161b] bg-white'>
+		<div className='chats chatListContainer box-border h-full w-full min-w-0 max-w-full overflow-x-hidden overflow-y-auto scrollbar-none dark:bg-[#16161b] bg-white'>
 			<div className='w-full min-w-0 mb-8 sm:mb-10 flex flex-col mt-4 sm:mt-5 gap-2'>
 				<Link
 					to='/settings'

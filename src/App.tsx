@@ -28,6 +28,9 @@ import { useSelector } from 'react-redux'
 import type { RootType } from './store/store'
 import { useEffect } from 'react'
 import { useIsMobile } from './hooks/useIsMobile'
+import { useGSAP } from '@gsap/react'
+import { authClient } from './lib/auth-client'
+import gsap from 'gsap'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -74,6 +77,7 @@ function App() {
 	}, [theme])
 
 	const isMobile = useIsMobile()
+	const { isPending } = authClient.useSession()
 
 	return (
 		<>

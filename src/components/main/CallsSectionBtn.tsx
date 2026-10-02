@@ -1,5 +1,5 @@
 import { Phone } from 'lucide-react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 
 export default function CallsSectionBtn({
 	isSmallScreen,
@@ -8,11 +8,14 @@ export default function CallsSectionBtn({
 	isSmallScreen: boolean
 	onClick?: () => void
 }) {
+	const location = useLocation()
+
 	return (
 		<>
 			{!isSmallScreen ? (
 				<NavLink
 					to={'/calls'}
+					state={{ from: location.pathname }}
 					type='button'
 					onClick={onClick}
 					className={({ isActive }) =>
@@ -31,6 +34,7 @@ export default function CallsSectionBtn({
 			) : (
 				<NavLink
 					to={'/calls'}
+					state={{ from: location.pathname }}
 					type='button'
 					onClick={onClick}
 					className={({ isActive }) =>
