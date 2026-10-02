@@ -11,6 +11,7 @@ export default function SubmitBtn({
 }) {
 	return (
 		<Button
+		className='registrationAnim'
 			type='submit'
 			variant='contained'
 			disabled={isSubmitting}
