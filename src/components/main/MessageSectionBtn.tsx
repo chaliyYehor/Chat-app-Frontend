@@ -1,5 +1,5 @@
 import { MessageSquare } from 'lucide-react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 
 export default function MessageSectionBtn({
 	isSmallScreen,
@@ -8,11 +8,14 @@ export default function MessageSectionBtn({
 	isSmallScreen: boolean
 	onClick?: () => void
 }) {
+	const location = useLocation()
+
 	return (
 		<>
 			{!isSmallScreen ? (
 				<NavLink
 					to={'/chats'}
+					state={{ from: location.pathname }}
 					type='button'
 					onClick={onClick}
 					className={({ isActive }) =>
@@ -31,6 +34,7 @@ export default function MessageSectionBtn({
 			) : (
 				<NavLink
 					to={'/chats'}
+					state={{ from: location.pathname }}
 					type='button'
 					onClick={onClick}
 					className={({ isActive }) =>
