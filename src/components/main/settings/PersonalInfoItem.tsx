@@ -12,10 +12,12 @@ export default function PersonalInfoItem({
 	registerName,
 	label,
 	isLast = false,
+	isDisabled = false,
 }: {
 	registerName: keyof ChangeUserInfoInput
 	label: string
 	isLast?: boolean
+	isDisabled?: boolean
 }) {
 	const { register } = useFormContext<
 		ChangeUserInfoInput,
@@ -42,6 +44,7 @@ export default function PersonalInfoItem({
 			<TextField
 				id='standard-basic'
 				variant='standard'
+				disabled={isDisabled}
 				{...register(registerName)}
 				sx={{
 					width: '95%',
@@ -51,6 +54,9 @@ export default function PersonalInfoItem({
 						color: appTheme === 'dark' ? '#F0F0F5' : '#000000',
 						fontFamily: 'Inter, sans-serif',
 						padding: '8px 0 6px',
+					},
+					'& .MuiInputBase-input.Mui-disabled': {
+						WebkitTextFillColor: appTheme === 'dark' ? '#F0F0F5' : '#000000',
 					},
 					'& .MuiInput-underline:before': {
 						borderBottomColor:

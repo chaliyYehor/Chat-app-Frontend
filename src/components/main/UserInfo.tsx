@@ -14,7 +14,7 @@ export default function UserInfo({
 	sharedMedia: boolean
 	setIsProfileOpened: React.Dispatch<React.SetStateAction<boolean>>
 }) {
-	const { data: userInfo, isFetching } = useGetUserInfo()
+	const { data: userInfo, isPending: isFetching } = useGetUserInfo()
 	const { data } = authClient.useSession()
 	return (
 		<div
