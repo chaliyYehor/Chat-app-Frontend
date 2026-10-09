@@ -1,7 +1,9 @@
+import clsx from 'clsx'
 import heic2any from 'heic2any'
-import { Camera } from 'lucide-react'
+import { Camera, User } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { useGetUserInfo } from '../../../hooks/useGetUserInfo'
 import {
 	type ChangeUserInfo,
 	type ChangeUserInfoInput,
@@ -18,6 +20,9 @@ export default function EditProfileChangePhoto() {
 	const [image, setImage] = useState<File>()
 	const [imagePreview, setImagePreview] = useState<string>()
 	const [previewError, setPreviewError] = useState<string>()
+	const [isPreviewLoading, setIsPreviewLoading] = useState(false)
+	const [isImageLoading, setIsImageLoading] = useState(false)
+	const [imageLoadError, setImageLoadError] = useState(false)
 	const fileInputRef = useRef<HTMLInputElement>(null)
 	const {
 		register,
@@ -33,8 +38,12 @@ export default function EditProfileChangePhoto() {
 
 		if (!image) {
 			setImagePreview(undefined)
+			setIsPreviewLoading(false)
 			return () => undefined
 		}
+
+		setIsPreviewLoading(true)
+		setImageLoadError(false)
 
 		const createPreview = async () => {
 			try {
@@ -53,10 +62,12 @@ export default function EditProfileChangePhoto() {
 				previewUrl = URL.createObjectURL(previewBlob)
 				setImagePreview(previewUrl)
 				setPreviewError(undefined)
+				setIsPreviewLoading(false)
 			} catch {
 				if (cancelled) return
 				setImagePreview(undefined)
 				setPreviewError('Preview is not supported for this file')
+				setIsPreviewLoading(false)
 			}
 		}
 
@@ -64,6 +75,7 @@ export default function EditProfileChangePhoto() {
 
 		return () => {
 			cancelled = true
+			setIsPreviewLoading(false)
 			if (previewUrl) URL.revokeObjectURL(previewUrl)
 		}
 	}, [image])
@@ -77,20 +89,29 @@ export default function EditProfileChangePhoto() {
 
 		if (!file) {
 			setImage(undefined)
-			setValue('file', undefined, { shouldValidate: true })
+			setValue('file', undefined, {
+				shouldValidate: true,
+				shouldDirty: true,
+			})
 			return
 		}
 
 		if (!isImageFile(file)) {
 			setImage(undefined)
-			setValue('file', undefined, { shouldValidate: false })
+			setValue('file', undefined, {
+				shouldValidate: false,
+				shouldDirty: true,
+			})
 			setError('file', { type: 'validate', message: 'Only images are allowed' })
 			return
 		}
 
 		if (file.size > MAX_FILE_SIZE) {
 			setImage(undefined)
-			setValue('file', undefined, { shouldValidate: false })
+			setValue('file', undefined, {
+				shouldValidate: false,
+				shouldDirty: true,
+			})
 			setError('file', { type: 'validate', message: 'Max image size is 5MB' })
 			return
 		}
@@ -98,6 +119,10 @@ export default function EditProfileChangePhoto() {
 		setImage(file)
 		fileInput.onChange(event)
 	}
+
+	const { data: userInfo, isPending: isUserInfoLoading } = useGetUserInfo()
+	const imageSource = imagePreview ?? userInfo?.profilePicture ?? undefined
+	const isLoading = isUserInfoLoading || isPreviewLoading || isImageLoading
 
 	return (
 		<div className='flex flex-col justify-center md:items-center items-start md:ml-0 ml-20 text-center'>
@@ -117,11 +142,36 @@ export default function EditProfileChangePhoto() {
 				htmlFor='profilePhotoInput'
 				className='relative block md:ml-0 ml-3 w-28 h-28 cursor-pointer rounded-3xl border dark:border-white/7'
 			>
-				<img
-					className='w-full h-full object-cover rounded-3xl'
-					src={imagePreview ?? '/rozvrh.png'}
-					alt='Profile preview'
-				/>
+				{imageSource && !imageLoadError ? (
+					<>
+						{isLoading && (
+							<div className='skeleton-shimmer absolute inset-0 rounded-3xl' />
+						)}
+						<img
+							className={clsx(
+								'w-full h-full object-cover rounded-3xl',
+								isLoading && 'opacity-0',
+							)}
+							src={imageSource}
+							alt='Profile preview'
+							onLoad={() => setIsImageLoading(false)}
+							onLoadStart={() => setIsImageLoading(true)}
+							onError={() => {
+								setIsImageLoading(false)
+								setImageLoadError(true)
+							}}
+						/>
+					</>
+				) : (
+					<div
+						className={clsx(
+							'w-full h-full flex items-center justify-center',
+							isLoading && 'skeleton-shimmer',
+						)}
+					>
+						<User size={34} />
+					</div>
+				)}
 				<div className='cameraUI absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center shadow-lg'>
 					<Camera color='white' size={16} />
 				</div>

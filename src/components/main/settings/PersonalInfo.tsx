@@ -16,8 +16,8 @@ export default function PersonalInfo() {
 					}}
 					className='flex flex-col border-b items-center rounded-2xl border-white/7 w-full h-full px-2 py-4 overflow-hidden'
 				>
-					<PersonalInfoItem label='display name' registerName='displayName' />
-					<PersonalInfoItem label='username' registerName='username' />
+					<PersonalInfoItem label='display name' registerName='name' />
+					<PersonalInfoItem label='User ID' registerName='userId' isDisabled />
 					<PersonalInfoItem label='bio' registerName='bio' isLast />
 				</div>
 			</div>

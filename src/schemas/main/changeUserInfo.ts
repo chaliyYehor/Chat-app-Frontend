@@ -8,15 +8,13 @@ const isImageFile = (file: File) =>
 export const changeUserInfoSchema = z
 	.object({
 		status: z.enum(['online', 'away', 'offline']).optional(),
-		displayName: z
+		userId: z
 			.string()
-			.min(1, 'Display name is required')
-			.max(50, 'Display name must be at most 50 characters')
 			.optional(),
-		username: z
+		name: z
 			.string()
-			.min(1, 'Username is required')
-			.max(30, 'Username must be at most 30 characters')
+			.min(1, 'name is required')
+			.max(30, 'name must be at most 30 characters')
 			.optional(),
 		bio: z.string().max(160, 'Bio must be at most 160 characters').optional(),
 		email: z.string().email('Invalid email address').optional(),

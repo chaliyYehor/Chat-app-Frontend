@@ -5,6 +5,7 @@ import CallButon from '../chat/CallButton'
 import VideoCallBtn from '../chat/VideoCallBtn'
 import { useSelector } from 'react-redux'
 import type { RootType } from '../../../../store/store'
+import { useGetUserInfo } from '../../../../hooks/useGetUserInfo'
 
 interface CallsPreviewProps {
 	isIncoming: boolean
@@ -50,6 +51,7 @@ export default function CallsPreview({
 	
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 
+	const { data: userInfo } = useGetUserInfo()
 	return (
 		<Link
 			to={'/chats/123'}
@@ -58,7 +60,7 @@ export default function CallsPreview({
 			}}
 			className='chatPreview w-full h-17.5 flex justify-center items-center gap-3 dark:hover:bg-[#1e1e26] hover:bg-[#f0f0f4] rounded-lg transition-all duration-200 ease-in-out'
 		>
-			<Avatar />
+			<Avatar state={userInfo?.status || 'offline'} />
 			<div className='flex-1 min-w-0 flex flex-col gap-1 items-start text-white'>
 				<p
 					style={{

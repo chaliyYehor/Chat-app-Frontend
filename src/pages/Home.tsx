@@ -10,6 +10,10 @@ import Profile from '../components/main/Profile'
 import SettingsSectionBtn from '../components/main/SettingsSectionBtn'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { authClient } from '../lib/auth-client'
+import { useGetUserInfo } from '../hooks/useGetUserInfo'
+import { useDispatch } from 'react-redux'
+import type { AppDispatch } from '../store/store'
+import { setTheme } from '../store/slices/themeSlice'
 gsap.registerPlugin(useGSAP)
 
 export default function Home() {
@@ -27,33 +31,14 @@ export default function Home() {
 		}
 	}, [isPending, session, navigate])
 
-	// useGSAP(
-	// 	() => {
-	// 		if (isPending || !navigationRef.current) return
+	const {data: userInfo} = useGetUserInfo()
+	const dispatch = useDispatch<AppDispatch>()
 
-	// 		const navigationItems = navigationRef.current.querySelectorAll('a')
-	// 		if (!navigationItems.length) return
+	useEffect(() => {
+		if(isPending || !userInfo) return
 
-	// 		gsap.fromTo(
-	// 			navigationItems,
-	// 			{ autoAlpha: 0, y: 8 },
-	// 			{
-	// 				autoAlpha: 1,
-	// 				y: 0,
-	// 				duration: 0.35,
-	// 				stagger: 0.15,
-	// 				delay: 0.2,
-	// 				ease: 'power1.in',
-	// 				clearProps: 'opacity,visibility,transform',
-	// 			},
-	// 		)
-	// 	},
-	// 	{
-	// 		dependencies: [isPending, isMobile],
-	// 		revertOnUpdate: true,
-	// 		scope: navigationRef,
-	// 	},
-	// )
+		dispatch(setTheme(userInfo.theme))
+	}, [userInfo, isPending])
 
 	if (isPending) {
 		return (

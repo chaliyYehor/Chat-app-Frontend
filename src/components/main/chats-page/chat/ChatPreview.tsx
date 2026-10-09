@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import Avatar from '../../Avatar'
 import ChatRightClick from './ChatRightClick'
 import MessagesIndicator from './MessagesIndicator'
+import { useGetUserInfo } from '../../../../hooks/useGetUserInfo'
 
 export interface ChatMenuPosition {
 	x: number
@@ -53,6 +54,9 @@ export default function ChatPreview({
 			longPressTriggered.current = false
 		}
 	}
+
+	const { data: userInfo } = useGetUserInfo()
+
 	return (
 		<Link
 			to={'/chats/123'}
@@ -67,7 +71,7 @@ export default function ChatPreview({
 			{menuPosition && (
 				<ChatRightClick position={menuPosition} onClose={onCloseMenu} />
 			)}
-			<Avatar />
+			<Avatar state={userInfo?.status || 'offline'} />
 			<div className='flex-1 min-w-0 flex flex-col dark:text-white'>
 				<p className='truncate max-w-[60%] font-semibold'>Sofia Chen</p>
 				<p className='truncate max-w-[80%] text-sm'>
