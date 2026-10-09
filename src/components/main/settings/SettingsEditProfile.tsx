@@ -33,19 +33,27 @@ export default function SettingsEditProfile() {
 			file: undefined,
 		},
 	})
+	const { reset } = methods
+	const {
+		formState: { isDirty, isSubmitting, dirtyFields },
+	} = methods
+	void dirtyFields
 
 	useEffect(() => {
 		if (!userInfo) return
 
-		methods.reset({
+		reset(
+			{
 			status: userInfo.status,
 			userId: userInfo.userPubId,
 			name: userInfo.name,
 			bio: userInfo.about ?? '',
 			email: session?.user.email ?? '',
 			file: undefined,
-		})
-	}, [userInfo, session?.user.email, methods])
+			},
+			{ keepDirtyValues: true },
+		)
+	}, [userInfo, session?.user.email, reset])
 
 	const onSubmit: SubmitHandler<ChangeUserInfo> = data => {
 		console.log(data)
@@ -101,7 +109,7 @@ export default function SettingsEditProfile() {
 								type='submit'
 								variant='contained'
 								disabled={
-									methods.formState.isSubmitting || !methods.formState.isDirty
+									isSubmitting || !isDirty
 								}
 								sx={{
 									width: isMobile ? '70%' : 'calc(100% - 32px)',

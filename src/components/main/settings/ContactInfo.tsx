@@ -9,7 +9,7 @@ export default function ContactInfo() {
 				}}
 				className='flex flex-col border-b items-center rounded-2xl border-white/7 w-full h-full px-2 py-4 overflow-hidden'
 			>
-				<PersonalInfoItem label='email' registerName='email' isLast />
+				<PersonalInfoItem label='email' registerName='email' isLast isDisabled />
 			</div>
 		</div>
 	)

@@ -4,7 +4,6 @@ import { Camera, User } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useGetUserInfo } from '../../../hooks/useGetUserInfo'
-import { authClient } from '../../../lib/auth-client'
 import {
 	type ChangeUserInfo,
 	type ChangeUserInfoInput,
@@ -90,20 +89,29 @@ export default function EditProfileChangePhoto() {
 
 		if (!file) {
 			setImage(undefined)
-			setValue('file', undefined, { shouldValidate: true })
+			setValue('file', undefined, {
+				shouldValidate: true,
+				shouldDirty: true,
+			})
 			return
 		}
 
 		if (!isImageFile(file)) {
 			setImage(undefined)
-			setValue('file', undefined, { shouldValidate: false })
+			setValue('file', undefined, {
+				shouldValidate: false,
+				shouldDirty: true,
+			})
 			setError('file', { type: 'validate', message: 'Only images are allowed' })
 			return
 		}
 
 		if (file.size > MAX_FILE_SIZE) {
 			setImage(undefined)
-			setValue('file', undefined, { shouldValidate: false })
+			setValue('file', undefined, {
+				shouldValidate: false,
+				shouldDirty: true,
+			})
 			setError('file', { type: 'validate', message: 'Max image size is 5MB' })
 			return
 		}
@@ -113,7 +121,6 @@ export default function EditProfileChangePhoto() {
 	}
 
 	const { data: userInfo, isPending: isUserInfoLoading } = useGetUserInfo()
-	const { data } = authClient.useSession()
 	const imageSource = imagePreview ?? userInfo?.profilePicture ?? undefined
 	const isLoading = isUserInfoLoading || isPreviewLoading || isImageLoading
 
