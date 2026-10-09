@@ -3,6 +3,7 @@ import { Check } from 'lucide-react'
 import type { UseFieldArrayAppend, UseFieldArrayRemove } from 'react-hook-form'
 import type { GroupCreation } from '../../../../schemas/main/groupCreation'
 import Avatar from '../../Avatar'
+import { useGetUserInfo } from '../../../../hooks/useGetUserInfo'
 
 interface PickPersonProps {
 	add: UseFieldArrayAppend<GroupCreation>
@@ -22,6 +23,8 @@ export default function PickPerson({
 	isPicked,
 	selectedIndex,
 }: PickPersonProps) {
+	const { data: userInfo } = useGetUserInfo()
+
 	return (
 		<button
 			type='button'
@@ -38,7 +41,7 @@ export default function PickPerson({
 				'chatPreview cursor-pointer w-full h-17.5 flex justify-center items-center gap-3 dark:hover:bg-[#1e1e26] hover:bg-[#ebebf0] p-2 rounded-lg transition-all duration-200 ease-in-out',
 			)}
 		>
-			<Avatar />
+			<Avatar state={userInfo?.status || 'offline'} />
 			<div className='flex-1 min-w-0 flex flex-col items-start dark:text-white'>
 				<p className='truncate max-w-[60%] font-semibold'>{person.label}</p>
 				<p className='text-[#6B6B80] text-sm font-inter text-[12px]'>Online</p>

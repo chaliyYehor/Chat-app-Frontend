@@ -11,11 +11,14 @@ import { ArrowLeft } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import type { RootType } from '../../../../store/store'
+import { useGetUserInfo } from '../../../../hooks/useGetUserInfo'
 
 export function Chat() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
 
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
+
+	const { data: userInfo } = useGetUserInfo()
 	return (
 		<div className='w-full h-full overflow-hidden flex flex-col dark:bg-[#16161b] bg-white'>
 			<div className='p-4 shrink-0 flex w-full justify-between items-center border-b border-gray-700/60'>
@@ -39,7 +42,7 @@ export function Chat() {
 						className='cursor-pointer hover:outline-2 hover:outline-[#7C5CFC] transition-all duration-200 ease-in-out rounded-full'
 						aria-label='Open profile'
 					>
-						<Avatar />
+						<Avatar state={userInfo?.status || 'offline'} />
 					</button>
 					<div className='w-[70%]'>
 						<p className='font-semibold font-inter text-md truncate dark:text-white'>
