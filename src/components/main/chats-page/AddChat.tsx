@@ -1,5 +1,6 @@
 import { Button } from '@mui/material'
 import { X } from 'lucide-react'
+import { createPortal } from 'react-dom'
 import { useFormContext, type SubmitHandler } from 'react-hook-form'
 import type { ChatSearch as ChatSearchType } from '../../../schemas/main/chatSearch'
 import Person from './chat/Person'
@@ -19,7 +20,7 @@ export default function AddChat({
 	}
 
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
-	return (
+	return createPortal(
 		<div
 			onClick={() => {
 				setIsAdding(false)
@@ -28,7 +29,7 @@ export default function AddChat({
 			aria-modal='true'
 			aria-labelledby='new-message-title'
 			tabIndex={-1}
-			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex md:items-start justify-center z-50 backdrop-blur-xs'
+			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex md:items-start justify-center z-100 backdrop-blur-xs'
 		>
 			<div
 				onClick={e => e.stopPropagation()}
@@ -90,6 +91,7 @@ export default function AddChat({
 					</div>
 				</div>
 			</div>
-		</div>
+		</div>,
+		document.body,
 	)
 }

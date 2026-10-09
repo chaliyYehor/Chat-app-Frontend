@@ -258,3 +258,34 @@ input:-webkit-autofill:active {
 .cameraUI {
 	background: linear-gradient(135deg, rgb(124, 92, 252), rgb(91, 63, 219));
 }
+
+.skeleton-shimmer {
+    position: relative;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.skeleton-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0 auto 0 -45%;
+    width: 45%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.35),
+        transparent
+    );
+    filter: blur(12px);
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(330%);
+    }
+}
