@@ -1,6 +1,7 @@
 import { TextField } from '@mui/material'
 import Button from '@mui/material/Button'
 import { X } from 'lucide-react'
+import { createPortal } from 'react-dom'
 import {
 	useFieldArray,
 	useFormContext,
@@ -42,7 +43,7 @@ export default function CreateGroup({
 	}
 
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
-	return (
+	return createPortal(
 		<div
 			onClick={() => {
 				setIsAdding(false)
@@ -169,6 +170,7 @@ export default function CreateGroup({
 					</form>
 				</div>
 			</div>
-		</div>
+		</div>,
+		document.body,
 	)
 }

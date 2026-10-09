@@ -1,7 +1,9 @@
 import { Button } from '@mui/material'
 import { clsx } from 'clsx'
-import { Mail, UserRound, X } from 'lucide-react'
+import { Mail, User, UserRound, X } from 'lucide-react'
 import SharedMedia from './chats-page/SharedMedia'
+import { useGetUserInfo } from '../../hooks/useGetUserInfo'
+import { authClient } from '../../lib/auth-client'
 
 export default function UserInfo({
 	setIsProfileOpened,
@@ -12,6 +14,8 @@ export default function UserInfo({
 	sharedMedia: boolean
 	setIsProfileOpened: React.Dispatch<React.SetStateAction<boolean>>
 }) {
+	const { data: userInfo, isFetching } = useGetUserInfo()
+	const { data } = authClient.useSession()
 	return (
 		<div
 			onClick={() => {
@@ -59,19 +63,32 @@ export default function UserInfo({
 					</div>
 					<div className=' flex flex-col items-start -mt-10 ml-5 mb-5'>
 						<div className='w-20 h-20  dark:bg-[#16161B] bg-white text-white font-bold font-mono text-xl flex justify-center items-center rounded-2xl shadow-lg border dark:border-[#0D0D0D] relative'>
-							<img
-								className='w-full h-full object-cover rounded-2xl p-1'
-								src='/rozvrh.png'
-								alt='pfp'
-							/>
+							{userInfo && !isFetching && userInfo.profilePicture ? (
+								<img
+									className='w-full h-full object-cover rounded-2xl p-1'
+									src={userInfo.profilePicture}
+									alt='pfp'
+								/>
+							) : (
+								<div className='w-full h-full flex items-center justify-center'>
+									<User size={34} />
+								</div>
+							)}
 							{!isYourProfile && (
 								<div className='w-3 h-3 bg-green-500 border border-black rounded-[50%] absolute right-1 bottom-1' />
 							)}
 						</div>
-						<div>
-							<h2 className='dark:text-[#F0F0F5] font-bold text-xl leading-tight font-inter'>
-								Alex Rivera
-							</h2>
+						<div className='w-full pr-5 '>
+							<div
+								className={clsx(
+									isFetching ? 'skeleton-shimmer' : '',
+									'w-full min-h-fit h-5 rounded-2xl mb-2',
+								)}
+							>
+								<h2 className='dark:text-[#F0F0F5] font-bold text-xl leading-tight font-inter'>
+									{userInfo && !isFetching ? userInfo.name : ''}
+								</h2>
+							</div>
 							<p
 								className={clsx(
 									!isYourProfile ? 'text-green-500' : '',
@@ -87,8 +104,14 @@ export default function UserInfo({
 							<p className='text-[#6B6B80] font-inter  font-semibold text-[10px]'>
 								ABOUT
 							</p>
-							<p className='dark:text-[#F0F0F5] font-inter'>
-								Product designer & coffee enthusiast
+							<p
+								className={clsx(
+									isFetching ? 'skeleton-shimmer' : '',
+									'dark:text-[#F0F0F5] font-inter w-full min-h-7 rounded-xl',
+								)}
+							>
+								{userInfo && !isFetching ? userInfo.about : ''}
+								{!userInfo?.about && !isFetching && '...'}
 							</p>
 						</div>
 					</div>
@@ -97,12 +120,17 @@ export default function UserInfo({
 							<div className='w-full p-4 border-b dark:border-black border-gray-600/30'>
 								<div className='flex justify-start gap-4 items-center'>
 									<Mail size={15} />
-									<div>
+									<div
+										className={clsx(
+											isFetching ? 'skeleton-shimmer' : '',
+											'w-full min-h-10 rounded-xl',
+										)}
+									>
 										<p className='text-[10px] text-[#6B6B80] font-inter font-medium'>
-											Email
+											{isFetching ? '' : 'Email'}
 										</p>
 										<p className='text-sm dark:text-[#F0F0F5] text-black font-inter'>
-											alex.rivera@pulse.app
+											{userInfo && !isFetching ? '@' + data?.user?.email : ''}
 										</p>
 									</div>
 								</div>
@@ -110,12 +138,17 @@ export default function UserInfo({
 							<div className='w-full px-4 pb-4 border-b dark:border-black border-gray-600/30'>
 								<div className='flex justify-start gap-4 items-center '>
 									<UserRound size={15} />
-									<div>
+									<div
+										className={clsx(
+											isFetching ? 'skeleton-shimmer' : '',
+											'w-full min-h-10 rounded-xl',
+										)}
+									>
 										<p className='text-[10px] text-[#6B6B80] font-inter font-medium'>
-											Username
+											{isFetching ? '' : 'User ID'}
 										</p>
 										<p className='text-sm dark:text-[#F0F0F5] text-black font-inter'>
-											@alexrivera
+											{userInfo && !isFetching ? '@' + userInfo.userPubId : ''}
 										</p>
 									</div>
 								</div>
