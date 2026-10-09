@@ -45,7 +45,7 @@ export default function SettingsEditProfile() {
 		reset(
 			{
 			status: userInfo.status,
-			userId: userInfo.userPubId,
+			userId: '@' + userInfo.userPubId,
 			name: userInfo.name,
 			bio: userInfo.about ?? '',
 			email: session?.user.email ?? '',

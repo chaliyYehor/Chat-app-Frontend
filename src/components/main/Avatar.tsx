@@ -1,15 +1,24 @@
+import { User } from 'lucide-react'
+
 interface AvatarProps {
 	lightColor?: string
+	state: 'online' | 'away' | 'offline'
 }
 
-export default function Avatar({ lightColor }: AvatarProps) {
+export default function Avatar({ lightColor, state }: AvatarProps) {
+	const colors = {
+		online: { text: '#00D4AA', bg: '#00D4AA' },
+		away: { text: '#F59E0B', bg: '#F59E0B' },
+		offline: { text: '#6B6B80', bg: '#6B6B80' },
+	}
 	return (
 		<div
 			className={`w-15 h-15 rounded-[50%] dark:text-white flex justify-center items-center border-2 border-gray-700 relative shrink-0 ${'text-' + lightColor}`.trim()}
 		>
-			PFP
+			<User />
 			<div
-				className='w-3 h-3 bg-green-500 border dark:border-white border-black rounded-[50%] absolute right-0 top-[68%]'
+				style={{ backgroundColor: colors[state].bg }}
+				className='w-3 h-3 border dark:border-white border-black rounded-[50%] absolute right-0 top-[68%]'
 				aria-label='Online'
 			/>
 		</div>
