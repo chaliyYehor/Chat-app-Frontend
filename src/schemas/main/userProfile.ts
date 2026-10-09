@@ -6,6 +6,7 @@ export const userProfileSchema = z.object({
 	about: z.string().nullable(),
 	userPubId: z.string(),
 	name: z.string(),
+	theme: z.enum(['light', 'dark']),
 	status: z.enum(['online', 'away', 'offline']),
 	lastSeen: z.coerce.date(),
 	createdAt: z.coerce.date(),

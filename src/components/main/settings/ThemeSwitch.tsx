@@ -2,19 +2,27 @@ import { ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import type { AppDispatch, RootType } from '../../../store/store'
 import { setTheme } from '../../../store/slices/themeSlice'
+import { useSetTheme } from '../../../hooks/useSetTheme'
 
 export default function ThemeSwitch() {
 	const theme = useSelector((state: RootType) => state.theme.mode)
 	const dispatch = useDispatch<AppDispatch>()
+	const { mutateAsync: switchTheme, isPending } = useSetTheme()
 
 	return (
 		<ToggleButtonGroup
 			aria-label='Theme'
 			exclusive
 			value={theme}
-			onChange={(_, value) => {
+			disabled={isPending}
+			onChange={async (_, value) => {
 				if (value !== null) {
-					dispatch(setTheme(value))
+					try {
+						await switchTheme({theme: value})
+						dispatch(setTheme(value))
+					} catch (error) {
+						console.error('couldn`t change theme settings')
+					}
 				}
 			}}
 			sx={{
@@ -37,7 +45,8 @@ export default function ThemeSwitch() {
 					transition: '0.3s ease',
 				},
 				'& .Mui-selected': {
-					bgcolor: theme === 'dark' ? '#16161B !important' : '#FFFFFF !important',
+					bgcolor:
+						theme === 'dark' ? '#16161B !important' : '#FFFFFF !important',
 					color: theme === 'dark' ? '#F0F0F5 !important' : '#000000 !important',
 					borderRadius: '8px',
 				},

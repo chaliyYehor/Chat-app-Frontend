@@ -7,8 +7,8 @@ import SettingsDanger from './SettingsDanger'
 
 export default function SettingsSecurity() {
 	return (
-		<div className='chatListContainer h-full w-full min-w-0 dark:bg-[#16161b] bg-white'>
-			<div className='upper mb-10 flex flex-col mt-5 gap-2'>
+		<div className='chats chatListContainer h-full w-full min-w-0 dark:bg-[#16161b] bg-white'>
+			<div className='mb-10 flex flex-col mt-5 gap-2'>
 				<Link
 					to='/settings'
 					className='text-[#6B6B80] w-fit hover:text-black dark:hover:text-white transition-all duration-200 ease-in-out flex justify-center items-center font-inter text-[20px]	gap-2 pl-4'
