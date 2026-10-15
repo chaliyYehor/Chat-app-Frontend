@@ -2,18 +2,36 @@ import { Check, Clock2 } from 'lucide-react'
 import SettingsSwitch from './SettingsSwitch'
 import { useSelector } from 'react-redux'
 import type { RootType } from '../../../store/store'
+import { useGetUserPreferences } from '../../../hooks/useGetUserPreferences'
+import { useChangeLastSeen } from '../../../hooks/useChangeLastSeen'
+import { useChangeReadReceipts } from '../../../hooks/useChangeReadReceipts'
 
 export default function SettingsPrivacy() {
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 
+	const { data: preferences, isPending } = useGetUserPreferences()
+	const {mutateAsync: changeLastSeen, isPending: isChangeLastSeenPending} = useChangeLastSeen()
+	const {mutateAsync: changeReadReceipts, isPending: isChangeReadReceiptsPending} = useChangeReadReceipts()
+	if (isPending) {
+		return <div>Loading...</div>
+	}
+
 	const items = [
 		{
 			icon: Check,
-			label: 'Read Receipts',
+			label: 'readReceipts',
+			displayLabel: 'Read Receipts',
+			ifChecked: preferences?.readReceipts ?? false,
+			onChange: changeReadReceipts,
+			isPending: isChangeReadReceiptsPending,
 		},
 		{
 			icon: Clock2,
-			label: 'Last Seen',
+			label: 'lastSeen',
+			displayLabel: 'Last Seen',
+			ifChecked: preferences?.lastSeen ?? false,
+			onChange: changeLastSeen,
+			isPending: isChangeLastSeenPending,
 		},
 	]
 	return (
@@ -35,11 +53,16 @@ export default function SettingsPrivacy() {
 						<div className='flex-1 flex items-center gap-1'>
 							<item.icon size={18} color='#6B6B80' />
 							<span className='dark:text-white ml-2 font-medium font-inter'>
-								{item.label}
+								{item.displayLabel}
 							</span>
 						</div>
 						<div className='self-end'>
-							<SettingsSwitch label={item.label} />
+							<SettingsSwitch
+								ifChecked={item.ifChecked}
+								onChange={item.onChange}
+								label={item.label as "typingSounds" | "messageSounds" | "lastSeen" | "readReceipts"}
+								isPending={item.isPending}
+							/>
 						</div>
 					</div>
 				))}

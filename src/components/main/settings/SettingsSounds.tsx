@@ -2,18 +2,36 @@ import { MessageCircleMore, Volume2 } from 'lucide-react'
 import SettingsSwitch from './SettingsSwitch'
 import { useSelector } from 'react-redux'
 import type { RootType } from '../../../store/store'
+import { useGetUserPreferences } from '../../../hooks/useGetUserPreferences'
+import { useChangeTypingSound } from '../../../hooks/useChangeTypingSound'
+import { useChangeMessageSounds } from '../../../hooks/useChangeMessageSounds'
 
 export default function SettingsSounds() {
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 
+	const { data: preferences, isPending } = useGetUserPreferences()
+	const {mutateAsync: changeTypingSound, isPending: isChangeTypingSoundPending} = useChangeTypingSound()
+	const {mutateAsync: changeMessageSound, isPending: isChangeMessageSoundPending} = useChangeMessageSounds()
+	if (isPending) {
+		return <div>Loading...</div>
+	}
+
 	const items = [
 		{
 			icon: MessageCircleMore,
-			label: 'Typing Sound',
+			label: 'typingSounds',
+			displayLabel: 'Typing Sound',
+			ifChecked: preferences?.typingSounds ?? true,
+			onChange: changeTypingSound,
+			isPending: isChangeTypingSoundPending,
 		},
 		{
 			icon: Volume2,
-			label: 'Message Sound',
+			label: 'messageSounds',
+			displayLabel: 'Message Sound',
+			ifChecked: preferences?.messageSounds ?? true,
+			onChange: changeMessageSound,
+			isPending: isChangeMessageSoundPending,
 		},
 	]
 	return (
@@ -35,11 +53,16 @@ export default function SettingsSounds() {
 						<div className='flex-1 flex items-center gap-1'>
 							<item.icon size={18} color='#6B6B80' />
 							<span className='dark:text-white ml-2 font-medium font-inter'>
-								{item.label}
+								{item.displayLabel}
 							</span>
 						</div>
 						<div className='self-end'>
-							<SettingsSwitch label={item.label} />
+							<SettingsSwitch
+								ifChecked={item.ifChecked}
+								onChange={item.onChange}
+								label={item.label as "typingSounds" | "messageSounds" | "lastSeen" | "readReceipts"}
+								isPending={item.isPending}
+							/>
 						</div>
 					</div>
 				))}
