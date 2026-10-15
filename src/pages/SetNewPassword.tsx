@@ -4,8 +4,6 @@ import { Lock } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import BackToSignUp from '../components/BackToSignUp'
-
 import FormTextField from '../components/form/components/FormTextField'
 import Label from '../components/form/components/Label'
 import { authClient } from '../lib/auth-client'
@@ -17,6 +15,8 @@ import {
 
 export function SetNewPassword() {
 	const [globalError, setGlobalError] = useState('')
+
+	const [isSend, setIsSend] = useState(false)
 
 	const { data, isPending: isSessionPending } = authClient.useSession()
 
@@ -50,13 +50,15 @@ export function SetNewPassword() {
 
 		const { error } = await authClient.requestPasswordReset({
 			email,
-			redirectTo: `${window.location.origin}/reset-password`,
+			redirectTo: `${window.location.origin}/resetPassword`,
 		})
 
 		if (error) {
 			setGlobalError(error.message!)
 			return
 		}
+
+		setIsSend(true)
 	}
 
 	const { data: session, isPending } = authClient.useSession()
@@ -140,7 +142,7 @@ export function SetNewPassword() {
 					>
 						<span aria-hidden='true'>&#8592;</span>&nbsp;Back
 					</button>
-
+					{isSend && <p className='text-green-500 text-md flex justify-center items-center'>Check your email for the reset link.</p>}
 					<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center'>
 						{globalError || '\u00A0'}
 					</p>

@@ -6,12 +6,13 @@ import SettingsActSess from './SettingsActSess'
 import SettingsDanger from './SettingsDanger'
 import { authClient } from '../../../lib/auth-client'
 import { useEffect, useState } from 'react'
+import SettingsSetNewPassword from './SettingsSetNewPassword'
 
 export default function SettingsSecurity() {
 	const [hasPassword, setHasPassword] = useState<boolean | null>(
     null,
   );
-
+	const { isPending } = authClient.useSession()
   useEffect(() => {
     async function checkPassword() {
       const { data: accounts, error } =
@@ -47,7 +48,8 @@ export default function SettingsSecurity() {
 			<div className='flex flex-col gap-4'>
 				<div className='flex flex-col md:w-full w-[80%]'>
 					<SettingsLabel label={'Authentication'} />
-					{hasPassword && <SettingsChangePassword />}
+					{isPending && <div className='h-14 w-[90%] ml-5 rounded-2xl skeleton-shimmer' />}
+					{hasPassword ? <SettingsChangePassword /> : <SettingsSetNewPassword />}
 				</div>
 
 				<div className='flex flex-col md:w-full w-[80%]'>
