@@ -28,6 +28,7 @@ import { useSelector } from 'react-redux'
 import type { RootType } from './store/store'
 import { useEffect } from 'react'
 import { useIsMobile } from './hooks/useIsMobile'
+import { SetNewPassword } from './pages/SetNewPassword'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -142,6 +143,7 @@ function App() {
 					}
 				/>
 				<Route path='/forgotPassword' element={<ForgotPassword />} />
+				<Route path='/setNewPassword' element={<SetNewPassword />} />
 				<Route path='/resetPassword' element={<ResetPassword />} />
 				<Route path='/verify' element={<Verify />} />
 				<Route path='*' element={<NotFound />} />
