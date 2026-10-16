@@ -2,6 +2,7 @@ import { SquarePen } from 'lucide-react'
 import UIArrowRight from './UIArrowRight'
 import type { RootType } from '../../../store/store'
 import { useSelector } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 export default function SettingsChangePassword() {
 	const items = [
@@ -16,7 +17,8 @@ export default function SettingsChangePassword() {
 		<>
 			<div className='outline mx-4 mb-4 dark:outline-white/7 outline-black/10  rounded-2xl flex flex-col overflow-hidden'>
 				{items.map((item, index) => (
-					<button
+					<Link
+						to='/settings/changePassword'
 						key={index}
 						style={{
 							borderBottom:
@@ -39,7 +41,7 @@ export default function SettingsChangePassword() {
 							</div>
 						</div>
 						<UIArrowRight />
-					</button>
+					</Link>
 				))}
 			</div>
 		</>
