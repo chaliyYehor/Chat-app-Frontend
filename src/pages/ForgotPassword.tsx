@@ -16,6 +16,7 @@ import {
 
 export default function ForgotPassword() {
 	const [globalError, setGlobalError] = useState('')
+	const [isSend, setIsSend] = useState(false)
 
 	const {
 		control,
@@ -40,6 +41,8 @@ export default function ForgotPassword() {
 			setGlobalError(error.message!)
 			return
 		}
+
+		setIsSend(true)
 	}
 
 	const { data: session, isPending } = authClient.useSession()
@@ -87,7 +90,7 @@ export default function ForgotPassword() {
 					<Button
 						type='submit'
 						variant='contained'
-						disabled={isSubmitting}
+						disabled={isSubmitting || isSend}
 						sx={{
 							width: '100%',
 							borderRadius: '10px',
@@ -119,6 +122,11 @@ export default function ForgotPassword() {
 
 					<BackToSignUp />
 
+					{isSend && (
+						<p className='text-green-500 text-md flex justify-center items-center'>
+							Check your email for the reset link.
+						</p>
+					)}
 					<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center'>
 						{globalError || '\u00A0'}
 					</p>

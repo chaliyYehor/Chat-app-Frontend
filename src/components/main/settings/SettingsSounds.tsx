@@ -13,7 +13,9 @@ export default function SettingsSounds() {
 	const {mutateAsync: changeTypingSound, isPending: isChangeTypingSoundPending} = useChangeTypingSound()
 	const {mutateAsync: changeMessageSound, isPending: isChangeMessageSoundPending} = useChangeMessageSounds()
 	if (isPending) {
-		return <div>Loading...</div>
+		return <div className='w-full h-125 flex justify-center items-center'>
+			<div className='loader'  />
+		</div>
 	}
 
 	const items = [

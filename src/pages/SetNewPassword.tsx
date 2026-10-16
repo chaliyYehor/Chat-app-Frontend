@@ -106,7 +106,7 @@ export function SetNewPassword() {
 					<Button
 						type='submit'
 						variant='contained'
-						disabled={isSubmitting}
+						disabled={isSubmitting || isSend}
 						sx={{
 							width: '100%',
 							borderRadius: '10px',

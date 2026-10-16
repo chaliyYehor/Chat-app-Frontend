@@ -10,10 +10,18 @@ export default function SettingsPrivacy() {
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 
 	const { data: preferences, isPending } = useGetUserPreferences()
-	const {mutateAsync: changeLastSeen, isPending: isChangeLastSeenPending} = useChangeLastSeen()
-	const {mutateAsync: changeReadReceipts, isPending: isChangeReadReceiptsPending} = useChangeReadReceipts()
+	const { mutateAsync: changeLastSeen, isPending: isChangeLastSeenPending } =
+		useChangeLastSeen()
+	const {
+		mutateAsync: changeReadReceipts,
+		isPending: isChangeReadReceiptsPending,
+	} = useChangeReadReceipts()
 	if (isPending) {
-		return <div>Loading...</div>
+		return (
+			<div className='w-full h-125 flex justify-center items-center'>
+				<div className='loader' />
+			</div>
+		)
 	}
 
 	const items = [
@@ -45,8 +53,8 @@ export default function SettingsPrivacy() {
 								index !== items.length - 1 && appTheme === 'dark'
 									? '1px solid rgba(255, 255, 255, 0.07)'
 									: index !== items.length - 1
-									? '1px solid rgba(0, 0, 0, 0.07)'
-									: 'none',
+										? '1px solid rgba(0, 0, 0, 0.07)'
+										: 'none',
 						}}
 						className='flex border-b items-center border-white/7 w-full h-full p-4'
 					>
@@ -60,7 +68,13 @@ export default function SettingsPrivacy() {
 							<SettingsSwitch
 								ifChecked={item.ifChecked}
 								onChange={item.onChange}
-								label={item.label as "typingSounds" | "messageSounds" | "lastSeen" | "readReceipts"}
+								label={
+									item.label as
+										| 'typingSounds'
+										| 'messageSounds'
+										| 'lastSeen'
+										| 'readReceipts'
+								}
 								isPending={item.isPending}
 							/>
 						</div>
