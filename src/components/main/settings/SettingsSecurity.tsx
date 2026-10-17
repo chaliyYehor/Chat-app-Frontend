@@ -31,7 +31,6 @@ export default function SettingsSecurity() {
 
     void checkPassword();
   }, []);
-	
 	return (
 		<div className='chats chatListContainer h-full w-full min-w-0 dark:bg-[#16161b] bg-white'>
 			<div className='mb-10 flex flex-col mt-5 gap-2'>
