@@ -2,7 +2,8 @@ import z from 'zod'
 
 export const userProfileSchema = z.object({
 	userId: z.string(),
-	profilePicture: z.string().nullable(),
+	imageUrl: z.string().nullable(),
+	imagePubId: z.string().nullable(),
 	about: z.string().nullable(),
 	userPubId: z.string(),
 	name: z.string(),

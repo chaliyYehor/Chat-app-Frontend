@@ -19,7 +19,7 @@ export default function SettingsProfile() {
 				{isPending ? (
 					<div className='w-15 h-15 rounded-[50%] bg-gray-300 dark:bg-gray-600' />
 				) : (
-					<Avatar state={userInfo?.status || 'offline'} />
+					<Avatar imageUrl={userInfo?.imageUrl || undefined} state={userInfo?.status || 'offline'} />
 				)}
 				<div className='flex flex-col flex-1 min-w-0 gap-1'>
 					<div

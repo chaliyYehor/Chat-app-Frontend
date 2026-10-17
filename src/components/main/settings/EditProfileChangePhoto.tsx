@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import heic2any from 'heic2any'
-import { Camera, User } from 'lucide-react'
+import { Camera, Trash2, User } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useGetUserInfo } from '../../../hooks/useGetUserInfo'
@@ -24,12 +24,13 @@ export default function EditProfileChangePhoto() {
 	const [isImageLoading, setIsImageLoading] = useState(false)
 	const [imageLoadError, setImageLoadError] = useState(false)
 	const fileInputRef = useRef<HTMLInputElement>(null)
+	const selectedImageRef = useRef<File | undefined>(undefined)
 	const {
 		register,
 		setValue,
 		setError,
 		clearErrors,
-		formState: { errors },
+		formState: { errors, isSubmitSuccessful },
 	} = useFormContext<ChangeUserInfoInput, unknown, ChangeUserInfo>()
 
 	useEffect(() => {
@@ -89,6 +90,7 @@ export default function EditProfileChangePhoto() {
 
 		if (!file) {
 			setImage(undefined)
+			selectedImageRef.current = undefined
 			setValue('file', undefined, {
 				shouldValidate: true,
 				shouldDirty: true,
@@ -98,6 +100,7 @@ export default function EditProfileChangePhoto() {
 
 		if (!isImageFile(file)) {
 			setImage(undefined)
+			selectedImageRef.current = undefined
 			setValue('file', undefined, {
 				shouldValidate: false,
 				shouldDirty: true,
@@ -108,6 +111,7 @@ export default function EditProfileChangePhoto() {
 
 		if (file.size > MAX_FILE_SIZE) {
 			setImage(undefined)
+			selectedImageRef.current = undefined
 			setValue('file', undefined, {
 				shouldValidate: false,
 				shouldDirty: true,
@@ -117,11 +121,40 @@ export default function EditProfileChangePhoto() {
 		}
 
 		setImage(file)
+		selectedImageRef.current = file
 		fileInput.onChange(event)
 	}
 
+	const handleRemoveSelectedImage = () => {
+		setImage(undefined)
+		selectedImageRef.current = undefined
+		setPreviewError(undefined)
+		clearErrors('file')
+		setValue('file', undefined, {
+			shouldValidate: true,
+			shouldDirty: false,
+		})
+
+		if (fileInputRef.current) {
+			fileInputRef.current.value = ''
+		}
+	}
+
+	useEffect(() => {
+		if (!isSubmitSuccessful || !selectedImageRef.current) return
+
+		setImage(undefined)
+		selectedImageRef.current = undefined
+		setPreviewError(undefined)
+		clearErrors('file')
+
+		if (fileInputRef.current) {
+			fileInputRef.current.value = ''
+		}
+	}, [clearErrors, isSubmitSuccessful])
+
 	const { data: userInfo, isPending: isUserInfoLoading } = useGetUserInfo()
-	const imageSource = imagePreview ?? userInfo?.profilePicture ?? undefined
+	const imageSource = imagePreview ?? userInfo?.imageUrl ?? undefined
 	const isLoading = isUserInfoLoading || isPreviewLoading || isImageLoading
 
 	return (
@@ -138,44 +171,56 @@ export default function EditProfileChangePhoto() {
 				className='hidden'
 				id='profilePhotoInput'
 			/>
-			<label
-				htmlFor='profilePhotoInput'
-				className='relative block md:ml-0 ml-3 w-28 h-28 cursor-pointer rounded-3xl border dark:border-white/7'
-			>
-				{imageSource && !imageLoadError ? (
-					<>
-						{isLoading && (
-							<div className='skeleton-shimmer absolute inset-0 rounded-3xl' />
-						)}
-						<img
-							className={clsx(
-								'w-full h-full object-cover rounded-3xl',
-								isLoading && 'opacity-0',
+			<div className='relative md:ml-0 ml-3 w-28 h-28'>
+				<label
+					htmlFor='profilePhotoInput'
+					className='relative block h-full w-full cursor-pointer rounded-3xl border dark:border-white/7'
+				>
+					{imageSource && !imageLoadError ? (
+						<>
+							{isLoading && (
+								<div className='skeleton-shimmer absolute inset-0 rounded-3xl' />
 							)}
-							src={imageSource}
-							alt='Profile preview'
-							onLoad={() => setIsImageLoading(false)}
-							onLoadStart={() => setIsImageLoading(true)}
-							onError={() => {
-								setIsImageLoading(false)
-								setImageLoadError(true)
-							}}
-						/>
-					</>
-				) : (
-					<div
-						className={clsx(
-							'w-full h-full flex items-center justify-center',
-							isLoading && 'skeleton-shimmer',
-						)}
-					>
-						<User size={34} />
+							<img
+								className={clsx(
+									'w-full h-full object-cover rounded-3xl',
+									isLoading && 'opacity-0',
+								)}
+								src={imageSource}
+								alt='Profile preview'
+								onLoad={() => setIsImageLoading(false)}
+								onLoadStart={() => setIsImageLoading(true)}
+								onError={() => {
+									setIsImageLoading(false)
+									setImageLoadError(true)
+								}}
+							/>
+						</>
+					) : (
+						<div
+							className={clsx(
+								'w-full h-full flex items-center justify-center',
+								isLoading && 'skeleton-shimmer',
+							)}
+						>
+							<User size={34} />
+						</div>
+					)}
+					<div className='cameraUI absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center shadow-lg'>
+						<Camera color='white' size={16} />
 					</div>
+				</label>
+				{image && (
+					<button
+						type='button'
+						aria-label='Remove selected photo'
+						onClick={handleRemoveSelectedImage}
+						className='absolute -top-2 -right-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-red-500 text-white shadow-md transition-colors hover:bg-red-600'
+					>
+						<Trash2 size={15} />
+					</button>
 				)}
-				<div className='cameraUI absolute -bottom-1 -right-1 w-8 h-8 rounded-full flex items-center justify-center shadow-lg'>
-					<Camera color='white' size={16} />
-				</div>
-			</label>
+			</div>
 			<p className='text-[#6B6B80] text-sm mt-3 font-inter font-normal'>
 				Tap to change photo
 			</p>

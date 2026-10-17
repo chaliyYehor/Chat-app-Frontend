@@ -63,10 +63,10 @@ export default function UserInfo({
 					</div>
 					<div className=' flex flex-col items-start -mt-10 ml-5 mb-5'>
 						<div className='w-20 h-20  dark:bg-[#16161B] bg-white text-white font-bold font-mono text-xl flex justify-center items-center rounded-2xl shadow-lg border dark:border-[#0D0D0D] relative'>
-							{userInfo && !isFetching && userInfo.profilePicture ? (
+							{userInfo && !isFetching && userInfo.imageUrl ? (
 								<img
 									className='w-full h-full object-cover rounded-2xl p-1'
-									src={userInfo.profilePicture}
+									src={userInfo.imageUrl}
 									alt='pfp'
 								/>
 							) : (
