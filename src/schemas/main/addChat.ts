@@ -10,7 +10,8 @@ export const chatResponseSchema = z.object({
 	userId: z.string(),
 	name: z.string(),
 	imageUrl: z.string().nullable(),
-	status: z.enum(['online', 'away', 'offline']),
+	status: z.enum(['online', 'offline']),
+	previouslySetStatus: z.enum(['online', 'away', 'offline']),
 })
 
 export const addChatResponseSchema = z.array(chatResponseSchema)

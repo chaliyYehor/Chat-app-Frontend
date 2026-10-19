@@ -12,6 +12,7 @@ import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import type { RootType } from '../../../../store/store'
 import { useGetUserInfo } from '../../../../hooks/useGetUserInfo'
+import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
 
 export function Chat() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
@@ -42,7 +43,12 @@ export function Chat() {
 						className='cursor-pointer hover:outline-2 hover:outline-[#7C5CFC] transition-all duration-200 ease-in-out rounded-full'
 						aria-label='Open profile'
 					>
-						<Avatar state={userInfo?.status || 'offline'} />
+						<Avatar
+							state={getDisplayedStatus(
+								userInfo?.status,
+								userInfo?.previouslySetStatus,
+							)}
+						/>
 					</button>
 					<div className='w-[70%]'>
 						<p className='font-semibold font-inter text-md truncate dark:text-white'>

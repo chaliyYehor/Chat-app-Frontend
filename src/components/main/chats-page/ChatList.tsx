@@ -18,7 +18,7 @@ export default function ChatList() {
 
 	const { control, handleSubmit } = useFormContext<ChatSearchType>()
 
-	const chats = true // Replace with actual logic to determine if there are chats
+	const chats = false // Replace with actual logic to determine if there are chats
 
 	const onSubmit: SubmitHandler<ChatSearchType> = data => {
 		console.log(data)
@@ -64,22 +64,14 @@ export default function ChatList() {
 					<section className='px-4 font-semibold text-sm mb-5'>
 						<h3 className='text-[#6B6B80] font-inter mb-3'>PINNED</h3>
 						<div className='flex flex-col gap-4'>
-							{renderChatPreview('pinned-1')}
-							{renderChatPreview('pinned-2')}
-							{renderChatPreview('pinned-3')}
-							{renderChatPreview('pinned-4')}
-							{renderChatPreview('pinned-5')}
+							// Render pinned chats here
 						</div>
 						<hr className='text-gray-500/50 mt-3' />
 					</section>
 					<section className='px-4 font-semibold text-sm'>
 						<h3 className='text-[#6B6B80] font-inter mb-3'>ALL MESSAGES</h3>
 						<div className='flex flex-col gap-4'>
-							{renderChatPreview('all-1')}
-							{renderChatPreview('all-2')}
-							{renderChatPreview('all-3')}
-							{renderChatPreview('all-4')}
-							{renderChatPreview('all-5')}
+							// Render all chats here
 						</div>
 					</section>
 				</>

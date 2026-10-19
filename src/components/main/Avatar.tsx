@@ -27,7 +27,7 @@ export default function Avatar({ lightColor, state, imageUrl }: AvatarProps) {
 			)}
 			<div
 				style={{ backgroundColor: colors[state].bg }}
-				className='w-3 h-3 border dark:border-white border-black rounded-[50%] absolute right-0 top-[68%]'
+				className='w-3 capitalize h-3 border dark:border-white border-black rounded-[50%] absolute right-0 top-[68%]'
 				aria-label='Online'
 			/>
 		</div>

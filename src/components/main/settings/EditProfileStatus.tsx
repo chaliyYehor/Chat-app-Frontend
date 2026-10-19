@@ -13,7 +13,7 @@ const statuses = [
 	{ value: 'offline', label: 'Appear Offline', color: 'bg-gray-500' },
 ]
 
-type ProfileStatus = NonNullable<ChangeUserInfo['status']>
+type ProfileStatus = NonNullable<ChangeUserInfo['previouslySetStatus']>
 
 export default function EditProfileStatus() {
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
@@ -21,7 +21,7 @@ export default function EditProfileStatus() {
 	const { control } = useFormContext<ChangeUserInfoInput>()
 
 	const { field } = useController({
-		name: 'status',
+		name: 'previouslySetStatus',
 		control,
 	})
 

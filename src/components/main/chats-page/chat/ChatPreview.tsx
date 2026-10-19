@@ -4,6 +4,7 @@ import Avatar from '../../Avatar'
 import ChatRightClick from './ChatRightClick'
 import MessagesIndicator from './MessagesIndicator'
 import { useGetUserInfo } from '../../../../hooks/useGetUserInfo'
+import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
 
 export interface ChatMenuPosition {
 	x: number
@@ -71,7 +72,12 @@ export default function ChatPreview({
 			{menuPosition && (
 				<ChatRightClick position={menuPosition} onClose={onCloseMenu} />
 			)}
-			<Avatar state={userInfo?.status || 'offline'} />
+			<Avatar
+				state={getDisplayedStatus(
+					userInfo?.status,
+					userInfo?.previouslySetStatus,
+				)}
+			/>
 			<div className='flex-1 min-w-0 flex flex-col dark:text-white'>
 				<p className='truncate max-w-[60%] font-semibold'>Sofia Chen</p>
 				<p className='truncate max-w-[80%] text-sm'>

@@ -11,9 +11,15 @@ import SettingsSectionBtn from '../components/main/SettingsSectionBtn'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { authClient } from '../lib/auth-client'
 import { useGetUserInfo } from '../hooks/useGetUserInfo'
-import { useDispatch } from 'react-redux'
-import type { AppDispatch } from '../store/store'
+import { useDispatch, useSelector } from 'react-redux'
+import type { AppDispatch, RootType } from '../store/store'
 import { setTheme } from '../store/slices/themeSlice'
+import { socket } from '../socket'
+import {
+	setGlobalSocketError,
+	setIsSocketConnected,
+} from '../store/slices/socketSlice'
+import { useQueryClient } from '@tanstack/react-query'
 gsap.registerPlugin(useGSAP)
 
 export default function Home() {
@@ -31,14 +37,66 @@ export default function Home() {
 		}
 	}, [isPending, session, navigate])
 
-	const {data: userInfo} = useGetUserInfo()
+	const { data: userInfo } = useGetUserInfo()
+
+	const isConnected = useSelector(
+		(state: RootType) => state.socketState.isSocketConnected,
+	)
+	const globalSocketError = useSelector(
+		(state: RootType) => state.socketState.globalSocketError,
+	)
 	const dispatch = useDispatch<AppDispatch>()
 
 	useEffect(() => {
-		if(isPending || !userInfo) return
+		if (isPending || !userInfo) return
 
 		dispatch(setTheme(userInfo.theme))
 	}, [userInfo, isPending])
+
+	const queryClient = useQueryClient()
+	useEffect(() => {
+		if (isPending || !session) return
+
+		const handleConnect = () => {
+			dispatch(setIsSocketConnected(true))
+			dispatch(setGlobalSocketError(null))
+
+			queryClient.invalidateQueries({
+				queryKey: ['userInfo'],
+			})
+		}
+
+		const handleConnectError = (error: Error) => {
+			dispatch(setIsSocketConnected(false))
+			if (error.message === 'Too Many Requests') {
+				dispatch(setGlobalSocketError('Too many requests'))
+			} else if (error.message === 'Forbidden') {
+				dispatch(setGlobalSocketError('Connection forbidden'))
+			} else {
+				dispatch(setGlobalSocketError('Unable to connect to server'))
+			}
+		}
+
+		const handleDisconnect = () => {
+			dispatch(setIsSocketConnected(false))
+			dispatch(setGlobalSocketError(null))
+		}
+
+		socket.on('connect', handleConnect)
+		socket.on('disconnect', handleDisconnect)
+		socket.on('connect_error', handleConnectError)
+		socket.connect()
+
+		return () => {
+			socket.off('connect', handleConnect)
+			socket.off('disconnect', handleDisconnect)
+			socket.off('connect_error', handleConnectError)
+			socket.disconnect()
+		}
+	}, [dispatch, isPending, session])
+
+	console.log('isConnected:', isConnected)
+	console.log('globalSocketError:', globalSocketError)
 
 	if (isPending) {
 		return (

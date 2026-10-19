@@ -5,6 +5,7 @@ import UIArrowRight from './UIArrowRight'
 import { useGetUserInfo } from '../../../hooks/useGetUserInfo'
 import clsx from 'clsx'
 import { authClient } from '../../../lib/auth-client'
+import { getDisplayedStatus } from '../../../lib/getDisplayedStatus'
 
 export default function SettingsProfile() {
 	const { data: userInfo, isPending } = useGetUserInfo()
@@ -19,7 +20,13 @@ export default function SettingsProfile() {
 				{isPending ? (
 					<div className='w-15 h-15 rounded-[50%] bg-gray-300 dark:bg-gray-600' />
 				) : (
-					<Avatar imageUrl={userInfo?.imageUrl || undefined} state={userInfo?.status || 'offline'} />
+					<Avatar
+						imageUrl={userInfo?.imageUrl || undefined}
+						state={getDisplayedStatus(
+							userInfo?.status,
+							userInfo?.previouslySetStatus,
+						)}
+					/>
 				)}
 				<div className='flex flex-col flex-1 min-w-0 gap-1'>
 					<div
@@ -42,7 +49,12 @@ export default function SettingsProfile() {
 							{session?.user.email || ''}
 						</p>
 					</div>
-					<Status status={userInfo?.status || 'offline'} />
+					<Status
+						status={getDisplayedStatus(
+							userInfo?.status,
+							userInfo?.previouslySetStatus,
+						)}
+					/>
 				</div>
 				<UIArrowRight />
 			</div>

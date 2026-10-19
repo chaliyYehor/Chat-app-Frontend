@@ -30,7 +30,7 @@ export default function SettingsEditProfile() {
 	const methods = useForm<ChangeUserInfoInput, unknown, ChangeUserInfo>({
 		resolver: zodResolver(changeUserInfoSchema),
 		defaultValues: {
-			status: 'online',
+			previouslySetStatus: 'online',
 			userId: '',
 			name: '',
 			bio: '',
@@ -49,7 +49,7 @@ export default function SettingsEditProfile() {
 
 		reset(
 			{
-				status: userInfo.status,
+				previouslySetStatus: userInfo.previouslySetStatus,
 				userId: '@' + userInfo.userPubId,
 				name: userInfo.name,
 				bio: userInfo.about ?? '',
@@ -62,10 +62,10 @@ export default function SettingsEditProfile() {
 
 	const onSubmit: SubmitHandler<ChangeUserInfo> =async data => {
 		setGlobalError('')
-		const { bio, email, file, name, status, userId } = data
+		const { bio, email, file, name, previouslySetStatus, userId } = data
 
 		const formData = new FormData()
-		formData.append('status', status ?? 'online')
+		formData.append('previouslySetStatus', previouslySetStatus ?? 'online')
 		formData.append('userId', userId ?? '')
 		formData.append('name', name ?? '')
 		formData.append('bio', bio ?? '')

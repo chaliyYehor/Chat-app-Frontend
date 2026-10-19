@@ -6,6 +6,7 @@ import VideoCallBtn from '../chat/VideoCallBtn'
 import { useSelector } from 'react-redux'
 import type { RootType } from '../../../../store/store'
 import { useGetUserInfo } from '../../../../hooks/useGetUserInfo'
+import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
 
 interface CallsPreviewProps {
 	isIncoming: boolean
@@ -60,7 +61,12 @@ export default function CallsPreview({
 			}}
 			className='chatPreview w-full h-17.5 flex justify-center items-center gap-3 dark:hover:bg-[#1e1e26] hover:bg-[#f0f0f4] rounded-lg transition-all duration-200 ease-in-out'
 		>
-			<Avatar state={userInfo?.status || 'offline'} />
+			<Avatar
+				state={getDisplayedStatus(
+					userInfo?.status,
+					userInfo?.previouslySetStatus,
+				)}
+			/>
 			<div className='flex-1 min-w-0 flex flex-col gap-1 items-start text-white'>
 				<p
 					style={{
