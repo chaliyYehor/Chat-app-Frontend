@@ -1,11 +1,13 @@
 import { useState } from 'react'
-import { useFormContext, type SubmitHandler } from 'react-hook-form'
+import { FormProvider, useForm, useFormContext, type SubmitHandler } from 'react-hook-form'
 import type { ChatSearch as ChatSearchType } from '../../../schemas/main/chatSearch'
 import AddChat from './AddChat'
 import AddChatBtn from './AddChatBtn'
 import { ChatSearch } from './ChatSearch'
 import NoConvosYet from './NoConvosYet'
 import ChatPreview, { type ChatMenuPosition } from './chat/ChatPreview'
+import { addChatSchema, type AddChatType } from '../../../schemas/main/addChat'
+import { zodResolver } from '@hookform/resolvers/zod/dist/zod.js'
 
 export default function ChatList() {
 	const [isAdding, setIsAdding] = useState(false)
@@ -34,6 +36,14 @@ export default function ChatList() {
 			/>
 		)
 	}
+
+	const addChatMethods = useForm<AddChatType>({
+		resolver: zodResolver(addChatSchema),
+		defaultValues: {
+			search: '',
+		},
+		mode: 'onSubmit',
+	})
 
 	return (
 		<div className='chatListContainer h-full w-full min-w-0 dark:bg-[#16161b] bg-white pb-15'>
@@ -74,7 +84,9 @@ export default function ChatList() {
 					</section>
 				</>
 			)}
-			{isAdding && <AddChat setIsAdding={setIsAdding} />}
+			<FormProvider {...addChatMethods}>
+				{isAdding && <AddChat setIsAdding={setIsAdding} />}
+			</FormProvider>
 		</div>
 	)
 }

@@ -1,23 +1,34 @@
 import { Button } from '@mui/material'
 import { X } from 'lucide-react'
 import { createPortal } from 'react-dom'
-import { useFormContext, type SubmitHandler } from 'react-hook-form'
-import type { ChatSearch as ChatSearchType } from '../../../schemas/main/chatSearch'
+import { useFormContext, useWatch, type SubmitHandler } from 'react-hook-form'
 import Person from './chat/Person'
 import { ChatSearch } from './ChatSearch'
 import type { RootType } from '../../../store/store'
 import { useSelector } from 'react-redux'
+import type { AddChatType } from '../../../schemas/main/addChat'
+import { useDebounce } from '../../../hooks/useDebounce'
+import { useAddChat } from '../../../hooks/useAddChat'
 
 export default function AddChat({
 	setIsAdding,
 }: {
 	setIsAdding: React.Dispatch<React.SetStateAction<boolean>>
 }) {
-	const { control, handleSubmit } = useFormContext<ChatSearchType>()
+	const { control, handleSubmit } = useFormContext<AddChatType>()
 
-	const onSubmit: SubmitHandler<ChatSearchType> = data => {
-		console.log(data)
-	}
+	const search = useWatch({
+		control,
+		name: 'search',
+	})
+
+	const debouncedSearch = useDebounce(search, 500)
+
+	const { data: people, isPending, isFetching } = useAddChat(debouncedSearch)
+
+	
+
+	const onSubmit: SubmitHandler<AddChatType> = data => {}
 
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 	return createPortal(
@@ -81,14 +92,17 @@ export default function AddChat({
 					>
 						<ChatSearch isChatSearch control={control} name='search' />
 					</form>
-					<div className='suggestedPeople p-2'>
-						<Person setIsAdding={setIsAdding} />
-						<Person setIsAdding={setIsAdding} />
-						<Person setIsAdding={setIsAdding} />
-						<Person setIsAdding={setIsAdding} />
-						<Person setIsAdding={setIsAdding} />
-						<Person setIsAdding={setIsAdding} />
-					</div>
+					{isPending && isFetching ? (
+						<div className='w-full h-full flex justify-center items-center'>
+							<div className='loader' />
+						</div>
+					) : (
+						<div className='suggestedPeople p-2'>
+							{people?.map(person => (
+								<Person key={person.userId} setIsAdding={setIsAdding} user={person} />
+							))}
+						</div>
+					)}
 				</div>
 			</div>
 		</div>,

@@ -83,16 +83,16 @@ export default function GroupInfo({
 					<div className='w-full px-5 text-[#6B6B80] mb-5 flex-1 overflow-y-auto scrollbar-none flex flex-col gap-2'>
 						<div className='bg-[#1E1E26] w-full flex flex-col justify-center items-center rounded-2xl '>
 							<div className='w-full px-4 py-2 border-b border-black flex justify-center items-center'>
-								<Person setIsAdding={setIsProfileOpened} isListItem />
+								{/* <Person setIsAdding={setIsProfileOpened} isListItem /> */}
 							</div>
 							<div className='w-full px-4 py-2 border-b border-black flex justify-center items-center'>
-								<Person setIsAdding={setIsProfileOpened} isListItem />
+								{/* <Person setIsAdding={setIsProfileOpened} isListItem /> */}
 							</div>
 							<div className='w-full px-4 py-2 border-b border-black flex justify-center items-center'>
-								<Person setIsAdding={setIsProfileOpened} isListItem />
+								{/* <Person setIsAdding={setIsProfileOpened} isListItem /> */}
 							</div>
 							<div className='w-full px-4 py-2 border-b border-black flex justify-center items-center'>
-								<Person setIsAdding={setIsProfileOpened} isListItem />
+								{/* <Person setIsAdding={setIsProfileOpened} isListItem /> */}
 							</div>
 						</div>
 					</div>
