@@ -1,6 +1,5 @@
 import { Button } from '@mui/material'
 import { X } from 'lucide-react'
-import Person from '../chat/Person'
 import GroupPfp from './GroupPfp'
 
 export default function GroupInfo({

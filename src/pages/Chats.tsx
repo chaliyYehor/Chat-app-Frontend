@@ -13,6 +13,7 @@ export default function Chats() {
 	const { isPending } = authClient.useSession()
 	const location = useLocation()
 	const currentLocation = location.pathname
+	const isChatDetailsRoute = /^\/chats\//.test(currentLocation)
 	const previousLocation =
 		typeof location.state?.from === 'string' ? location.state.from : undefined
 	const currentIndex = possiblePreviousLocations.indexOf(currentLocation)
@@ -27,10 +28,9 @@ export default function Chats() {
 				? -100
 				: 100
 			: -100
-
 	useGSAP(
 		() => {
-			if (isPending) return
+			if (isPending || isChatDetailsRoute) return
 
 			gsap.from('.chats', {
 				xPercent: isMobile ? animationXPercent : -100,
@@ -39,7 +39,13 @@ export default function Chats() {
 			})
 		},
 		{
-			dependencies: [isPending, isMobile, currentLocation, previousLocation],
+			dependencies: [
+				isPending,
+				isMobile,
+				currentLocation,
+				previousLocation,
+				isChatDetailsRoute,
+			],
 			revertOnUpdate: true,
 		},
 	)

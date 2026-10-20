@@ -64,6 +64,10 @@ export default function Home() {
 			queryClient.invalidateQueries({
 				queryKey: ['userInfo'],
 			})
+
+			queryClient.invalidateQueries({
+				queryKey: ['chats'],
+			})
 		}
 
 		const handleConnectError = (error: Error) => {
@@ -82,15 +86,33 @@ export default function Home() {
 			dispatch(setGlobalSocketError(null))
 		}
 
+		const handleChatAdded = () => {
+			queryClient.invalidateQueries({
+				queryKey: ['chats'],
+			})
+		}
+
+		const handleChatDeleted = () => {
+			queryClient.invalidateQueries({
+				queryKey: ['chats'],
+			})
+		}
+
 		socket.on('connect', handleConnect)
 		socket.on('disconnect', handleDisconnect)
 		socket.on('connect_error', handleConnectError)
+
+		socket.on('chat:added', handleChatAdded)
+		socket.on('chat:deleted', handleChatDeleted)
+
 		socket.connect()
 
 		return () => {
 			socket.off('connect', handleConnect)
 			socket.off('disconnect', handleDisconnect)
 			socket.off('connect_error', handleConnectError)
+			socket.off('chat:added', handleChatAdded)
+			socket.off('chat:deleted', handleChatDeleted)
 			socket.disconnect()
 		}
 	}, [dispatch, isPending, session])

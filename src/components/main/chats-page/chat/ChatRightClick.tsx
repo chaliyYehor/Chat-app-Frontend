@@ -3,23 +3,91 @@ import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { useSelector } from 'react-redux'
 import type { RootType } from '../../../../store/store'
+import { useQueryClient } from '@tanstack/react-query'
+import { socket } from '../../../../socket'
 
 interface ChatRightClickProps {
 	position: { x: number; y: number }
 	onClose: () => void
 	isGroup?: boolean
+	chatId: string
+	setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+	isPinned: boolean
 }
 
 export default function ChatRightClick({
 	position,
 	onClose,
 	isGroup,
+	isPinned,
+	setIsLoading,
+	chatId,
 }: ChatRightClickProps) {
 	const menuRef = useRef<HTMLDivElement>(null)
 
+	const queryClient = useQueryClient()
+
+	const pinChat = () => {
+		setIsLoading(true)
+		socket.emit(
+			'chat:pin-chat',
+			{ conversationId: chatId, value: isPinned ? false : true },
+			async ({ success, error }: { success: boolean; error?: string }) => {
+				if (success) {
+					console.log(
+						isPinned
+							? 'Chat unpinned successfully'
+							: 'Chat pinned successfully',
+					)
+
+					await queryClient.invalidateQueries({
+						queryKey: ['chats'],
+					})
+					setIsLoading(false)
+				}
+				if (error) {
+					console.error('Error updating chat pin:', error)
+					setIsLoading(false)
+				}
+			},
+		)
+	}
+
+	const deleteChat = () => {
+		setIsLoading(true)
+		socket.emit(
+			'chat:delete-chat',
+			{ conversationId: chatId },
+			async ({ success, error }: { success: boolean; error?: string }) => {
+				if (success) {
+					console.log('Chat deleted successfully')
+
+					await queryClient.invalidateQueries({
+						queryKey: ['chats'],
+					})
+					setIsLoading(false)
+				}
+				if (error) {
+					console.error('Error deleting chat:', error)
+					setIsLoading(false)
+				}
+			},
+		)
+	}
+
 	const menuItems = [
-		{ icon: Pin, label: 'Pin', onClick: () => onClose() },
-		{ icon: Trash2, label: 'Delete', danger: true, onClick: () => onClose() },
+		{
+			icon: Pin,
+			label: isPinned ? 'Unpin' : 'Pin',
+			onClick: () => {
+				pinChat()
+				onClose()
+			},
+		},
+		{ icon: Trash2, label: 'Delete', danger: true, onClick: () => {
+			deleteChat()
+			onClose()
+		} },
 	]
 
 	const groupMenuItems = [

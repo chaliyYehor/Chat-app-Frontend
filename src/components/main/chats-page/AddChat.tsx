@@ -9,6 +9,10 @@ import { useSelector } from 'react-redux'
 import type { AddChatType } from '../../../schemas/main/addChat'
 import { useDebounce } from '../../../hooks/useDebounce'
 import { useAddChat } from '../../../hooks/useAddChat'
+import { socket } from '../../../socket'
+import { useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export default function AddChat({
 	setIsAdding,
@@ -16,6 +20,8 @@ export default function AddChat({
 	setIsAdding: React.Dispatch<React.SetStateAction<boolean>>
 }) {
 	const { control, handleSubmit } = useFormContext<AddChatType>()
+
+	const [isLoading, setIsLoading] = useState(false)
 
 	const search = useWatch({
 		control,
@@ -26,11 +32,14 @@ export default function AddChat({
 
 	const { data: people, isPending, isFetching } = useAddChat(debouncedSearch)
 
-	
-
-	const onSubmit: SubmitHandler<AddChatType> = data => {}
+	const onSubmit: SubmitHandler<AddChatType> = () => {}
 
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
+
+	const queryClient = useQueryClient()
+
+	const navigate = useNavigate()
+
 	return createPortal(
 		<div
 			onClick={() => {
@@ -99,7 +108,43 @@ export default function AddChat({
 					) : (
 						<div className='suggestedPeople p-2'>
 							{people?.map(person => (
-								<Person key={person.userId} setIsAdding={setIsAdding} user={person} />
+								<Person
+									key={person.userId}
+									isLoading={isLoading}
+									setIsAdding={() => {
+										setIsLoading(true)
+										socket.emit(
+											'chat:create-chat',
+											{ userId: person.userId },
+											async ({
+												success,
+												error,
+											}: {
+												success: boolean
+												error?: string
+											}) => {
+												if (success) {
+													console.log('Chat created successfully')
+													await queryClient.invalidateQueries({
+														queryKey: ['chats'],
+													})
+													setIsAdding(false)
+													setIsLoading(false)
+													navigate(`/chats/${person.name}`)
+												}
+												if (error) {
+													setIsLoading(false)
+													// add error handling logic here, e.g., display a notification to the user
+													if (error.includes('already exists')) {
+														setIsAdding(false)
+														navigate(`/chats/${person.name}`)
+													}
+												}
+											},
+										)
+									}}
+									user={person}
+								/>
 							))}
 						</div>
 					)}
