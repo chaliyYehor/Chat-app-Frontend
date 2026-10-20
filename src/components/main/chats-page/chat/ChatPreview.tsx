@@ -79,7 +79,7 @@ export default function ChatPreview({
 
 	return (
 		<Link
-			to={`/chats/${name}`}
+			to={`/chats/${chatId}`}
 			onContextMenu={handleContextMenu}
 			onPointerDown={handlePointerDown}
 			onPointerUp={cancelLongPress}

@@ -119,9 +119,11 @@ export default function AddChat({
 											async ({
 												success,
 												error,
+												conversationId,
 											}: {
 												success: boolean
 												error?: string
+												conversationId?: string
 											}) => {
 												if (success) {
 													console.log('Chat created successfully')
@@ -130,14 +132,14 @@ export default function AddChat({
 													})
 													setIsAdding(false)
 													setIsLoading(false)
-													navigate(`/chats/${person.name}`)
+													navigate(`/chats/${conversationId}`)
 												}
 												if (error) {
 													setIsLoading(false)
 													// add error handling logic here, e.g., display a notification to the user
 													if (error.includes('already exists')) {
 														setIsAdding(false)
-														navigate(`/chats/${person.name}`)
+														navigate(`/chats/${conversationId}`)
 													}
 												}
 											},
