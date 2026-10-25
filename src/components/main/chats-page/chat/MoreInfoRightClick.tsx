@@ -1,25 +1,82 @@
-import { Pin, Search, Trash2 } from 'lucide-react'
-import { useEffect, useRef } from 'react'
+import { Pin, Search, Trash2, type LucideIcon } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { RootType } from '../../../../store/store'
 import { useSelector } from 'react-redux'
+import { socket } from '../../../../socket'
+import { useQueryClient } from '@tanstack/react-query'
 
 interface MoreInfoRightClickProps {
 	position: { x: number; y: number }
 	onClose: () => void
 	isGroup?: boolean
+	chatId: string
+	isPinned: boolean
+}
+
+interface MenuItem {
+	icon: LucideIcon
+	label: string
+	onClick: () => void
+	danger?: boolean
+	isDisabled?: boolean
 }
 
 export default function MoreInfoRightClick({
 	position,
 	onClose,
 	isGroup = false,
+	isPinned,
+	chatId,
 }: MoreInfoRightClickProps) {
 	const menuRef = useRef<HTMLDivElement>(null)
 
-	const menuItems = [
+	const queryClient = useQueryClient()
+
+	const [loading, setIsLoading] = useState(false)
+
+	const pinChat = () => {
+		setIsLoading(true)
+		socket.emit(
+			'chat:pin-chat',
+			{ conversationId: chatId, value: isPinned ? false : true },
+			async ({ success, error }: { success: boolean; error?: string }) => {
+				if (success) {
+					console.log(
+						isPinned
+							? 'Chat unpinned successfully'
+							: 'Chat pinned successfully',
+					)
+
+					await Promise.all([
+						queryClient.invalidateQueries({
+							queryKey: ['chats'],
+						}),
+						queryClient.invalidateQueries({
+							queryKey: ['chatInfo', chatId],
+						}),
+					])
+					setIsLoading(false)
+				}
+				if (error) {
+					console.error('Error updating chat pin:', error)
+					setIsLoading(false)
+				}
+			},
+		)
+	}
+
+	const menuItems: MenuItem[] = [
 		{ icon: Search, label: 'Search in chat', onClick: () => onClose() },
-		{ icon: Pin, label: 'Pin chat', onClick: () => onClose() },
+		{
+			icon: Pin,
+			label: isPinned ? 'Unpin chat' : 'Pin chat',
+			isDisabled: loading,
+			onClick: () => {
+				pinChat()
+				onClose()
+			},
+		},
 		{
 			icon: Trash2,
 			label: 'Clear chat',
@@ -28,7 +85,7 @@ export default function MoreInfoRightClick({
 		},
 	]
 
-	const groupMenuItems = [
+	const groupMenuItems: MenuItem[] = [
 		{ icon: Search, label: 'Search in chat', onClick: () => onClose() },
 		{
 			icon: Trash2,
@@ -104,6 +161,7 @@ export default function MoreInfoRightClick({
 				const Icon = item.icon
 				return (
 					<button
+						disabled={item.isDisabled}
 						type='button'
 						role='menuitem'
 						className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-inter transition-colors cursor-pointer text-left w-full ${
@@ -120,7 +178,10 @@ export default function MoreInfoRightClick({
 						}}
 					>
 						<Icon size={16} className='shrink-0' aria-hidden='true' />
-						<span>{item.label}</span>
+						<span>
+							{item.label}
+							{loading && item.label === 'Pin chat' && ' ...'}
+						</span>
 					</button>
 				)
 			})}

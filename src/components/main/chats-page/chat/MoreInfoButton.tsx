@@ -5,13 +5,18 @@ import MoreInfoRightClick from './MoreInfoRightClick'
 
 export default function MoreInfoButton({
 	isGroup = false,
+	chatId,
+	isPinned,
 }: {
 	isGroup?: boolean
+	chatId: string
+	isPinned: boolean
 }) {
 	const [chatToolsPosition, setChatToolsPosition] = useState<{
 		x: number
 		y: number
 	} | null>(null)
+
 
 	function handleClick(e: React.MouseEvent) {
 		e.preventDefault()
@@ -22,6 +27,8 @@ export default function MoreInfoButton({
 		<>
 			{chatToolsPosition && (
 				<MoreInfoRightClick
+					chatId={chatId}
+					isPinned={isPinned}
 					position={chatToolsPosition}
 					onClose={() => setChatToolsPosition(null)}
 					isGroup={isGroup}

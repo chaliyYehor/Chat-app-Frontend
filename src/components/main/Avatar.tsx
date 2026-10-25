@@ -4,9 +4,10 @@ interface AvatarProps {
 	lightColor?: string
 	state: 'online' | 'away' | 'offline'
 	imageUrl?: string
+	isLoading?: boolean
 }
 
-export default function Avatar({ lightColor, state, imageUrl }: AvatarProps) {
+export default function Avatar({ lightColor, state, imageUrl, isLoading }: AvatarProps) {
 	const colors = {
 		online: { text: '#00D4AA', bg: '#00D4AA' },
 		away: { text: '#F59E0B', bg: '#F59E0B' },
@@ -16,7 +17,7 @@ export default function Avatar({ lightColor, state, imageUrl }: AvatarProps) {
 		<div
 			className={`w-15 h-15 rounded-[50%] dark:text-white flex justify-center items-center border-2 border-gray-700 relative shrink-0 ${'text-' + lightColor}`.trim()}
 		>
-			{imageUrl ? (
+			{isLoading ? <div className='loader' /> : imageUrl ? (
 				<img
 					src={imageUrl}
 					alt='Profile'
