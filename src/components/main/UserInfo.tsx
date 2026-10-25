@@ -2,20 +2,38 @@ import { Button } from '@mui/material'
 import { clsx } from 'clsx'
 import { Mail, User, UserRound, X } from 'lucide-react'
 import SharedMedia from './chats-page/SharedMedia'
-import { useGetUserInfo } from '../../hooks/useGetUserInfo'
 import { authClient } from '../../lib/auth-client'
+import type { UserProfile } from '../../schemas/main/userProfile'
+import type { GetUserInfoChat } from '../../schemas/main/getUserInfoChat'
+import { getDisplayedStatus } from '../../lib/getDisplayedStatus'
+
+type DisplayedUserInfo = UserProfile | GetUserInfoChat
 
 export default function UserInfo({
 	setIsProfileOpened,
 	isYourProfile,
 	sharedMedia,
+	userInfo,
+	email,
+	isFetching,
 }: {
 	isYourProfile: boolean
 	sharedMedia: boolean
+	isFetching?: boolean
+	email?: string
+	userInfo?: DisplayedUserInfo
 	setIsProfileOpened: React.Dispatch<React.SetStateAction<boolean>>
 }) {
-	const { data: userInfo, isPending: isFetching } = useGetUserInfo()
 	const { data } = authClient.useSession()
+	const displayedEmail =
+		email ??
+		(userInfo && 'email' in userInfo ? userInfo.email : data?.user?.email)
+
+	const colors = {
+		online: { text: '#00D4AA', bg: '#00D4AA' },
+		away: { text: '#F59E0B', bg: '#F59E0B' },
+		offline: { text: '#6B6B80', bg: '#6B6B80' },
+	}
 	return (
 		<div
 			onClick={() => {
@@ -75,7 +93,7 @@ export default function UserInfo({
 								</div>
 							)}
 							{!isYourProfile && (
-								<div className='w-3 h-3 bg-green-500 border border-black rounded-[50%] absolute right-1 bottom-1' />
+								<div style={{ backgroundColor: colors[getDisplayedStatus(userInfo?.status, userInfo?.previouslySetStatus)]?.bg }} className='w-3 h-3 border border-black rounded-[50%] absolute right-1 bottom-1' />
 							)}
 						</div>
 						<div className='w-full pr-5 '>
@@ -90,12 +108,18 @@ export default function UserInfo({
 								</h2>
 							</div>
 							<p
+							style={{ color: isYourProfile ? '#6B6B80' : colors[getDisplayedStatus(userInfo?.status, userInfo?.previouslySetStatus)]?.text }}
 								className={clsx(
 									!isYourProfile ? 'text-green-500' : '',
-									'text-sm font-inter text-[#6B6B80]',
+									'text-sm font-inter text-[#6B6B80] capitalize',
 								)}
 							>
-								{!isYourProfile ? 'Online' : 'Your profile'}
+								{!isYourProfile
+									? getDisplayedStatus(
+											userInfo?.status,
+											userInfo?.previouslySetStatus,
+										)
+									: 'Your profile'}
 							</p>
 						</div>
 					</div>
@@ -130,7 +154,9 @@ export default function UserInfo({
 											{isFetching ? '' : 'Email'}
 										</p>
 										<p className='text-sm dark:text-[#F0F0F5] text-black font-inter'>
-											{userInfo && !isFetching ? '@' + data?.user?.email : ''}
+											{displayedEmail && !isFetching
+												? `@${displayedEmail}`
+												: ''}
 										</p>
 									</div>
 								</div>

@@ -2,6 +2,7 @@ import z from 'zod'
 
 export const getUserInfoChatSchema = z.object({
 	userId: z.string(),
+	email: z.email(),
 	name: z.string(),
 	createdAt: z.coerce.date(),
 	updatedAt: z.coerce.date(),

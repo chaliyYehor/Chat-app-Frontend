@@ -3,15 +3,20 @@ import Avatar from './Avatar'
 import UserInfo from './UserInfo'
 import { useGetUserInfo } from '../../hooks/useGetUserInfo'
 import { getDisplayedStatus } from '../../lib/getDisplayedStatus'
+import { authClient } from '../../lib/auth-client'
 
 export default function Profile() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
 
 	const { data: userInfo, isPending } = useGetUserInfo()
+	const { data: session, isPending: isSessionPending } = authClient.useSession()
 	return (
 		<>
 			{isProfileOpened && (
 				<UserInfo
+					userInfo={userInfo}
+					isFetching={isPending || isSessionPending}
+					email={session?.user?.email}
 					sharedMedia={false}
 					isYourProfile
 					setIsProfileOpened={setIsProfileOpened}

@@ -38,6 +38,8 @@ export function Chat() {
 						<UserInfo
 							sharedMedia={true}
 							isYourProfile={false}
+							userInfo={userInfo}
+							isFetching={isUserInfoPending}
 							setIsProfileOpened={setIsProfileOpened}
 						/>
 					)}
