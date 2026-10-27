@@ -20,17 +20,6 @@ const isHeicFile = (file: File) => /\.(heic|heif)$/i.test(file.name)
 interface Props {
 	chatId: string;
 	lastMessageAt?: Date;
-	setMessages: Dispatch<SetStateAction<{
-    conversationId: string;
-    id: string;
-    senderId: string;
-    createdAt: Date;
-    read: boolean;
-    type: "image" | "text_or_image";
-    text: string | null;
-    imageUrl: string | null;
-    imagePubId: string | null;
-}[]>>
 }
 
 export default function SendAMessage({ chatId, lastMessageAt }: Props) {

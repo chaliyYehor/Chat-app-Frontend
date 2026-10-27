@@ -361,7 +361,6 @@ export function Chat() {
 
 			<SendAMessage
 				lastMessageAt={messagesState[0]?.createdAt}
-				setMessages={setMessagesState}
 				chatId={chatId as string}
 			/>
 		</div>

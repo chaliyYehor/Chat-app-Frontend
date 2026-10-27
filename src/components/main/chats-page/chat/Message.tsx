@@ -16,7 +16,7 @@ export default function Message({
 	messageInfo,
 	userInfo,
 	isFetching,
-	chatId
+	chatId,
 }: {
 	isMe: boolean
 	isGroup?: boolean
@@ -108,10 +108,13 @@ export default function Message({
 								)}
 								<div
 									style={{
-										backgroundColor: colors[getDisplayedStatus(
-											userInfo?.status,
-											userInfo?.previouslySetStatus,
-										)].bg,
+										backgroundColor:
+											colors[
+												getDisplayedStatus(
+													userInfo?.status,
+													userInfo?.previouslySetStatus,
+												)
+											].bg,
 									}}
 									className='w-3 h-3 border border-white rounded-[50%] absolute right-0 top-[68%]'
 								/>
@@ -179,7 +182,7 @@ export default function Message({
 							{!isGroup && messageInfo.read && isMe && (
 								<CheckCheck color='#7c5cfc' size={13} />
 							)}
-							{!isGroup && !messageInfo.read && isMe && (
+							{!isGroup && !messageInfo.read  && isMe && (
 								<Check color='#6B6B80' size={13} />
 							)}
 						</p>

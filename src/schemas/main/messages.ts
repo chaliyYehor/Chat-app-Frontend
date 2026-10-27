@@ -6,7 +6,7 @@ export const messagesSchema = z.object({
 		id: z.string().min(1, 'Message ID is required'),
 		senderId: z.string().min(1, 'Sender ID is required'),
 		createdAt: z.coerce.date(),
-		read: z.boolean().default(false),
+		read: z.boolean().optional(),
 		type: z.enum(['text_or_image', 'image']).default('text_or_image'),
 		text: z.string().max(1000, 'Text must be less than 1000 characters').nullable(),
 		imageUrl: z.string().url('Invalid image URL').nullable(),
