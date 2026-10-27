@@ -1,28 +1,53 @@
 import { zodResolver } from '@hookform/resolvers/zod/dist/zod.js'
 import heic2any from 'heic2any'
 import { Image, Send } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import {
 	sendAMessageSchema,
 	type SendAMessageInput,
 	type SendAMessageType,
 } from '../../../../schemas/main/sendAMessage'
+import { getConvertedImage } from '../../../../api/getConvertedImage'
+import { socket } from '../../../../socket'
+import { deleteUploadedImage } from '../../../../api/deleteUploadedImage'
 
 const isImageFile = (file: File) =>
 	file.type.startsWith('image/') || /\.(heic|heif)$/i.test(file.name)
 
 const isHeicFile = (file: File) => /\.(heic|heif)$/i.test(file.name)
 
-export default function SendAMessage() {
+interface Props {
+	chatId: string;
+	lastMessageAt?: Date;
+	setMessages: Dispatch<SetStateAction<{
+    conversationId: string;
+    id: string;
+    senderId: string;
+    createdAt: Date;
+    read: boolean;
+    type: "image" | "text_or_image";
+    text: string | null;
+    imageUrl: string | null;
+    imagePubId: string | null;
+}[]>>
+}
+
+export default function SendAMessage({ chatId, lastMessageAt, setMessages }: Props) {
 	const [image, setImage] = useState<File | undefined>(undefined)
 	const [imagePreview, setImagePreview] = useState<string | undefined>(
 		undefined,
 	)
 	const [imagePreviewError, setImagePreviewError] = useState(false)
+	const [isImageUploading, setIsImageUploading] = useState(false)
+	const [uploadedImage, setUploadedImage] = useState<{
+		imageUrl: string
+		imagePublicId: string
+	}>()
 	const fileInputRef = useRef<HTMLInputElement>(null)
+	const uploadRequestRef = useRef(0)
 
-	const { register, handleSubmit, setValue } = useForm<
+	const { register, handleSubmit, reset, setValue } = useForm<
 		SendAMessageInput,
 		unknown,
 		SendAMessageType
@@ -72,15 +97,65 @@ export default function SendAMessage() {
 		}
 	}, [image])
 
-	const onSubmit: SubmitHandler<SendAMessageType> = data => {
-		console.log(data)
-	}
-	const clearImage = () => {
+	const resetAfterSend = () => {
+		uploadRequestRef.current += 1
 		setImage(undefined)
+		setUploadedImage(undefined)
+		setIsImageUploading(false)
+		setImagePreview(undefined)
+		setImagePreviewError(false)
+		reset({
+			message: '',
+			image: undefined,
+		})
+		if (fileInputRef.current) fileInputRef.current.value = ''
+	}
+
+	const onSubmit: SubmitHandler<SendAMessageType> = async data => {
+		if (isImageUploading || (data.image && !uploadedImage)) {
+			return
+		}
+
+		socket.emit(
+			'message:send',
+			{
+				type: uploadedImage && !data.message ? 'image' : 'text_or_image',
+				text: data.message.trim() || undefined,
+				imageUrl: uploadedImage?.imageUrl ?? undefined,
+				imagePubId: uploadedImage?.imagePublicId ?? undefined,
+				conversationId: chatId,
+				lastMessageAt: lastMessageAt ?? new Date(),
+			},
+			({ success, error }: { success: boolean; error?: string }) => {
+				if (!success) {
+					console.error('Failed to send message:', error)
+					return
+				}
+
+				resetAfterSend()
+				console.log('Message sent successfully')
+			},
+		)
+	}
+	const clearImage = async () => {
+		const publicId = uploadedImage?.imagePublicId
+
+		uploadRequestRef.current += 1
+		setImage(undefined)
+		setUploadedImage(undefined)
+		setIsImageUploading(false)
 		setImagePreview(undefined)
 		setImagePreviewError(false)
 		setValue('image', undefined, { shouldValidate: true })
 		if (fileInputRef.current) fileInputRef.current.value = ''
+
+		if (publicId) {
+			try {
+				await deleteUploadedImage(publicId)
+			} catch (error) {
+				console.error('Failed to delete image:', error)
+			}
+		}
 	}
 	const { ref: registerImageRef, ...imageInput } = register('image')
 
@@ -93,6 +168,15 @@ export default function SendAMessage() {
 						src={imagePreview}
 						alt='preview'
 					/>
+					{isImageUploading && (
+						<div className='absolute inset-0 flex items-center justify-center rounded-xl bg-black/50'>
+							<div
+								className='loader'
+								role='status'
+								aria-label='Uploading image'
+							/>
+						</div>
+					)}
 					<button
 						onClick={clearImage}
 						type='button'
@@ -137,8 +221,40 @@ export default function SendAMessage() {
 						}
 
 						setImagePreviewError(false)
+						setUploadedImage(undefined)
 						setImage(file)
 						imageInput.onChange(event)
+
+						const uploadRequest = ++uploadRequestRef.current
+						setIsImageUploading(true)
+						void getConvertedImage(file)
+							.then(async response => {
+								if (uploadRequest !== uploadRequestRef.current) {
+									try {
+										await deleteUploadedImage(response.imagePublicId)
+									} catch (error) {
+										console.error('Failed to delete cancelled upload:', error)
+									}
+
+									return
+								}
+
+								setUploadedImage({
+									imageUrl: response.imageUrl,
+									imagePublicId: response.imagePublicId,
+								})
+							})
+							.catch(error => {
+								if (uploadRequest !== uploadRequestRef.current) return
+
+								console.error('Failed to upload image:', error)
+								setImagePreviewError(true)
+							})
+							.finally(() => {
+								if (uploadRequest !== uploadRequestRef.current) return
+
+								setIsImageUploading(false)
+							})
 					}}
 					type='file'
 					accept='image/*,.heic,.heif'
@@ -161,7 +277,7 @@ export default function SendAMessage() {
 					className='flex-1 dark:text-white bg-transparent text-md py-2 focus-visible:outline-none!'
 				/>
 				<button
-					onClick={() => console.log('clicked')}
+					disabled={isImageUploading}
 					type='submit'
 					aria-label='Send message'
 				>
