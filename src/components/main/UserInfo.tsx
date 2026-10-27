@@ -6,6 +6,7 @@ import { authClient } from '../../lib/auth-client'
 import type { UserProfile } from '../../schemas/main/userProfile'
 import type { GetUserInfoChat } from '../../schemas/main/getUserInfoChat'
 import { getDisplayedStatus } from '../../lib/getDisplayedStatus'
+import { formatLastSeen } from '../../lib/formatLastSeen'
 
 type DisplayedUserInfo = UserProfile | GetUserInfoChat
 
@@ -93,7 +94,18 @@ export default function UserInfo({
 								</div>
 							)}
 							{!isYourProfile && (
-								<div style={{ backgroundColor: colors[getDisplayedStatus(userInfo?.status, userInfo?.previouslySetStatus)]?.bg }} className='w-3 h-3 border border-black rounded-[50%] absolute right-1 bottom-1' />
+								<div
+									style={{
+										backgroundColor:
+											colors[
+												getDisplayedStatus(
+													userInfo?.status,
+													userInfo?.previouslySetStatus,
+												)
+											]?.bg,
+									}}
+									className='w-3 h-3 border border-black rounded-[50%] absolute right-1 bottom-1'
+								/>
 							)}
 						</div>
 						<div className='w-full pr-5 '>
@@ -108,17 +120,29 @@ export default function UserInfo({
 								</h2>
 							</div>
 							<p
-							style={{ color: isYourProfile ? '#6B6B80' : colors[getDisplayedStatus(userInfo?.status, userInfo?.previouslySetStatus)]?.text }}
+								style={{
+									color: isYourProfile
+										? '#6B6B80'
+										: colors[
+												getDisplayedStatus(
+													userInfo?.status,
+													userInfo?.previouslySetStatus,
+												)
+											]?.text,
+								}}
 								className={clsx(
 									!isYourProfile ? 'text-green-500' : '',
 									'text-sm font-inter text-[#6B6B80] capitalize',
 								)}
 							>
+								{userInfo && userInfo.lastSeen && 'Last seen: '}
 								{!isYourProfile
-									? getDisplayedStatus(
-											userInfo?.status,
-											userInfo?.previouslySetStatus,
-										)
+									? userInfo?.status === 'offline' && userInfo.lastSeen
+										? formatLastSeen(userInfo.lastSeen)
+										: getDisplayedStatus(
+												userInfo?.status,
+												userInfo?.previouslySetStatus,
+											)
 									: 'Your profile'}
 							</p>
 						</div>

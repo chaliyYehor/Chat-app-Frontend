@@ -124,7 +124,7 @@ export default function ChatPreview({
 			) : (
 				<>
 					<Avatar
-						state={getDisplayedStatus(status, previouslySetStatus)}
+						state={getDisplayedStatus(status,  previouslySetStatus)}
 						imageUrl={imageUrl || undefined}
 					/>
 					<div className='flex-1 min-w-0 flex flex-col dark:text-white'>

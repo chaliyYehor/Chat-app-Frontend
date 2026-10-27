@@ -11,7 +11,7 @@ export const getUserInfoChatSchema = z.object({
 	about: z.string().nullable(),
 	userPubId: z.string(),
 	previouslySetStatus: z.enum(['online', 'away', 'offline']),
-	lastSeen: z.coerce.date(),
+	lastSeen: z.coerce.date().optional(),
 })
 
 export type GetUserInfoChat = z.infer<typeof getUserInfoChatSchema>

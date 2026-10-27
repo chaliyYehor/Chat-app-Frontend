@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod/dist/zod.js'
 import heic2any from 'heic2any'
 import { Image, Send } from 'lucide-react'
-import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import {
 	sendAMessageSchema,
@@ -149,7 +149,7 @@ export default function SendAMessage({ chatId, lastMessageAt }: Props) {
 	const { ref: registerImageRef, ...imageInput } = register('image')
 
 	return (
-		<div className='p-4 shrink-0 flex flex-col w-full gap-4 border-t border-gray-700/60'>
+		<div className='p-4 shrink-0 mt-2 flex flex-col w-full gap-4 border-t border-gray-700/60'>
 			{imagePreview ? (
 				<div className='relative w-fit'>
 					<img

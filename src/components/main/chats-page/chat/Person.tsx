@@ -29,7 +29,7 @@ export default function Person({
 				<>
 					<Avatar
 						imageUrl={user.imageUrl ? user.imageUrl : undefined}
-						state={getDisplayedStatus(user.status, user.previouslySetStatus)}
+						state={getDisplayedStatus(user.status,  user.previouslySetStatus)}
 					/>
 
 					<div className='flex-1 min-w-0 flex flex-col items-start dark:text-white'>

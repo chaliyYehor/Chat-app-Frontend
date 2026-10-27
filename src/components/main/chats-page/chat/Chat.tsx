@@ -25,6 +25,7 @@ import { socket } from '../../../../socket'
 import { useQueryClient } from '@tanstack/react-query'
 import ScrollDownBtn from '../../../ScrollDownBtn'
 import SearchInChat from './SearchInChat'
+import { formatLastSeen } from '../../../../lib/formatLastSeen'
 export function Chat() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
 	const [isSearchOpened, setIsSearchOpened] = useState(false)
@@ -276,11 +277,14 @@ export function Chat() {
 								'text-[#6B6B80] text-[13px] font-inter text-xs h-4 min-w-10 rounded-md capitalize',
 							)}
 						>
+							{userInfo && userInfo.lastSeen && 'Last seen: '}
 							{!isUserInfoPending &&
-								getDisplayedStatus(
-									userInfo?.status,
-									userInfo?.previouslySetStatus,
-								)}
+								(userInfo?.status === 'offline' && userInfo.lastSeen
+									? formatLastSeen(userInfo.lastSeen)
+									: getDisplayedStatus(
+											userInfo?.status,
+											userInfo?.previouslySetStatus,
+										))}
 						</p>
 					</div>
 				</div>
