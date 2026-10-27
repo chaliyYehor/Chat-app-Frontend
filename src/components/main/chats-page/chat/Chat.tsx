@@ -24,8 +24,10 @@ import type {
 import { socket } from '../../../../socket'
 import { useQueryClient } from '@tanstack/react-query'
 import ScrollDownBtn from '../../../ScrollDownBtn'
+import SearchInChat from './SearchInChat'
 export function Chat() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
+	const [isSearchOpened, setIsSearchOpened] = useState(false)
 
 	const [hasScrolled, setHasScrolled] = useState(false)
 
@@ -61,7 +63,7 @@ export function Chat() {
 	const { data: messages, isPending: isMessagesPending } = useGetMessages({
 		conversationId: chatId as string,
 		page: 1,
-		limit: 20,
+		limit: 40,
 	})
 
 	const setLatestMessageRefs = useCallback((node: HTMLDivElement | null) => {
@@ -227,7 +229,7 @@ export function Chat() {
 
 	return (
 		<div className='w-full h-full overflow-hidden flex flex-col dark:bg-[#16161b] bg-white border-l border-gray-700/60'>
-			<div className='p-4 shrink-0 flex w-full justify-between items-center border-b border-gray-700/60'>
+			<div className='relative p-4 pl-0 shrink-0 flex w-full justify-between items-center border-b border-gray-700/60'>
 				<div className='flex justify-center items-center gap-3'>
 					{isProfileOpened && (
 						<UserInfo
@@ -240,7 +242,7 @@ export function Chat() {
 					)}
 					<Link
 						to='/chats'
-						className={`cursor-pointer transition-all duration-200 ease-in-out rounded-full ${appTheme === 'dark' ? 'hover:bg-[#2D2D3B]' : 'hover:bg-[#E5E5EA]'}`}
+						className={`cursor-pointer transition-all duration-200 ease-in-out rounded-full ml-4 ${appTheme === 'dark' ? 'hover:bg-[#2D2D3B]' : 'hover:bg-[#E5E5EA]'}`}
 					>
 						<ArrowLeft color='#6B6B80' />
 					</Link>
@@ -292,18 +294,20 @@ export function Chat() {
 							<CallButon />
 							<VideoCallBtn />
 							<MoreInfoButton
+								onSearchClick={() => setIsSearchOpened(true)}
 								isPinned={chatInfo?.conversationUserData.isPinned!}
 								chatId={chatId as string}
 							/>
 						</>
 					)}
 				</div>
+				{isSearchOpened && <SearchInChat onClose={() => setIsSearchOpened(false)} />}
 			</div>
 
 			<div
 				ref={chatref}
 				onScroll={handleScroll}
-				className='messages relative w-full min-h-0 flex-1 flex flex-col-reverse text-white p-5 gap-2'
+				className='messages relative w-full min-h-0 flex-1 flex flex-col-reverse text-white p-5 pb-0 gap-2'
 			>
 				{
 					<ScrollDownBtn

@@ -158,7 +158,7 @@ export default function Message({
 											: 'black',
 								}}
 								className={
-									'font-inter px-3.5 py-2 md:text-sm text-base leading-relaxed wrap-anywhere whitespace-pre-wrap'
+									'message-text font-inter px-3.5 py-2 md:text-sm text-base leading-relaxed wrap-anywhere whitespace-pre-wrap'
 								}
 							>
 								{messageInfo.text}
