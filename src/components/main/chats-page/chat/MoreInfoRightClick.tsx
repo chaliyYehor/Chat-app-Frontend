@@ -1,5 +1,5 @@
 import { Pin, Search, Trash2, type LucideIcon } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type SetStateAction } from 'react'
 import { createPortal } from 'react-dom'
 import type { RootType } from '../../../../store/store'
 import { useSelector } from 'react-redux'
@@ -12,6 +12,7 @@ interface MoreInfoRightClickProps {
 	isGroup?: boolean
 	chatId: string
 	isPinned: boolean
+	onSearchClick: (value: SetStateAction<boolean>) => void
 }
 
 interface MenuItem {
@@ -28,6 +29,7 @@ export default function MoreInfoRightClick({
 	isGroup = false,
 	isPinned,
 	chatId,
+	onSearchClick,
 }: MoreInfoRightClickProps) {
 	const menuRef = useRef<HTMLDivElement>(null)
 
@@ -67,7 +69,14 @@ export default function MoreInfoRightClick({
 	}
 
 	const menuItems: MenuItem[] = [
-		{ icon: Search, label: 'Search in chat', onClick: () => onClose() },
+		{
+			icon: Search,
+			label: 'Search in chat',
+			onClick: () => {
+				onSearchClick(true)
+				onClose()
+			},
+		},
 		{
 			icon: Pin,
 			label: isPinned ? 'Unpin chat' : 'Pin chat',
@@ -86,7 +95,14 @@ export default function MoreInfoRightClick({
 	]
 
 	const groupMenuItems: MenuItem[] = [
-		{ icon: Search, label: 'Search in chat', onClick: () => onClose() },
+		{
+			icon: Search,
+			label: 'Search in chat',
+			onClick: () => {
+				onSearchClick(true)
+				onClose()
+			},
+		},
 		{
 			icon: Trash2,
 			label: 'Clear chat',
