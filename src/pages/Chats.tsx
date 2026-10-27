@@ -55,7 +55,9 @@ export default function Chats() {
 			<div className='chats messagesSection outline-1 outline-gray-700/60 md:w-100 w-full md:max-w-[30vw] shrink md:shrink-0 flex'>
 				<ChatList />
 			</div>
-			<div className='flex-1 min-w-0 shrink-0 md:shrink absolute top-0 left-0 md:relative md:top-auto md:left-auto h-full'>
+			<div
+				className={`${isMobile && !isChatDetailsRoute ? 'hidden md:block' : 'absolute inset-0'} md:relative md:inset-auto md:flex-1 min-w-0 md:shrink h-full`}
+			>
 				<Outlet />
 			</div>
 		</div>

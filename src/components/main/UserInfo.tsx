@@ -47,9 +47,9 @@ export default function UserInfo({
 		>
 			<div
 				onClick={e => e.stopPropagation()}
-				className='relative flex justify-center'
+				className='relative flex justify-center '
 			>
-				<div className='cursor-default dark:bg-[#16161B] bg-white w-90 flex flex-col border border-white/30 rounded-t-3xl md:rounded-2xl overflow-hidden animate-fade-in my-20 md:max-h-142.5 h-[90vh] pb-3 md:pb-0'>
+				<div className='cursor-default dark:bg-[#16161B] bg-white w-90 flex flex-col border border-white/30 rounded-2xl overflow-y-auto overflow-hidden animate-fade-in md:my-15 my-0 md:max-h-142.5 h-[90vh] pb-3 md:pb-0'>
 					<div className='profileGrad h-25 w-full flex justify-end items-start p-2'>
 						<Button
 							variant='contained'

@@ -11,29 +11,37 @@ export default function ScrollDownBtn({
 }) {
 	useGSAP(() => {
 		if (isVisible) {
-			gsap.fromTo('#go-down', {
-				y: 20,
-				opacity: 0,
-				duration: 0.3,
-				ease: 'power2.out',
-			}, {
-				y: 0,
-				opacity: 1,
-				duration: 0.3,
-				ease: 'power2.out',
-			})	
+			gsap.fromTo(
+				'#go-down',
+				{
+					y: 20,
+					opacity: 0,
+					duration: 0.3,
+					ease: 'power2.out',
+				},
+				{
+					y: 0,
+					opacity: 1,
+					duration: 0.3,
+					ease: 'power2.out',
+				},
+			)
 		} else {
-			gsap.fromTo("#go-down", {
-				y: 0,
-				opacity: 1,
-				duration: 0.3,
-				ease: 'power2.out',
-			}, {
-				y: 20,
-				opacity: 0,
-				duration: 0.3,
-				ease: 'power2.out',
-			})
+			gsap.fromTo(
+				'#go-down',
+				{
+					y: 0,
+					opacity: 1,
+					duration: 0.3,
+					ease: 'power2.out',
+				},
+				{
+					y: 20,
+					opacity: 0,
+					duration: 0.3,
+					ease: 'power2.out',
+				},
+			)
 		}
 	}, [isVisible])
 
