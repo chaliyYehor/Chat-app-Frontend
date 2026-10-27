@@ -76,6 +76,26 @@ export default function ChatPreview({
 	}
 
 	const { name, imageUrl, status, previouslySetStatus } = userInfo
+	const formatMessageDate = (date: Date) => {
+		const now = new Date()
+		const isToday =
+			date.getFullYear() === now.getFullYear() &&
+			date.getMonth() === now.getMonth() &&
+			date.getDate() === now.getDate()
+
+		if (isToday) {
+			return date.toLocaleTimeString([], {
+				hour: '2-digit',
+				minute: '2-digit',
+			})
+		}
+
+		return date.toLocaleDateString([], {
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric',
+		})
+	}
 
 	return (
 		<Link
@@ -113,14 +133,16 @@ export default function ChatPreview({
 							{lastMessage?.lastMessage || ''}
 						</p>
 					</div>
-					{lastMessage?.lastMessageSentAt && lastMessage.unreadMessages && (
+					{lastMessage?.lastMessageSentAt && (
 						<div className='info flex flex-col items-end gap-1'>
 							<p className='text-[#6B6B80] text-[13px] font-mono'>
-								{String(lastMessage?.lastMessageSentAt)}
+								{formatMessageDate(lastMessage.lastMessageSentAt)}
 							</p>
-							<MessagesIndicator
-								numberOfMessages={lastMessage?.unreadMessages}
-							/>
+							{(lastMessage.unreadMessages ?? 0) > 0 ? (
+								<MessagesIndicator
+									numberOfMessages={lastMessage.unreadMessages ?? 0}
+								/>
+							) : null}
 						</div>
 					)}
 				</>
