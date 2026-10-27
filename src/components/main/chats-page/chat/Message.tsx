@@ -13,7 +13,6 @@ import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
 export default function Message({
 	isMe = true,
 	isGroup = false,
-	isSeen,
 	messageInfo,
 	userInfo,
 	isFetching,
@@ -21,7 +20,6 @@ export default function Message({
 }: {
 	isMe: boolean
 	isGroup?: boolean
-	isSeen?: boolean
 	imageUrl?: string
 	messageInfo: Message
 	userInfo: GetUserInfoChat
