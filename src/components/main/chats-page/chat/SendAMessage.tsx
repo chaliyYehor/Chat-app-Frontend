@@ -33,7 +33,7 @@ interface Props {
 }[]>>
 }
 
-export default function SendAMessage({ chatId, lastMessageAt, setMessages }: Props) {
+export default function SendAMessage({ chatId, lastMessageAt }: Props) {
 	const [image, setImage] = useState<File | undefined>(undefined)
 	const [imagePreview, setImagePreview] = useState<string | undefined>(
 		undefined,
