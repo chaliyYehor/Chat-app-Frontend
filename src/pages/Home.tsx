@@ -98,12 +98,26 @@ export default function Home() {
 			})
 		}
 
+		const handleMessageReceived = () => {
+			queryClient.invalidateQueries({
+				queryKey: ['chats'],
+			})
+		}
+
+		const handleMessageDeleted = () => {
+			queryClient.invalidateQueries({
+				queryKey: ['chats'],
+			})
+		}
+
 		socket.on('connect', handleConnect)
 		socket.on('disconnect', handleDisconnect)
 		socket.on('connect_error', handleConnectError)
 
 		socket.on('chat:added', handleChatAdded)
 		socket.on('chat:deleted', handleChatDeleted)
+		socket.on('message:received', handleMessageReceived)
+		socket.on('message:deleted', handleMessageDeleted)
 
 		socket.connect()
 
@@ -113,6 +127,8 @@ export default function Home() {
 			socket.off('connect_error', handleConnectError)
 			socket.off('chat:added', handleChatAdded)
 			socket.off('chat:deleted', handleChatDeleted)
+			socket.off('message:received', handleMessageReceived)
+			socket.off('message:deleted', handleMessageDeleted)
 			socket.disconnect()
 		}
 	}, [dispatch, isPending, session])
