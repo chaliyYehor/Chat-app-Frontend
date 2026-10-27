@@ -68,6 +68,32 @@ export default function MoreInfoRightClick({
 		)
 	}
 
+	const clearChat = () => {
+		socket.emit(
+			'chat:clear-chat',
+			{ conversationId: chatId },
+			async ({ success, error }: { success: boolean; error?: string }) => {
+				setIsLoading(true)
+				if (success) {
+					console.log('Chat cleared successfully')
+					await Promise.all([
+						queryClient.invalidateQueries({
+							queryKey: ['chats'],
+						}),
+						queryClient.invalidateQueries({
+							queryKey: ['chatInfo', chatId],
+						}),
+					])
+					setIsLoading(false)
+				}
+				if (error) {
+					console.error('Error clearing chat:', error)
+					setIsLoading(false)
+				}
+			},
+		)
+	}
+
 	const menuItems: MenuItem[] = [
 		{
 			icon: Search,
@@ -90,7 +116,10 @@ export default function MoreInfoRightClick({
 			icon: Trash2,
 			label: 'Clear chat',
 			danger: true,
-			onClick: () => onClose(),
+			onClick: () => {
+				clearChat()
+				onClose()
+			},
 		},
 	]
 

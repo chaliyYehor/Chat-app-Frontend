@@ -198,9 +198,23 @@ export function Chat() {
 			})
 		}
 
+		const handleChatCleared = ({
+			conversationId,
+		}: {
+			conversationId: string
+		}) => {
+			queryClient.invalidateQueries({
+				queryKey: ['messages', conversationId],
+			})
+			queryClient.invalidateQueries({
+				queryKey: ['chats'],
+			})
+		}
+
 		socket.on('message:read', handleMessagesRead)
 		socket.on('message:new_messages', handleNewMessages)
 		socket.on('message:received', handleMessageReceived)
+		socket.on('chat:cleared', handleChatCleared)
 
 		return () => {
 			socket.off('message:read', handleMessagesRead)
@@ -277,7 +291,7 @@ export function Chat() {
 								'text-[#6B6B80] text-[13px] font-inter text-xs h-4 min-w-10 rounded-md capitalize',
 							)}
 						>
-							{userInfo && userInfo.lastSeen && 'Last seen: '}
+							{userInfo && userInfo.lastSeen && userInfo.status === 'offline' && 'Last seen: '}
 							{!isUserInfoPending &&
 								(userInfo?.status === 'offline' && userInfo.lastSeen
 									? formatLastSeen(userInfo.lastSeen)
@@ -305,7 +319,9 @@ export function Chat() {
 						</>
 					)}
 				</div>
-				{isSearchOpened && <SearchInChat onClose={() => setIsSearchOpened(false)} />}
+				{isSearchOpened && (
+					<SearchInChat onClose={() => setIsSearchOpened(false)} />
+				)}
 			</div>
 
 			<div

@@ -135,7 +135,7 @@ export default function UserInfo({
 									'text-sm font-inter text-[#6B6B80] capitalize',
 								)}
 							>
-								{userInfo && userInfo.lastSeen && 'Last seen: '}
+								{userInfo && userInfo.lastSeen && userInfo.status === 'offline' && 'Last seen: '}
 								{!isYourProfile
 									? userInfo?.status === 'offline' && userInfo.lastSeen
 										? formatLastSeen(userInfo.lastSeen)
