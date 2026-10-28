@@ -4,11 +4,19 @@ import { Outlet, useLocation } from 'react-router-dom'
 import ChatList from '../components/main/chats-page/ChatList'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { authClient } from '../lib/auth-client'
+import { useSelector } from 'react-redux'
+import type { RootType } from '../store/store'
+import GlobalSocketError from '../components/globalSocketError'
+
 
 const possiblePreviousLocations = ['/chats', '/groups', '/calls', '/settings']
 
 export default function Chats() {
 	const isMobile = useIsMobile()
+
+	const globalSocketError = useSelector(
+		(state: RootType) => state.socketState.globalSocketError,
+	)
 
 	const { isPending } = authClient.useSession()
 	const location = useLocation()
@@ -53,7 +61,11 @@ export default function Chats() {
 	return (
 		<div className='flex w-full h-full min-w-0 relative'>
 			<div className='chats messagesSection outline-1 outline-gray-700/60 md:w-100 w-full md:max-w-[30vw] shrink md:shrink-0 flex'>
-				<ChatList />
+				{globalSocketError ? (
+					<GlobalSocketError />
+				) : (
+					<ChatList />
+				)}
 			</div>
 			<div
 				className={`${isMobile && !isChatDetailsRoute ? 'hidden md:block' : 'absolute inset-0'} md:relative md:inset-auto md:flex-1 min-w-0 md:shrink h-full`}

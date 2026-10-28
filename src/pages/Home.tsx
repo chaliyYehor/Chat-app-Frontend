@@ -53,12 +53,6 @@ export default function Home() {
 		}
 	}, [dispatch, isUserInfoError])
 
-	const isConnected = useSelector(
-		(state: RootType) => state.socketState.isSocketConnected,
-	)
-	const globalSocketError = useSelector(
-		(state: RootType) => state.socketState.globalSocketError,
-	)
 	useEffect(() => {
 		if (isPending || !userInfo) return
 
@@ -144,9 +138,6 @@ export default function Home() {
 			socket.disconnect()
 		}
 	}, [dispatch, isPending, session])
-
-	console.log('isConnected:', isConnected)
-	console.log('globalSocketError:', globalSocketError)
 
 	if (isPending) {
 		return (

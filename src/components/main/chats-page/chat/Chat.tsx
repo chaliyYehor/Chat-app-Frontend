@@ -35,6 +35,7 @@ import SearchInChat from './SearchInChat'
 import { formatLastSeen } from '../../../../lib/formatLastSeen'
 import IsTyping from './IsTyping'
 import { setPopUpError } from '../../../../store/slices/popUpSlice'
+
 export function Chat() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
 	const [isSearchOpened, setIsSearchOpened] = useState(false)
