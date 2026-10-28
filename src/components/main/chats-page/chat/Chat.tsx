@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import {
+	useCallback,
+	useEffect,
+	useLayoutEffect,
+	useMemo,
+	useRef,
+	useState,
+} from 'react'
 import Avatar from '../../Avatar'
 import CallButon from './CallButton'
 import Message from './Message'
@@ -22,7 +29,7 @@ import type {
 	Messages,
 } from '../../../../schemas/main/messages'
 import { socket } from '../../../../socket'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, type InfiniteData } from '@tanstack/react-query'
 import ScrollDownBtn from '../../../ScrollDownBtn'
 import SearchInChat from './SearchInChat'
 import { formatLastSeen } from '../../../../lib/formatLastSeen'
@@ -39,9 +46,12 @@ export function Chat() {
 		undefined,
 	)
 
-	console.log('isUserTyping', isUserTyping)
-
 	const chatref = useRef<HTMLDivElement>(null)
+	const pendingScrollAdjustmentRef = useRef<{
+		scrollHeight: number
+		scrollTop: number
+	} | null>(null)
+	const skipAutoScrollRef = useRef(false)
 	const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
 		setHasScrolled(e.currentTarget.scrollTop < -400)
 	}, [])
@@ -55,8 +65,8 @@ export function Chat() {
 		}
 	}, [isUserTyping, hasScrolled])
 
-	const [messagesState, setMessagesState] = useState<MessageData[]>([])
 	const latestMessageRef = useRef<HTMLDivElement>(null)
+	const [messagesState, setMessagesState] = useState<MessageData[]>([])
 	const [oldestMessageElement, setOldestMessageElement] =
 		useState<HTMLDivElement | null>(null)
 	const [newestMessageElement, setNewestMessageElement] =
@@ -78,11 +88,38 @@ export function Chat() {
 
 	const navigate = useNavigate()
 
-	const { data: messages, isPending: isMessagesPending } = useGetMessages({
+	const {
+		data: messages,
+		isPending: isMessagesPending,
+		isLoading: isMessagesLoading,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	} = useGetMessages({
 		conversationId: chatId as string,
-		page: 1,
 		limit: 40,
 	})
+	const messageQueryKey = useMemo(
+		() => ['messages', chatId, 'infinite'] as const,
+		[chatId],
+	)
+
+	const loadOlderMessages = useCallback(() => {
+		const container = chatref.current
+		if (!container || !hasNextPage || isFetchingNextPage) return
+
+		pendingScrollAdjustmentRef.current = {
+			scrollHeight: container.scrollHeight,
+			scrollTop: container.scrollTop,
+		}
+		skipAutoScrollRef.current = true
+		void fetchNextPage().then(result => {
+			if (result.isFetchNextPageError) {
+				pendingScrollAdjustmentRef.current = null
+				skipAutoScrollRef.current = false
+			}
+		})
+	}, [fetchNextPage, hasNextPage, isFetchingNextPage])
 
 	const setLatestMessageRefs = useCallback((node: HTMLDivElement | null) => {
 		latestMessageRef.current = node
@@ -127,12 +164,12 @@ export function Chat() {
 	}, [newestMessageElement])
 
 	useEffect(() => {
-		if (!oldestMessageElement) return
+		if (!oldestMessageElement || !hasNextPage) return
 
 		const observer = new IntersectionObserver(
 			([entry]) => {
 				if (entry?.isIntersecting) {
-					console.log('oldest message is visible')
+					loadOlderMessages()
 				}
 			},
 			{ threshold: 0.5 },
@@ -141,13 +178,40 @@ export function Chat() {
 		observer.observe(oldestMessageElement)
 
 		return () => observer.disconnect()
-	}, [oldestMessageElement])
+	}, [oldestMessageElement, hasNextPage, loadOlderMessages])
+
+	useEffect(() => {
+		setMessagesState([])
+		pendingScrollAdjustmentRef.current = null
+		skipAutoScrollRef.current = false
+	}, [chatId])
 
 	useEffect(() => {
 		if (messages && !isMessagesPending) {
-			setMessagesState(messages.messages)
+			setMessagesState(currentMessages => {
+				const fetchedMessages = messages.pages.flatMap(page => page.messages)
+				const messageMap = new Map<string, MessageData>()
+				for (const message of [...currentMessages, ...fetchedMessages]) {
+					messageMap.set(message.id, message)
+				}
+				return [...messageMap.values()].sort(
+					(first, second) =>
+						second.createdAt.getTime() - first.createdAt.getTime(),
+				)
+			})
 		}
 	}, [messages, isMessagesPending])
+
+	useLayoutEffect(() => {
+		const container = chatref.current
+		const previousPosition = pendingScrollAdjustmentRef.current
+		if (!container || !previousPosition) return
+
+		container.scrollTop =
+			previousPosition.scrollTop -
+			(container.scrollHeight - previousPosition.scrollHeight)
+		pendingScrollAdjustmentRef.current = null
+	}, [messagesState])
 
 	const scrollToLatestMessage = () => {
 		latestMessageRef.current?.scrollIntoView({
@@ -157,6 +221,10 @@ export function Chat() {
 	}
 
 	useEffect(() => {
+		if (skipAutoScrollRef.current) {
+			skipAutoScrollRef.current = false
+			return
+		}
 		if (!isMessagesPending && messagesState.length > 0 && !hasScrolled) {
 			chatref.current?.scrollTo({ top: 0, behavior: 'instant' })
 		}
@@ -187,6 +255,33 @@ export function Chat() {
 					? [...newMessages, ...currentMessages]
 					: currentMessages
 			})
+
+			queryClient.setQueryData<InfiniteData<Messages, number>>(
+				messageQueryKey,
+				current => {
+					const firstPage = current?.pages[0]
+					if (!current || !firstPage) return current
+
+					const existingIds = new Set(
+						firstPage.messages.map(message => message.id),
+					)
+					const newMessages = chatMessages.filter(
+						message => !existingIds.has(message.id),
+					)
+					if (newMessages.length === 0) return current
+
+					return {
+						...current,
+						pages: [
+							{
+								...firstPage,
+								messages: [...newMessages, ...firstPage.messages],
+							},
+							...current.pages.slice(1),
+						],
+					}
+				},
+			)
 		}
 
 		queryClient.invalidateQueries({
@@ -220,6 +315,7 @@ export function Chat() {
 		}: {
 			conversationId: string
 		}) => {
+			if (conversationId === chatId) setMessagesState([])
 			queryClient.invalidateQueries({
 				queryKey: ['messages', conversationId],
 			})
@@ -287,7 +383,7 @@ export function Chat() {
 			socket.off('message:new_messages', handleNewMessages)
 			socket.off('message:received', handleMessageReceived)
 		}
-	}, [chatId])
+	}, [chatId, messageQueryKey, navigate, queryClient])
 
 	useEffect(() => {
 		const handleDeletedMessage = (data: {
@@ -299,6 +395,19 @@ export function Chat() {
 			setMessagesState(currentMessages =>
 				currentMessages.filter(message => message.id !== data.messageId),
 			)
+			queryClient.setQueryData<InfiniteData<Messages, number>>(
+				messageQueryKey,
+				current =>
+					current && {
+						...current,
+						pages: current.pages.map(page => ({
+							...page,
+							messages: page.messages.filter(
+								message => message.id !== data.messageId,
+							),
+						})),
+					},
+			)
 		}
 
 		socket.on('message:deleted', handleDeletedMessage)
@@ -306,7 +415,7 @@ export function Chat() {
 		return () => {
 			socket.off('message:deleted', handleDeletedMessage)
 		}
-	}, [chatId])
+	}, [chatId, messageQueryKey, queryClient])
 
 	return (
 		<div className='w-full h-full overflow-hidden flex flex-col dark:bg-[#16161b] bg-white border-l border-gray-700/60'>
@@ -447,9 +556,22 @@ export function Chat() {
 								)}
 							</div>
 						))}
+						{!hasNextPage && messagesState.length > 10 && (
+							<div className='w-full flex items-center justify-center gap-2 py-2 px-1'>
+								<div className='w-full h-px bg-[#6B6B80]/15' />
+								<p className='text-center text-[#6B6B80] font-mono uppercase tracking-wider font-light text-sm text-nowrap'>
+									No more messages
+								</p>
+								<div className='w-full h-px bg-[#6B6B80]/15' />
+							</div>
+						)}
+						{hasNextPage && isFetchingNextPage && (
+							<div className='w-full flex justify-center items-center py-2'>
+								<div className='loader bg-black dark:bg-white' />
+							</div>
+						)}
 					</>
 				)}
-
 			</div>
 
 			<SendAMessage

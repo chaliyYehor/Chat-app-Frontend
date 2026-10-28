@@ -62,7 +62,7 @@ export default function IsTyping({
 					<>
 						<div
 							aria-label='Open sender profile'
-							className={`cursor-pointer sticky bottom-0 self-end w-10 h-10 rounded-[50%] dark:text-white text-black flex justify-center items-center border-2 border-gray-700 shrink-0`.trim()}
+							className={`sticky bottom-0 self-end w-10 h-10 rounded-[50%] dark:text-white text-black flex justify-center items-center border-2 border-gray-700 shrink-0`.trim()}
 						>
 							{userInfo?.imageUrl ? (
 								<div className='w-full h-full flex justify-center items-center overflow-hidden rounded-[50%]'>
