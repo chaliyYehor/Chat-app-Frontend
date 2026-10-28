@@ -21,6 +21,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import type { AppDispatch } from '../../../../store/store'
 import { useDispatch } from 'react-redux'
 import { setPopUpError } from '../../../../store/slices/popUpSlice'
+import { useTypeSound } from '../../../../hooks/useTypeSound'
+import { useGetUserPreferences } from '../../../../hooks/useGetUserPreferences'
 
 const isImageFile = (file: File) =>
 	file.type.startsWith('image/') || /\.(heic|heif)$/i.test(file.name)
@@ -119,7 +121,7 @@ export default function SendAMessage({
 		})
 		if (fileInputRef.current) fileInputRef.current.value = ''
 	}
-	
+
 	const queryClient = useQueryClient()
 
 	const onSubmit: SubmitHandler<SendAMessageType> = async data => {
@@ -188,6 +190,21 @@ export default function SendAMessage({
 		setIsTyping(false)
 		socket.volatile.emit('typing:stop', { chatId })
 	}
+
+	const { data: preferences, isError: isPreferencesError } =
+		useGetUserPreferences()
+
+	useEffect(() => {
+		if (isPreferencesError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to fetch user preferences. Please try again.',
+				}),
+			)
+		}
+	}, [isPreferencesError, dispatch])
+	const playTypeSound = useTypeSound()
 
 	return (
 		<div className='p-4 shrink-0 mt-2 flex flex-col w-full gap-4 border-t border-gray-700/60'>
@@ -305,6 +322,9 @@ export default function SendAMessage({
 					aria-label='Message'
 					{...messageInput}
 					onChange={event => {
+						if (preferences && preferences.typingSounds) {
+							playTypeSound()
+						}
 						messageInput.onChange(event)
 						if (!isTyping) {
 							setIsTyping(true)
