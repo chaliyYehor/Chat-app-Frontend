@@ -6,6 +6,7 @@ import ViewImage from './ViewImage'
 import type { Message } from '../../../../schemas/main/messages'
 import type { GetUserInfoChat } from '../../../../schemas/main/getUserInfoChat'
 import UserInfo from '../../UserInfo'
+import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
 
 export default function ImageMessage({
 	isMe = true,
@@ -26,6 +27,12 @@ export default function ImageMessage({
 	isFetching: boolean
 	chatId: string
 }) {
+	const colors = {
+		online: { text: '#00D4AA', bg: '#00D4AA' },
+		away: { text: '#F59E0B', bg: '#F59E0B' },
+		offline: { text: '#6B6B80', bg: '#6B6B80' },
+	}
+
 	const [isPreviewOpen, setIsPreviewOpen] = useState(false)
 
 	const [isProfileOpen, setIsProfileOpen] = useState(false)
@@ -98,7 +105,18 @@ export default function ImageMessage({
 									<User />
 								</div>
 							)}
-							<div className='w-3 h-3 bg-green-500 border border-white rounded-[50%] absolute right-0 top-[68%]' />
+							<div
+								style={{
+									backgroundColor:
+										colors[
+											getDisplayedStatus(
+												userInfo?.status,
+												userInfo?.previouslySetStatus,
+											)
+										].bg,
+								}}
+								className='w-3 h-3 border border-white rounded-[50%] absolute right-0 top-[68%]'
+							/>
 						</button>
 					)}
 					<div className='flex-1 min-w-0 flex flex-col'>
