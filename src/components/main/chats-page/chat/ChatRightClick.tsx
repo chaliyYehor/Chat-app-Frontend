@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import type { RootType } from '../../../../store/store'
 import { useQueryClient } from '@tanstack/react-query'
 import { socket } from '../../../../socket'
+import { useNavigate } from 'react-router-dom'
 
 interface ChatRightClickProps {
 	position: { x: number; y: number }
@@ -26,6 +27,8 @@ export default function ChatRightClick({
 	const menuRef = useRef<HTMLDivElement>(null)
 
 	const queryClient = useQueryClient()
+
+	const navigate = useNavigate()
 
 	const pinChat = () => {
 		setIsLoading(true)
@@ -61,6 +64,8 @@ export default function ChatRightClick({
 			async ({ success, error }: { success: boolean; error?: string }) => {
 				if (success) {
 					console.log('Chat deleted successfully')
+					
+					navigate('/chats', { replace: true })
 
 					await queryClient.invalidateQueries({
 						queryKey: ['chats'],

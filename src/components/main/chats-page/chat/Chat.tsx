@@ -8,7 +8,7 @@ import VideoCallBtn from './VideoCallBtn'
 import UserInfo from '../../UserInfo'
 import ImageMessage from './ImageMessage'
 import { ArrowLeft } from 'lucide-react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import type { RootType } from '../../../../store/store'
 import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
@@ -60,6 +60,8 @@ export function Chat() {
 	)
 
 	const queryClient = useQueryClient()
+	
+	const navigate = useNavigate()
 
 	const { data: messages, isPending: isMessagesPending } = useGetMessages({
 		conversationId: chatId as string,
@@ -211,13 +213,26 @@ export function Chat() {
 			})
 		}
 
+		const handleChatDeleted = ({
+			conversationId,
+		}: {
+			conversationId: string
+		}) => {
+			if (conversationId === chatId) {
+				navigate('/chats', { replace: true })
+			}
+		}
+
 		socket.on('message:read', handleMessagesRead)
 		socket.on('message:new_messages', handleNewMessages)
 		socket.on('message:received', handleMessageReceived)
+		socket.on('chat:deleted', handleChatDeleted)
 		socket.on('chat:cleared', handleChatCleared)
 
 		return () => {
 			socket.off('message:read', handleMessagesRead)
+			socket.off('chat:deleted', handleChatDeleted)
+			socket.off('chat:cleared', handleChatCleared)
 			socket.off('message:new_messages', handleNewMessages)
 			socket.off('message:received', handleMessageReceived)
 		}
@@ -291,7 +306,10 @@ export function Chat() {
 								'text-[#6B6B80] text-[13px] font-inter text-xs h-4 min-w-10 rounded-md capitalize',
 							)}
 						>
-							{userInfo && userInfo.lastSeen && userInfo.status === 'offline' && 'Last seen: '}
+							{userInfo &&
+								userInfo.lastSeen &&
+								userInfo.status === 'offline' &&
+								'Last seen: '}
 							{!isUserInfoPending &&
 								(userInfo?.status === 'offline' && userInfo.lastSeen
 									? formatLastSeen(userInfo.lastSeen)
