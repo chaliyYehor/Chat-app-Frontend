@@ -1,21 +1,54 @@
 import { Check, Clock2 } from 'lucide-react'
 import SettingsSwitch from './SettingsSwitch'
-import { useSelector } from 'react-redux'
-import type { RootType } from '../../../store/store'
+import { useDispatch, useSelector } from 'react-redux'
+import type { AppDispatch, RootType } from '../../../store/store'
 import { useGetUserPreferences } from '../../../hooks/useGetUserPreferences'
 import { useChangeLastSeen } from '../../../hooks/useChangeLastSeen'
 import { useChangeReadReceipts } from '../../../hooks/useChangeReadReceipts'
+import { setPopUpError } from '../../../store/slices/popUpSlice'
+import { useEffect } from 'react'
 
 export default function SettingsPrivacy() {
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 
-	const { data: preferences, isPending } = useGetUserPreferences()
-	const { mutateAsync: changeLastSeen, isPending: isChangeLastSeenPending } =
+	const { data: preferences, isError: isPreferencesError, isPending } = useGetUserPreferences()
+	const { mutateAsync: changeLastSeen, isError: isChangeLastSeenError, isPending: isChangeLastSeenPending } =
 		useChangeLastSeen()
 	const {
 		mutateAsync: changeReadReceipts,
+		isError: isChangeReadReceiptsError,
 		isPending: isChangeReadReceiptsPending,
 	} = useChangeReadReceipts()
+
+	const dispatch = useDispatch<AppDispatch>()
+
+	useEffect(() => {
+		if (isPreferencesError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load user preferences. Please try again.',
+				}),
+			)
+		}
+		if (isChangeLastSeenError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to update last seen. Please try again.',
+				}),
+			)
+		}
+		if (isChangeReadReceiptsError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to update read receipts. Please try again.',
+				}),
+			)
+		}
+	}, [isPreferencesError, isChangeLastSeenError, isChangeReadReceiptsError, dispatch])
+
 	if (isPending) {
 		return (
 			<div className='w-full h-125 flex justify-center items-center'>

@@ -18,9 +18,26 @@ import { useGetUserInfo } from '../../../hooks/useGetUserInfo'
 import { authClient } from '../../../lib/auth-client'
 import { useEffect, useState } from 'react'
 import { useEditUserProfileInfo } from '../../../hooks/useEditUserProfileInfo'
+import type { AppDispatch } from '../../../store/store'
+import { useDispatch } from 'react-redux'
+import { setPopUpError } from '../../../store/slices/popUpSlice'
 
 export default function SettingsEditProfile() {
-	const { data: userInfo, isPending: isUserInfoLoading } = useGetUserInfo()
+	const { data: userInfo, isError: isUserInfoError, isPending: isUserInfoLoading } = useGetUserInfo()
+
+	const dispatch = useDispatch<AppDispatch>()
+
+	useEffect(() => {
+		if (isUserInfoError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load user info. Please try again.',
+				}),
+			)
+		}
+	}, [isUserInfoError, dispatch])
+
 	const { data: session } = authClient.useSession()
 	const [globalError, setGlobalError] = useState('')
 

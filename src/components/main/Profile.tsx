@@ -1,15 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Avatar from './Avatar'
 import UserInfo from './UserInfo'
 import { useGetUserInfo } from '../../hooks/useGetUserInfo'
 import { getDisplayedStatus } from '../../lib/getDisplayedStatus'
 import { authClient } from '../../lib/auth-client'
+import type { AppDispatch } from '../../store/store'
+import { useDispatch } from 'react-redux'
+import { setPopUpError } from '../../store/slices/popUpSlice'
 
 export default function Profile() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
 
-	const { data: userInfo, isPending } = useGetUserInfo()
+	const { data: userInfo, isError: isUserInfoError, isPending } = useGetUserInfo()
 	const { data: session, isPending: isSessionPending } = authClient.useSession()
+
+	const dispatch = useDispatch<AppDispatch>()
+
+	useEffect(() => {
+		if(isUserInfoError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load user info. Please try again.',
+				}),
+			)
+		}
+	}, [isUserInfoError])
 	return (
 		<>
 			{isProfileOpened && (

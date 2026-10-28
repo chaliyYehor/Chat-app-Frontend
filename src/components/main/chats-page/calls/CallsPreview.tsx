@@ -3,10 +3,12 @@ import Avatar from '../../Avatar'
 import { Video, PhoneOutgoing, PhoneIncoming, Users } from 'lucide-react'
 import CallButon from '../chat/CallButton'
 import VideoCallBtn from '../chat/VideoCallBtn'
-import { useSelector } from 'react-redux'
-import type { RootType } from '../../../../store/store'
+import { useDispatch, useSelector } from 'react-redux'
+import type { AppDispatch, RootType } from '../../../../store/store'
 import { useGetUserInfo } from '../../../../hooks/useGetUserInfo'
 import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
+import { setPopUpError } from '../../../../store/slices/popUpSlice'
+import { useEffect } from 'react'
 
 interface CallsPreviewProps {
 	isIncoming: boolean
@@ -49,10 +51,23 @@ export default function CallsPreview({
 				: null
 
 	const IconComponent = itemsToDisplay ? itemsToDisplay.icon : null
-	
+
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 
-	const { data: userInfo } = useGetUserInfo()
+	const { data: userInfo, isError: isUserInfoError } = useGetUserInfo()
+
+	const dispatch = useDispatch<AppDispatch>()
+
+	useEffect(() => {
+		if (isUserInfoError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load user info. Please try again.',
+				}),
+			)
+		}
+	}, [isUserInfoError])
 	return (
 		<Link
 			to={'/chats/123'}

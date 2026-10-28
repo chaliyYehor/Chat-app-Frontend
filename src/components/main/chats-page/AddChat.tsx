@@ -4,15 +4,16 @@ import { createPortal } from 'react-dom'
 import { useFormContext, useWatch, type SubmitHandler } from 'react-hook-form'
 import Person from './chat/Person'
 import { ChatSearch } from './ChatSearch'
-import type { RootType } from '../../../store/store'
-import { useSelector } from 'react-redux'
+import type { AppDispatch, RootType } from '../../../store/store'
+import { useDispatch, useSelector } from 'react-redux'
 import type { AddChatType } from '../../../schemas/main/addChat'
 import { useDebounce } from '../../../hooks/useDebounce'
 import { useAddChat } from '../../../hooks/useAddChat'
 import { socket } from '../../../socket'
 import { useQueryClient } from '@tanstack/react-query'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { setPopUpError } from '../../../store/slices/popUpSlice'
 
 export default function AddChat({
 	setIsAdding,
@@ -30,7 +31,18 @@ export default function AddChat({
 
 	const debouncedSearch = useDebounce(search, 500)
 
-	const { data: people, isPending, isFetching } = useAddChat(debouncedSearch)
+	const { data: people, isPending, isError: isAddChatError, isFetching } = useAddChat(debouncedSearch)
+
+	useEffect(() => {
+		if(isAddChatError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load people. Please try again.',
+				}),
+			)
+		}
+	}, [isAddChatError])
 
 	const onSubmit: SubmitHandler<AddChatType> = () => {}
 
@@ -39,6 +51,8 @@ export default function AddChat({
 	const queryClient = useQueryClient()
 
 	const navigate = useNavigate()
+
+	const dispatch = useDispatch<AppDispatch>()
 
 	return createPortal(
 		<div
@@ -136,10 +150,17 @@ export default function AddChat({
 												}
 												if (error) {
 													setIsLoading(false)
-													// add error handling logic here, e.g., display a notification to the user
+
 													if (error.includes('already exists')) {
 														setIsAdding(false)
 														navigate(`/chats/${conversationId}`)
+													} else {
+														dispatch(
+															setPopUpError({
+																heading: 'Error',
+																text: 'Failed to create chat. Please try again.',
+															}),
+														)
 													}
 												}
 											},

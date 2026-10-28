@@ -8,6 +8,10 @@ import type { GetUserInfoChat } from '../../schemas/main/getUserInfoChat'
 import { getDisplayedStatus } from '../../lib/getDisplayedStatus'
 import { formatLastSeen } from '../../lib/formatLastSeen'
 import { useGetSharedMedia } from '../../hooks/useGetSharedMedia'
+import { useEffect } from 'react'
+import { setPopUpError } from '../../store/slices/popUpSlice'
+import type { AppDispatch } from '../../store/store'
+import { useDispatch } from 'react-redux'
 
 type DisplayedUserInfo = UserProfile | GetUserInfoChat
 
@@ -39,12 +43,28 @@ export default function UserInfo({
 		offline: { text: '#6B6B80', bg: '#6B6B80' },
 	}
 
-	const { data: sharedMediaData, isPending: isSharedMediaLoading } =
-		useGetSharedMedia({
-			chatId: chatId ?? '',
-			otherUserId: userInfo?.userId ?? '',
-			enabled: sharedMedia,
-		})
+	const {
+		data: sharedMediaData,
+		isError: isSharedMediaError,
+		isPending: isSharedMediaLoading,
+	} = useGetSharedMedia({
+		chatId: chatId ?? '',
+		otherUserId: userInfo?.userId ?? '',
+		enabled: sharedMedia,
+	})
+
+	const dispatch = useDispatch<AppDispatch>()
+
+	useEffect(() => {
+		if (isSharedMediaError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load shared media. Please try again.',
+				}),
+			)
+		}
+	}, [isSharedMediaError])
 	return (
 		<div
 			onClick={() => {

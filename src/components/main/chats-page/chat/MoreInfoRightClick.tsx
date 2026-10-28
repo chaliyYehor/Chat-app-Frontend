@@ -1,10 +1,16 @@
 import { Pin, Search, Trash2, type LucideIcon } from 'lucide-react'
 import { useEffect, useRef, useState, type SetStateAction } from 'react'
 import { createPortal } from 'react-dom'
-import type { RootType } from '../../../../store/store'
-import { useSelector } from 'react-redux'
+import type { AppDispatch, RootType } from '../../../../store/store'
+import { useDispatch, useSelector } from 'react-redux'
 import { socket } from '../../../../socket'
 import { useQueryClient } from '@tanstack/react-query'
+import {
+	setPopUpError,
+	setPopUpLoading,
+	setPopUpSuccess,
+} from '../../../../store/slices/popUpSlice'
+import { closePopUpLoading, openPopUpLoading } from '../../../../lib/openPopUps'
 
 interface MoreInfoRightClickProps {
 	position: { x: number; y: number }
@@ -61,19 +67,31 @@ export default function MoreInfoRightClick({
 					setIsLoading(false)
 				}
 				if (error) {
-					console.error('Error updating chat pin:', error)
+					dispatch(
+						setPopUpError({
+							heading: 'Error',
+							text: 'Failed to pin/unpin the chat. Please try again.',
+						}),
+					)
 					setIsLoading(false)
 				}
 			},
 		)
 	}
 
+	const dispatch = useDispatch<AppDispatch>()
+
 	const clearChat = () => {
+		setIsLoading(true)
+		dispatch(
+			setPopUpLoading({ heading: 'Clearing chat', text: 'Please wait...' }),
+		)
+		openPopUpLoading()
+
 		socket.emit(
 			'chat:clear-chat',
 			{ conversationId: chatId },
 			async ({ success, error }: { success: boolean; error?: string }) => {
-				setIsLoading(true)
 				if (success) {
 					console.log('Chat cleared successfully')
 					await Promise.all([
@@ -85,9 +103,24 @@ export default function MoreInfoRightClick({
 						}),
 					])
 					setIsLoading(false)
-				}
-				if (error) {
+					closePopUpLoading()
+					dispatch(setPopUpLoading({ heading: '', text: '' }))
+					dispatch(
+						setPopUpSuccess({
+							heading: 'Chat cleared',
+							text: 'The chat has been cleared successfully.',
+						}),
+					)
+				} else {
 					console.error('Error clearing chat:', error)
+					dispatch(setPopUpLoading({ heading: '', text: '' }))
+					closePopUpLoading()
+					dispatch(
+						setPopUpError({
+							heading: 'Error',
+							text: 'Failed to clear the chat. Please try again.',
+						}),
+					)
 					setIsLoading(false)
 				}
 			},

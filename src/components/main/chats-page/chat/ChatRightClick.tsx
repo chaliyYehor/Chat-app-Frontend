@@ -1,11 +1,12 @@
 import { Pin, Trash2 } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { useSelector } from 'react-redux'
-import type { RootType } from '../../../../store/store'
+import { useDispatch, useSelector } from 'react-redux'
+import type { AppDispatch, RootType } from '../../../../store/store'
 import { useQueryClient } from '@tanstack/react-query'
 import { socket } from '../../../../socket'
 import { useNavigate } from 'react-router-dom'
+import { setPopUpError } from '../../../../store/slices/popUpSlice'
 
 interface ChatRightClickProps {
 	position: { x: number; y: number }
@@ -30,6 +31,8 @@ export default function ChatRightClick({
 
 	const navigate = useNavigate()
 
+	const dispatch = useDispatch<AppDispatch>()
+
 	const pinChat = () => {
 		setIsLoading(true)
 		socket.emit(
@@ -50,6 +53,12 @@ export default function ChatRightClick({
 				}
 				if (error) {
 					console.error('Error updating chat pin:', error)
+					dispatch(
+						setPopUpError({
+							heading: 'Error',
+							text: 'Failed to update chat pin. Please try again.',
+						}),
+					)
 					setIsLoading(false)
 				}
 			},
@@ -74,6 +83,12 @@ export default function ChatRightClick({
 				}
 				if (error) {
 					console.error('Error deleting chat:', error)
+					dispatch(
+						setPopUpError({
+							heading: 'Error',
+							text: 'Failed to delete chat. Please try again.',
+						}),
+					)
 					setIsLoading(false)
 				}
 			},

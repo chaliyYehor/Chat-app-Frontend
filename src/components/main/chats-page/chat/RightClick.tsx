@@ -1,9 +1,10 @@
 import { Copy, Trash2, type LucideIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import type { RootType } from '../../../../store/store'
-import { useSelector } from 'react-redux'
+import type { AppDispatch, RootType } from '../../../../store/store'
+import { useDispatch, useSelector } from 'react-redux'
 import { socket } from '../../../../socket'
+import { setPopUpError } from '../../../../store/slices/popUpSlice'
 
 interface RightClickProps {
 	position: { x: number; y: number }
@@ -79,6 +80,8 @@ export default function RightClick({
 		}
 	}
 
+	const dispatch = useDispatch<AppDispatch>()
+
 	const deleteMessage = () => {
 		socket.emit(
 			'message:delete',
@@ -86,6 +89,13 @@ export default function RightClick({
 			({ success, error }: { success: boolean; error: string }) => {
 				if (!success) {
 					console.error('Failed to delete message:', error)
+					dispatch(
+						setPopUpError({
+							heading: 'Error',
+							text: 'Failed to delete message. Please try again.',
+						}),
+					)
+					return
 				}
 			},
 		)

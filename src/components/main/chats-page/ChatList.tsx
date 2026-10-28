@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
 	FormProvider,
 	useForm,
@@ -17,6 +17,9 @@ import { useGetChats } from '../../../hooks/useGetChats'
 import type z from 'zod'
 import type { chatUserSchema } from '../../../schemas/main/getChatsResponse'
 import { authClient } from '../../../lib/auth-client'
+import type { AppDispatch } from '../../../store/store'
+import { useDispatch } from 'react-redux'
+import { setPopUpError } from '../../../store/slices/popUpSlice'
 
 export default function ChatList() {
 	const [isAdding, setIsAdding] = useState(false)
@@ -27,9 +30,21 @@ export default function ChatList() {
 
 	const { control, handleSubmit } = useFormContext<ChatSearchType>()
 
-	const { data: chatsData, isPending } = useGetChats()
+	const { data: chatsData, isError: isChatsError, isPending } = useGetChats()
 	const userId = authClient.useSession().data?.user.id
 
+	const dispatch = useDispatch<AppDispatch>()
+
+	useEffect(() => {
+		if (isChatsError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load chats. Please try again.',
+				}),
+			)
+		}
+	}, [isChatsError])
 	const chatsRes = useMemo(() => {
 		if (!chatsData || !userId) return []
 

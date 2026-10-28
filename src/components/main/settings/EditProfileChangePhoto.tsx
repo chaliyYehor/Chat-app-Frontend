@@ -8,6 +8,9 @@ import {
 	type ChangeUserInfo,
 	type ChangeUserInfoInput,
 } from '../../../schemas/main/changeUserInfo'
+import type { AppDispatch } from '../../../store/store'
+import { useDispatch } from 'react-redux'
+import { setPopUpError } from '../../../store/slices/popUpSlice'
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024
 
@@ -153,9 +156,22 @@ export default function EditProfileChangePhoto() {
 		}
 	}, [clearErrors, isSubmitSuccessful])
 
-	const { data: userInfo, isPending: isUserInfoLoading } = useGetUserInfo()
+	const { data: userInfo, isError: isUserInfoError, isPending: isUserInfoLoading } = useGetUserInfo()
 	const imageSource = imagePreview ?? userInfo?.imageUrl ?? undefined
 	const isLoading = isUserInfoLoading || isPreviewLoading || isImageLoading
+
+	const dispatch = useDispatch<AppDispatch>()
+
+	useEffect(() => {
+		if (isUserInfoError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load user info. Please try again.',
+				}),
+			)
+		}
+	}, [isUserInfoError, dispatch])
 
 	return (
 		<div className='flex flex-col justify-center md:items-center items-start md:ml-0 ml-20 text-center'>

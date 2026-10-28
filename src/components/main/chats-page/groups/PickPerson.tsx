@@ -5,6 +5,10 @@ import type { GroupCreation } from '../../../../schemas/main/groupCreation'
 import Avatar from '../../Avatar'
 import { useGetUserInfo } from '../../../../hooks/useGetUserInfo'
 import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
+import type { AppDispatch } from '../../../../store/store'
+import { useDispatch } from 'react-redux'
+import { useEffect } from 'react'
+import { setPopUpError } from '../../../../store/slices/popUpSlice'
 
 interface PickPersonProps {
 	add: UseFieldArrayAppend<GroupCreation>
@@ -24,8 +28,19 @@ export default function PickPerson({
 	isPicked,
 	selectedIndex,
 }: PickPersonProps) {
-	const { data: userInfo } = useGetUserInfo()
+	const { data: userInfo, isError: isUserInfoError } = useGetUserInfo()
+	const dispatch = useDispatch<AppDispatch>()
 
+	useEffect(() => {
+		if (isUserInfoError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load user info. Please try again.',
+				}),
+			)
+		}
+	}, [isUserInfoError])
 	return (
 		<button
 			type='button'

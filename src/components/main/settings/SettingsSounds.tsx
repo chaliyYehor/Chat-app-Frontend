@@ -1,17 +1,49 @@
 import { MessageCircleMore, Volume2 } from 'lucide-react'
 import SettingsSwitch from './SettingsSwitch'
-import { useSelector } from 'react-redux'
-import type { RootType } from '../../../store/store'
+import { useDispatch, useSelector } from 'react-redux'
+import type { AppDispatch, RootType } from '../../../store/store'
 import { useGetUserPreferences } from '../../../hooks/useGetUserPreferences'
 import { useChangeTypingSound } from '../../../hooks/useChangeTypingSound'
 import { useChangeMessageSounds } from '../../../hooks/useChangeMessageSounds'
+import { useEffect } from 'react'
+import { setPopUpError } from '../../../store/slices/popUpSlice'
 
 export default function SettingsSounds() {
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 
-	const { data: preferences, isPending } = useGetUserPreferences()
-	const {mutateAsync: changeTypingSound, isPending: isChangeTypingSoundPending} = useChangeTypingSound()
-	const {mutateAsync: changeMessageSound, isPending: isChangeMessageSoundPending} = useChangeMessageSounds()
+	const { data: preferences, isPending, isError: isUserPreferencesError } = useGetUserPreferences()
+	const {mutateAsync: changeTypingSound, isError: isChangeTypingSoundError, isPending: isChangeTypingSoundPending} = useChangeTypingSound()
+	const {mutateAsync: changeMessageSound, isError: isChangeMessageSoundError, isPending: isChangeMessageSoundPending} = useChangeMessageSounds()
+
+	const dispatch = useDispatch<AppDispatch>()
+
+	useEffect(() => {
+		if (isUserPreferencesError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load user preferences. Please try again.',
+				}),
+			)
+		}
+		if (isChangeTypingSoundError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to update typing sound. Please try again.',
+				}),
+			)
+		}
+		if (isChangeMessageSoundError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to update message sound. Please try again.',
+				}),
+			)
+		}
+	}, [isUserPreferencesError, isChangeTypingSoundError, isChangeMessageSoundError, dispatch])
+
 	if (isPending) {
 		return <div className='w-full h-125 flex justify-center items-center'>
 			<div className='loader'  />

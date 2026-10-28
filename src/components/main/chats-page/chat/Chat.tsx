@@ -16,8 +16,8 @@ import UserInfo from '../../UserInfo'
 import ImageMessage from './ImageMessage'
 import { ArrowLeft } from 'lucide-react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import type { RootType } from '../../../../store/store'
+import { useDispatch, useSelector } from 'react-redux'
+import type { AppDispatch, RootType } from '../../../../store/store'
 import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
 import { useGetUserInfoChat } from '../../../../hooks/useGetUserInfoChat'
 import { useGetChatInfo } from '../../../../hooks/useGetChatInfo'
@@ -34,6 +34,7 @@ import ScrollDownBtn from '../../../ScrollDownBtn'
 import SearchInChat from './SearchInChat'
 import { formatLastSeen } from '../../../../lib/formatLastSeen'
 import IsTyping from './IsTyping'
+import { setPopUpError } from '../../../../store/slices/popUpSlice'
 export function Chat() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
 	const [isSearchOpened, setIsSearchOpened] = useState(false)
@@ -74,13 +75,15 @@ export function Chat() {
 
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 
+	const dispatch = useDispatch<AppDispatch>()
+			
 	const chatId = useParams().chatId
 	const userId = authClient.useSession().data?.user?.id
 
-	const { data: userInfo, isPending: isUserInfoPending } = useGetUserInfoChat(
+	const { data: userInfo, isError: isUserInfoError, isPending: isUserInfoPending } = useGetUserInfoChat(
 		chatId as string,
 	)
-	const { data: chatInfo, isPending: isChatInfoPending } = useGetChatInfo(
+	const { data: chatInfo, isError: isChatInfoError, isPending: isChatInfoPending } = useGetChatInfo(
 		chatId as string,
 	)
 
@@ -90,6 +93,7 @@ export function Chat() {
 
 	const {
 		data: messages,
+		isError: isMessagesError,
 		isPending: isMessagesPending,
 		fetchNextPage,
 		hasNextPage,
@@ -98,6 +102,34 @@ export function Chat() {
 		conversationId: chatId as string,
 		limit: 40,
 	})
+
+	useEffect(() => {
+		if(isMessagesError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load messages. Please try again.',
+				}),
+			)
+		}
+		if(isUserInfoError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load user information. Please try again.',
+				}),
+			)
+		}
+		if(isChatInfoError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load chat information. Please try again.',
+				}),
+			)
+		}
+	}, [isMessagesError, isUserInfoError, isChatInfoError])
+
 	const messageQueryKey = useMemo(
 		() => ['messages', chatId, 'infinite'] as const,
 		[chatId],
@@ -139,6 +171,12 @@ export function Chat() {
 					})
 				}
 				if (error) {
+					dispatch(
+						setPopUpError({
+							heading: 'Error',
+							text: 'Failed to mark messages as read. Please try again.',
+						}),
+					)
 					console.error('Error marking messages as read:', error)
 				}
 			},

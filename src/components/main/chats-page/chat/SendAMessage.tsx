@@ -18,6 +18,9 @@ import { getConvertedImage } from '../../../../api/getConvertedImage'
 import { socket } from '../../../../socket'
 import { deleteUploadedImage } from '../../../../api/deleteUploadedImage'
 import { useQueryClient } from '@tanstack/react-query'
+import type { AppDispatch } from '../../../../store/store'
+import { useDispatch } from 'react-redux'
+import { setPopUpError } from '../../../../store/slices/popUpSlice'
 
 const isImageFile = (file: File) =>
 	file.type.startsWith('image/') || /\.(heic|heif)$/i.test(file.name)
@@ -41,6 +44,9 @@ export default function SendAMessage({
 	const [imagePreview, setImagePreview] = useState<string | undefined>(
 		undefined,
 	)
+
+	const dispatch = useDispatch<AppDispatch>()
+
 	const [imagePreviewError, setImagePreviewError] = useState(false)
 	const [isImageUploading, setIsImageUploading] = useState(false)
 	const [uploadedImage, setUploadedImage] = useState<{
@@ -134,6 +140,12 @@ export default function SendAMessage({
 			({ success, error }: { success: boolean; error?: string }) => {
 				if (!success) {
 					console.error('Failed to send message:', error)
+					dispatch(
+						setPopUpError({
+							heading: 'Error',
+							text: 'Failed to send message. Please try again.',
+						}),
+					)
 					return
 				}
 

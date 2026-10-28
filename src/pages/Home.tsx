@@ -20,12 +20,17 @@ import {
 	setIsSocketConnected,
 } from '../store/slices/socketSlice'
 import { useQueryClient } from '@tanstack/react-query'
+import PopUpError from '../components/PopUpError'
+import PopUpSuccess from '../components/PopUpSuccess'
+import PopUpLoading from '../components/PopUpLoading'
+import { setPopUpError } from '../store/slices/popUpSlice'
 gsap.registerPlugin(useGSAP)
 
 export default function Home() {
 	const navigationRef = useRef<HTMLDivElement>(null)
 
 	const navigate = useNavigate()
+	const dispatch = useDispatch<AppDispatch>()
 
 	const isMobile = useIsMobile()
 
@@ -37,7 +42,16 @@ export default function Home() {
 		}
 	}, [isPending, session, navigate])
 
-	const { data: userInfo } = useGetUserInfo()
+	const { data: userInfo, isError: isUserInfoError } = useGetUserInfo()
+
+	useEffect(() => {
+		if (isUserInfoError) {
+			dispatch(setPopUpError({
+				heading: 'Error',
+				text: 'Failed to load user info. Please try again.',
+			}))
+		}
+	}, [dispatch, isUserInfoError])
 
 	const isConnected = useSelector(
 		(state: RootType) => state.socketState.isSocketConnected,
@@ -45,8 +59,6 @@ export default function Home() {
 	const globalSocketError = useSelector(
 		(state: RootType) => state.socketState.globalSocketError,
 	)
-	const dispatch = useDispatch<AppDispatch>()
-
 	useEffect(() => {
 		if (isPending || !userInfo) return
 
@@ -151,6 +163,9 @@ export default function Home() {
 	return (
 		<>
 			<div className='w-screen h-dvh flex flex-col-reverse md:flex-row'>
+				<PopUpError />
+				<PopUpSuccess />
+				<PopUpLoading />
 				<nav
 					className='flex z-20 flex-col gap-5 w-full md:w-25 items-center justify-between h-auto md:h-dvh py-4 dark:bg-black bg-[#f5f5f8]'
 					aria-label='Main navigation'
