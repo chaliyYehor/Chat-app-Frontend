@@ -7,6 +7,7 @@ import type { UserProfile } from '../../schemas/main/userProfile'
 import type { GetUserInfoChat } from '../../schemas/main/getUserInfoChat'
 import { getDisplayedStatus } from '../../lib/getDisplayedStatus'
 import { formatLastSeen } from '../../lib/formatLastSeen'
+import { useGetSharedMedia } from '../../hooks/useGetSharedMedia'
 
 type DisplayedUserInfo = UserProfile | GetUserInfoChat
 
@@ -15,11 +16,13 @@ export default function UserInfo({
 	isYourProfile,
 	sharedMedia,
 	userInfo,
+	chatId,
 	email,
 	isFetching,
 }: {
 	isYourProfile: boolean
 	sharedMedia: boolean
+	chatId?: string
 	isFetching?: boolean
 	email?: string
 	userInfo?: DisplayedUserInfo
@@ -35,6 +38,13 @@ export default function UserInfo({
 		away: { text: '#F59E0B', bg: '#F59E0B' },
 		offline: { text: '#6B6B80', bg: '#6B6B80' },
 	}
+
+	const { data: sharedMediaData, isPending: isSharedMediaLoading } =
+		useGetSharedMedia({
+			chatId: chatId ?? '',
+			otherUserId: userInfo?.userId ?? '',
+			enabled: sharedMedia,
+		})
 	return (
 		<div
 			onClick={() => {
@@ -50,7 +60,7 @@ export default function UserInfo({
 				onClick={e => e.stopPropagation()}
 				className='relative flex justify-center '
 			>
-				<div className='cursor-default dark:bg-[#16161B] bg-white w-90 flex flex-col border border-white/30 rounded-2xl overflow-y-auto overflow-hidden animate-fade-in md:my-15 my-0 md:max-h-142.5 h-[90vh] pb-3 md:pb-0'>
+				<div className='cursor-default dark:bg-[#16161B] bg-white w-90 flex flex-col border border-white/30 rounded-2xl overflow-y-auto scrollbar-none overflow-hidden animate-fade-in md:my-15 my-0 md:max-h-142.5 h-[90vh] pb-3 md:pb-0'>
 					<div className='profileGrad h-25 w-full flex justify-end items-start p-2'>
 						<Button
 							variant='contained'
@@ -135,7 +145,10 @@ export default function UserInfo({
 									'text-sm font-inter text-[#6B6B80] capitalize',
 								)}
 							>
-								{userInfo && userInfo.lastSeen && userInfo.status === 'offline' && 'Last seen: '}
+								{userInfo &&
+									userInfo.lastSeen &&
+									userInfo.status === 'offline' &&
+									'Last seen: '}
 								{!isYourProfile
 									? userInfo?.status === 'offline' && userInfo.lastSeen
 										? formatLastSeen(userInfo.lastSeen)
@@ -205,36 +218,35 @@ export default function UserInfo({
 							</div>
 						</div>
 					</div>
-					{sharedMedia && (
-						<div className='flex w-full min-w-0 flex-col items-start px-5 mb-5'>
-							<p className='text-[10px] font-semibold text-[#6B6B80] tracking-wider mb-2 font-inter'>
-								SHARED MEDIA
-							</p>
-							<div
-								onWheel={event => {
-									const scrollDelta = event.deltaX || event.deltaY
-
-									if (scrollDelta !== 0) {
-										event.preventDefault()
-										event.currentTarget.scrollBy({
-											left: scrollDelta,
-											behavior: 'auto',
-										})
-									}
-								}}
-								className='sharedMedia flex w-full min-w-0 max-w-full touch-pan-x overscroll-x-contain flex-nowrap gap-3 overflow-x-auto select-none'
-							>
-								<SharedMedia src='/rozvrh.png' />
-								<SharedMedia src='/rozvrh.png' />
-								<SharedMedia src='/rozvrh.png' />
-								<SharedMedia src='/rozvrh.png' />
-								<SharedMedia src='/rozvrh.png' />
-								<SharedMedia src='/rozvrh.png' />
-								<SharedMedia src='/rozvrh.png' />
-								<SharedMedia src='/rozvrh.png' />
-							</div>
+					{isSharedMediaLoading && (
+						<div className='w-full h-20 flex justify-center items-center'>
+							<div className='loader dark:bg-white bg-black' />
 						</div>
 					)}
+					{sharedMediaData &&
+						sharedMediaData.length > 0 &&
+						!isSharedMediaLoading && (
+							<div className='flex w-full min-w-0 flex-col items-start px-5 mb-5'>
+								<p className='text-[10px] font-semibold text-[#6B6B80] tracking-wider mb-2 font-inter'>
+									SHARED MEDIA
+								</p>
+								<div
+									onWheel={event => {
+										event.stopPropagation()
+
+										if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+											event.preventDefault()
+											event.currentTarget.scrollLeft += event.deltaY
+										}
+									}}
+									className='sharedMedia flex w-full min-w-0 max-w-full touch-pan-x overscroll-contain flex-nowrap gap-3 overflow-x-auto select-none'
+								>
+									{sharedMediaData.map(media => (
+										<SharedMedia key={media.id} src={media.imageUrl} />
+									))}
+								</div>
+							</div>
+						)}
 				</div>
 			</div>
 		</div>

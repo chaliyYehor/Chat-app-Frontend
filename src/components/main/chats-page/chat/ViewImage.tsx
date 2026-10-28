@@ -18,7 +18,7 @@ export default function ViewImage({ src, alt, setShowPreview }: Props) {
 		>
 			<div className='relative flex justify-center'>
 				<img
-					className='max-w-[80%] max-h-full object-contain'
+					className='max-w-[80%] max-h-[90vh] object-contain'
 					src={src}
 					alt={alt}
 				/>

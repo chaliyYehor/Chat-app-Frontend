@@ -91,7 +91,6 @@ export function Chat() {
 	const {
 		data: messages,
 		isPending: isMessagesPending,
-		isLoading: isMessagesLoading,
 		fetchNextPage,
 		hasNextPage,
 		isFetchingNextPage,
@@ -298,6 +297,9 @@ export function Chat() {
 			queryClient.invalidateQueries({
 				queryKey: ['userInfoChat', chatId],
 			})
+			queryClient.invalidateQueries({
+				queryKey: ['sharedMedia', { chatId }],
+			})
 		}
 
 		const handleMessagesRead = ({
@@ -427,6 +429,7 @@ export function Chat() {
 							isYourProfile={false}
 							userInfo={userInfo}
 							isFetching={isUserInfoPending}
+							chatId={chatId as string}
 							setIsProfileOpened={setIsProfileOpened}
 						/>
 					)}

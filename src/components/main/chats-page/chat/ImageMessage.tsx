@@ -57,6 +57,7 @@ export default function ImageMessage({
 					isFetching={isFetching}
 					sharedMedia={true}
 					userInfo={userInfo}
+					chatId={chatId}
 				/>
 			)}
 			<div

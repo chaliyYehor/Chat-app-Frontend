@@ -65,6 +65,7 @@ export default function Message({
 					isFetching={isFetching}
 					sharedMedia={true}
 					userInfo={userInfo}
+					chatId={chatId}
 				/>
 			)}
 			<div

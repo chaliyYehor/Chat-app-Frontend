@@ -17,6 +17,7 @@ import {
 import { getConvertedImage } from '../../../../api/getConvertedImage'
 import { socket } from '../../../../socket'
 import { deleteUploadedImage } from '../../../../api/deleteUploadedImage'
+import { useQueryClient } from '@tanstack/react-query'
 
 const isImageFile = (file: File) =>
 	file.type.startsWith('image/') || /\.(heic|heif)$/i.test(file.name)
@@ -112,6 +113,8 @@ export default function SendAMessage({
 		})
 		if (fileInputRef.current) fileInputRef.current.value = ''
 	}
+	
+	const queryClient = useQueryClient()
 
 	const onSubmit: SubmitHandler<SendAMessageType> = async data => {
 		if (isImageUploading || (data.image && !uploadedImage)) {
@@ -134,6 +137,9 @@ export default function SendAMessage({
 					return
 				}
 
+				queryClient.invalidateQueries({
+					queryKey: ['sharedMedia', { chatId }],
+				})
 				stopTyping()
 				resetAfterSend()
 				console.log('Message sent successfully')
