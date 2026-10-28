@@ -1,7 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod/dist/zod.js'
 import heic2any from 'heic2any'
 import { Image, Send } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
+import {
+	useEffect,
+	useRef,
+	useState,
+	type Dispatch,
+	type SetStateAction,
+} from 'react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import {
 	sendAMessageSchema,
@@ -18,11 +24,18 @@ const isImageFile = (file: File) =>
 const isHeicFile = (file: File) => /\.(heic|heif)$/i.test(file.name)
 
 interface Props {
-	chatId: string;
-	lastMessageAt?: Date;
+	chatId: string
+	lastMessageAt?: Date
+	isTyping: boolean
+	setIsTyping: Dispatch<SetStateAction<boolean>>
 }
 
-export default function SendAMessage({ chatId, lastMessageAt }: Props) {
+export default function SendAMessage({
+	chatId,
+	lastMessageAt,
+	isTyping,
+	setIsTyping,
+}: Props) {
 	const [image, setImage] = useState<File | undefined>(undefined)
 	const [imagePreview, setImagePreview] = useState<string | undefined>(
 		undefined,
@@ -121,6 +134,7 @@ export default function SendAMessage({ chatId, lastMessageAt }: Props) {
 					return
 				}
 
+				stopTyping()
 				resetAfterSend()
 				console.log('Message sent successfully')
 			},
@@ -147,6 +161,15 @@ export default function SendAMessage({ chatId, lastMessageAt }: Props) {
 		}
 	}
 	const { ref: registerImageRef, ...imageInput } = register('image')
+	const messageInput = register('message')
+	const stopTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+	function stopTyping() {
+		clearTimeout(stopTimer.current)
+		stopTimer.current = undefined
+		setIsTyping(false)
+		socket.volatile.emit('typing:stop', { chatId })
+	}
 
 	return (
 		<div className='p-4 shrink-0 mt-2 flex flex-col w-full gap-4 border-t border-gray-700/60'>
@@ -262,7 +285,16 @@ export default function SendAMessage({ chatId, lastMessageAt }: Props) {
 					autoComplete='off'
 					placeholder='Message...'
 					aria-label='Message'
-					{...register('message')}
+					{...messageInput}
+					onChange={event => {
+						messageInput.onChange(event)
+						if (!isTyping) {
+							setIsTyping(true)
+						}
+						socket.volatile.emit('typing:start', { chatId })
+						clearTimeout(stopTimer.current)
+						stopTimer.current = setTimeout(stopTyping, 2500)
+					}}
 					className='flex-1 dark:text-white bg-transparent text-md py-2 focus-visible:outline-none!'
 				/>
 				<button

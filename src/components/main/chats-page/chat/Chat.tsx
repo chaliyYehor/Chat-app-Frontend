@@ -26,11 +26,20 @@ import { useQueryClient } from '@tanstack/react-query'
 import ScrollDownBtn from '../../../ScrollDownBtn'
 import SearchInChat from './SearchInChat'
 import { formatLastSeen } from '../../../../lib/formatLastSeen'
+import IsTyping from './IsTyping'
 export function Chat() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
 	const [isSearchOpened, setIsSearchOpened] = useState(false)
 
 	const [hasScrolled, setHasScrolled] = useState(false)
+
+	const [isTyping, setIsTyping] = useState(false)
+	const [isUserTyping, setIsUserTyping] = useState(false)
+	const typingTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+		undefined,
+	)
+
+	console.log('isUserTyping', isUserTyping)
 
 	const chatref = useRef<HTMLDivElement>(null)
 	const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
@@ -39,6 +48,12 @@ export function Chat() {
 	useEffect(() => {
 		console.log('hasScrolled', hasScrolled)
 	}, [hasScrolled])
+
+	useEffect(() => {
+		if (isUserTyping && !hasScrolled) {
+			chatref.current?.scrollTo({ top: 0, behavior: 'smooth' })
+		}
+	}, [isUserTyping, hasScrolled])
 
 	const [messagesState, setMessagesState] = useState<MessageData[]>([])
 	const latestMessageRef = useRef<HTMLDivElement>(null)
@@ -60,7 +75,7 @@ export function Chat() {
 	)
 
 	const queryClient = useQueryClient()
-	
+
 	const navigate = useNavigate()
 
 	const { data: messages, isPending: isMessagesPending } = useGetMessages({
@@ -143,7 +158,7 @@ export function Chat() {
 
 	useEffect(() => {
 		if (!isMessagesPending && messagesState.length > 0 && !hasScrolled) {
-			scrollToLatestMessage()
+			chatref.current?.scrollTo({ top: 0, behavior: 'instant' })
 		}
 
 		console.log(latestMessageRef.current)
@@ -223,6 +238,38 @@ export function Chat() {
 			}
 		}
 
+		const handleIsTypingStart = ({
+			chatId: typingChatId,
+			userId: typingUserId,
+		}: {
+			chatId: string
+			userId: string
+		}) => {
+			if (typingChatId !== chatId || typingUserId === userId) return
+
+			setIsUserTyping(true)
+			clearTimeout(typingTimerRef.current)
+			typingTimerRef.current = setTimeout(() => {
+				setIsUserTyping(false)
+				typingTimerRef.current = undefined
+			}, 5000)
+		}
+		const handleIsTypingStop = ({
+			chatId: typingChatId,
+			userId: typingUserId,
+		}: {
+			chatId: string
+			userId: string
+		}) => {
+			if (typingChatId !== chatId || typingUserId === userId) return
+
+			clearTimeout(typingTimerRef.current)
+			typingTimerRef.current = undefined
+			setIsUserTyping(false)
+		}
+
+		socket.on('typing:start', handleIsTypingStart)
+		socket.on('typing:stop', handleIsTypingStop)
 		socket.on('message:read', handleMessagesRead)
 		socket.on('message:new_messages', handleNewMessages)
 		socket.on('message:received', handleMessageReceived)
@@ -230,6 +277,10 @@ export function Chat() {
 		socket.on('chat:cleared', handleChatCleared)
 
 		return () => {
+			socket.off('typing:start', handleIsTypingStart)
+			socket.off('typing:stop', handleIsTypingStop)
+			clearTimeout(typingTimerRef.current)
+			typingTimerRef.current = undefined
 			socket.off('message:read', handleMessagesRead)
 			socket.off('chat:deleted', handleChatDeleted)
 			socket.off('chat:cleared', handleChatCleared)
@@ -362,42 +413,48 @@ export function Chat() {
 						<p>Failed to load user information</p>
 					</div>
 				) : (
-					messagesState.map((message, index) => (
-						<div
-							key={message.id}
-							ref={
-								index === 0
-									? setLatestMessageRefs
-									: index === messagesState.length - 1
-										? setOldestMessageElement
-										: null
-							}
-						>
-							{message.type === 'image' ? (
-								<ImageMessage
-									isFetching={isUserInfoPending}
-									imageUrl={userInfo?.imageUrl ?? undefined}
-									messageInfo={message}
-									userInfo={userInfo}
-									isMe={message.senderId === userId}
-									chatId={chatId as string}
-								/>
-							) : (
-								<Message
-									imageUrl={userInfo?.imageUrl ?? undefined}
-									messageInfo={message}
-									isFetching={isUserInfoPending}
-									userInfo={userInfo}
-									isMe={message.senderId === userId}
-									chatId={chatId as string}
-								/>
-							)}
-						</div>
-					))
+					<>
+						<IsTyping userInfo={userInfo} isTyping={isUserTyping} />
+						{messagesState.map((message, index) => (
+							<div
+								key={message.id}
+								ref={
+									index === 0
+										? setLatestMessageRefs
+										: index === messagesState.length - 1
+											? setOldestMessageElement
+											: null
+								}
+							>
+								{message.type === 'image' ? (
+									<ImageMessage
+										isFetching={isUserInfoPending}
+										imageUrl={userInfo?.imageUrl ?? undefined}
+										messageInfo={message}
+										userInfo={userInfo}
+										isMe={message.senderId === userId}
+										chatId={chatId as string}
+									/>
+								) : (
+									<Message
+										imageUrl={userInfo?.imageUrl ?? undefined}
+										messageInfo={message}
+										isFetching={isUserInfoPending}
+										userInfo={userInfo}
+										isMe={message.senderId === userId}
+										chatId={chatId as string}
+									/>
+								)}
+							</div>
+						))}
+					</>
 				)}
+
 			</div>
 
 			<SendAMessage
+				isTyping={isTyping}
+				setIsTyping={setIsTyping}
 				lastMessageAt={messagesState[0]?.createdAt}
 				chatId={chatId as string}
 			/>
