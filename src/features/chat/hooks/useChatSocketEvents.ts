@@ -135,6 +135,11 @@ export function useChatSocketEvents({
 			if (data.conversationId === chatId) navigate('/chats', { replace: true })
 		}
 
+		const handlePresenceChanged = () => {
+			void queryClient.invalidateQueries({ queryKey: ['userInfoChat', chatId] })
+			void queryClient.invalidateQueries({ queryKey: ['chats'] })
+		}
+
 		const handleTypingStart = (data: { chatId: string; userId: string }) => {
 			if (data.chatId !== chatId || data.userId === userId) return
 
@@ -187,6 +192,7 @@ export function useChatSocketEvents({
 		socket.on('message:deleted', handleDeletedMessage)
 		socket.on('chat:deleted', handleChatDeleted)
 		socket.on('chat:cleared', handleChatCleared)
+		socket.on('presence:changed', handlePresenceChanged)
 
 		return () => {
 			socket.off('typing:start', handleTypingStart)
@@ -197,6 +203,7 @@ export function useChatSocketEvents({
 			socket.off('message:deleted', handleDeletedMessage)
 			socket.off('chat:deleted', handleChatDeleted)
 			socket.off('chat:cleared', handleChatCleared)
+			socket.off('presence:changed', handlePresenceChanged)
 			clearTimeout(typingTimerRef.current)
 			typingTimerRef.current = undefined
 		}
