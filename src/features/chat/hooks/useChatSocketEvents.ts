@@ -114,7 +114,14 @@ export function useChatSocketEvents({
 
 			void queryClient.invalidateQueries({ queryKey: ['chats'] })
 			void queryClient.invalidateQueries({ queryKey: ['userInfoChat', chatId] })
-			void queryClient.invalidateQueries({ queryKey: ['sharedMedia', { chatId }] })
+			void queryClient.invalidateQueries({
+				queryKey: ['sharedMedia', { chatId }],
+			})
+		}
+
+		const handleNotificationReceived = (data: { conversationId: string }) => {
+			if (data.conversationId !== chatId) return
+
 			if (messageSoundsEnabled) playMessageSound()
 		}
 
@@ -184,6 +191,7 @@ export function useChatSocketEvents({
 
 		void queryClient.invalidateQueries({ queryKey: ['chats'] })
 		void queryClient.invalidateQueries({ queryKey: ['userInfoChat', chatId] })
+		socket.on('notification:new_message', handleNotificationReceived)
 		socket.on('typing:start', handleTypingStart)
 		socket.on('typing:stop', handleTypingStop)
 		socket.on('message:read', handleMessagesRead)
@@ -196,6 +204,7 @@ export function useChatSocketEvents({
 
 		return () => {
 			socket.off('typing:start', handleTypingStart)
+			socket.off('notification:new_message', handleNotificationReceived)
 			socket.off('typing:stop', handleTypingStop)
 			socket.off('message:read', handleMessagesRead)
 			socket.off('message:new_messages', handleNewMessages)
