@@ -28,6 +28,9 @@ import { useSelector } from 'react-redux'
 import type { RootType } from './store/store'
 import { useEffect } from 'react'
 import { useIsMobile } from './hooks/useIsMobile'
+import { SetNewPassword } from './pages/SetNewPassword'
+import SetChangePassword from './pages/SetChangePassword'
+import { changePasswordSchema, type ChangePasswordType } from './schemas/auth/changePassword'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -60,6 +63,14 @@ function App() {
 			groupName: '',
 			search: '',
 			peopleToAdd: [],
+		},
+	})
+	const changePasswordMethods = useForm<ChangePasswordType>({
+		resolver: zodResolver(changePasswordSchema),
+		defaultValues: {
+			confirmPassword: '',
+			currentPassword: '',
+			password: '',
 		},
 	})
 
@@ -107,19 +118,13 @@ function App() {
 					</Route>
 					<Route path='/settings' element={<Settings />}>
 						<Route index element={isMobile ? null : <SelectConvoUi />} />
+						<Route path='editProfile' element={<SetEditProfilePage />} />
+						<Route path='security' element={<SetSecurityPage />} />
 						<Route
-							path='editProfile'
+							path='changePassword'
 							element={
-								<FormProvider {...groupCreationMethods}>
-									<SetEditProfilePage />
-								</FormProvider>
-							}
-						/>
-						<Route
-							path='security'
-							element={
-								<FormProvider {...groupCreationMethods}>
-									<SetSecurityPage />
+								<FormProvider {...changePasswordMethods}>
+									<SetChangePassword />
 								</FormProvider>
 							}
 						/>
@@ -142,6 +147,7 @@ function App() {
 					}
 				/>
 				<Route path='/forgotPassword' element={<ForgotPassword />} />
+				<Route path='/setNewPassword' element={<SetNewPassword />} />
 				<Route path='/resetPassword' element={<ResetPassword />} />
 				<Route path='/verify' element={<Verify />} />
 				<Route path='*' element={<NotFound />} />

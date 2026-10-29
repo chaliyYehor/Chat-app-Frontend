@@ -16,16 +16,38 @@ import SettingsLabel from './SettingsLabel'
 import { useIsMobile } from '../../../hooks/useIsMobile'
 import { useGetUserInfo } from '../../../hooks/useGetUserInfo'
 import { authClient } from '../../../lib/auth-client'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { useEditUserProfileInfo } from '../../../hooks/useEditUserProfileInfo'
+import type { AppDispatch } from '../../../store/store'
+import { useDispatch } from 'react-redux'
+import { setPopUpError } from '../../../store/slices/popUpSlice'
 
 export default function SettingsEditProfile() {
-	const { data: userInfo, isPending: isUserInfoLoading } = useGetUserInfo()
+	const { data: userInfo, isError: isUserInfoError, isPending: isUserInfoLoading } = useGetUserInfo()
+
+	const dispatch = useDispatch<AppDispatch>()
+
+	useEffect(() => {
+		if (isUserInfoError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load user info. Please try again.',
+				}),
+			)
+		}
+	}, [isUserInfoError, dispatch])
+
 	const { data: session } = authClient.useSession()
+	const [globalError, setGlobalError] = useState('')
+
+	const { mutateAsync: editUserProfileInfo, isPending } =
+		useEditUserProfileInfo()
 
 	const methods = useForm<ChangeUserInfoInput, unknown, ChangeUserInfo>({
 		resolver: zodResolver(changeUserInfoSchema),
 		defaultValues: {
-			status: 'online',
+			previouslySetStatus: 'online',
 			userId: '',
 			name: '',
 			bio: '',
@@ -44,19 +66,36 @@ export default function SettingsEditProfile() {
 
 		reset(
 			{
-			status: userInfo.status,
-			userId: '@' + userInfo.userPubId,
-			name: userInfo.name,
-			bio: userInfo.about ?? '',
-			email: session?.user.email ?? '',
-			file: undefined,
+				previouslySetStatus: userInfo.previouslySetStatus,
+				userId: '@' + userInfo.userPubId,
+				name: userInfo.name,
+				bio: userInfo.about ?? '',
+				email: session?.user.email ?? '',
+				file: undefined,
 			},
 			{ keepDirtyValues: true },
 		)
 	}, [userInfo, session?.user.email, reset])
 
-	const onSubmit: SubmitHandler<ChangeUserInfo> = data => {
-		console.log(data)
+	const onSubmit: SubmitHandler<ChangeUserInfo> =async data => {
+		setGlobalError('')
+		const { bio, email, file, name, previouslySetStatus, userId } = data
+
+		const formData = new FormData()
+		formData.append('previouslySetStatus', previouslySetStatus ?? 'online')
+		formData.append('userId', userId ?? '')
+		formData.append('name', name ?? '')
+		formData.append('bio', bio ?? '')
+		formData.append('email', email ?? '')
+		if (file) {
+			formData.append('file', file)
+		}
+		try {
+			await editUserProfileInfo(formData)
+		} catch (error) {
+			setGlobalError('Failed to update user profile')
+			console.error('Error updating user profile:', error)
+		}
 	}
 
 	const isMobile = useIsMobile()
@@ -108,9 +147,7 @@ export default function SettingsEditProfile() {
 							<Button
 								type='submit'
 								variant='contained'
-								disabled={
-									isSubmitting || !isDirty
-								}
+								disabled={isSubmitting || !isDirty}
 								sx={{
 									width: isMobile ? '70%' : 'calc(100% - 32px)',
 									maxWidth: '448px',
@@ -141,8 +178,14 @@ export default function SettingsEditProfile() {
 									},
 								}}
 							>
-								Save Changes
+								{isPending ? <div className='loader' /> : 'Save Changes'}
 							</Button>
+							<p
+								className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center'
+								role='alert'
+							>
+								{globalError || '\u00A0'}
+							</p>
 						</form>
 					</FormProvider>
 				</>

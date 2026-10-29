@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useFormContext, type SubmitHandler } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { authClient } from '../../lib/auth-client'
 import type { LoginType } from '../../schemas/auth/login'
 import FormTextField from './components/FormTextField'
@@ -63,14 +63,13 @@ export default function LoginForm({ globalError, setGlobalError }: Props) {
 				<div>
 					<div className='flex justify-between items-center'>
 						<Label text='PASSWORD' htmlFor='password' />
-						<button
+						<Link
+							to='/forgotPassword'
 							aria-label='Forgot password'
-							onClick={() => navigate('/forgot-password')}
-							type='button'
 							className='text-[#7C5CFC] text-sm font-medium hover:underline cursor-pointer'
 						>
 							Forgot password?
-						</button>
+						</Link>
 					</div>
 					<FormTextField
 						control={control}

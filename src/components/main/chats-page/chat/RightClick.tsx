@@ -1,16 +1,38 @@
-import { Copy, Pin, Reply, Trash2 } from 'lucide-react'
+import { Copy, Trash2, type LucideIcon } from 'lucide-react'
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import type { RootType } from '../../../../store/store'
-import { useSelector } from 'react-redux'
+import type { AppDispatch, RootType } from '../../../../store/store'
+import { useDispatch, useSelector } from 'react-redux'
+import { socket } from '../../../../socket'
+import { setPopUpError } from '../../../../store/slices/popUpSlice'
+import { useAccessibleMenu } from '../../../../hooks/useAccessibleMenu'
 
 interface RightClickProps {
 	position: { x: number; y: number }
+	chatId: string
+	messageId: string
+	messageText: string | null
+	isMe: boolean
 	onClose: () => void
 }
 
-export default function RightClick({ position, onClose }: RightClickProps) {
+interface MenuItem {
+	icon: LucideIcon
+	label: string
+	onClick: () => void
+	danger?: boolean
+}
+
+export default function RightClick({
+	position,
+	onClose,
+	messageId,
+	chatId,
+	messageText,
+	isMe,
+}: RightClickProps) {
 	const menuRef = useRef<HTMLDivElement>(null)
+	useAccessibleMenu(menuRef)
 
 	useEffect(() => {
 		function handleClickOutside(e: MouseEvent) {
@@ -60,12 +82,75 @@ export default function RightClick({ position, onClose }: RightClickProps) {
 		}
 	}
 
-	const menuItems = [
-		{ icon: Reply, label: 'Reply', onClick: () => onClose() },
-		{ icon: Copy, label: 'Copy text', onClick: () => onClose() },
-		{ icon: Pin, label: 'Pin', onClick: () => onClose() },
-		{ icon: Trash2, label: 'Delete', danger: true, onClick: () => onClose() },
+	const dispatch = useDispatch<AppDispatch>()
+
+	const deleteMessage = () => {
+		socket.emit(
+			'message:delete',
+			{ chatId, messageId },
+			({ success, error }: { success: boolean; error: string }) => {
+				if (!success) {
+					console.error('Failed to delete message:', error)
+					dispatch(
+						setPopUpError({
+							heading: 'Error',
+							text: 'Failed to delete message. Please try again.',
+						}),
+					)
+					return
+				}
+			},
+		)
+	}
+
+	const copyMessage = () => {
+		navigator.clipboard.writeText(messageText || '')
+	}
+
+	const menuItemsGeneral: MenuItem[] = [
+		{
+			icon: Copy,
+			label: 'Copy text',
+			onClick: () => {
+				copyMessage()
+				onClose()
+			},
+		},
+		{
+			icon: Trash2,
+			label: 'Delete',
+			danger: true,
+			onClick: () => {
+				deleteMessage()
+				onClose()
+			},
+		},
 	]
+
+	const imageMenuItems: MenuItem[] = [
+		{
+			icon: Trash2,
+			label: 'Delete',
+			danger: true,
+			onClick: () => {
+				deleteMessage()
+				onClose()
+			},
+		},
+	]
+
+	const notMeMenuItems: MenuItem[] = [
+		{
+			icon: Copy,
+			label: 'Copy text',
+			onClick: () => {
+				copyMessage()
+				onClose()
+			},
+		},
+	]
+
+	const menuItems = messageText && isMe ? menuItemsGeneral : !messageText && isMe ? imageMenuItems : notMeMenuItems
 
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 
@@ -96,8 +181,8 @@ export default function RightClick({ position, onClose }: RightClickProps) {
 							item.danger
 								? 'text-red-400 hover:bg-red-500/10'
 								: appTheme === 'dark'
-								? 'text-[#E0E0E6] hover:bg-white/10'
-								: 'text-[#6B6B80] hover:bg-[#ebebf0]/40'
+									? 'text-[#E0E0E6] hover:bg-white/10'
+									: 'text-[#6B6B80] hover:bg-[#ebebf0]/40'
 						}`}
 					>
 						<Icon size={16} className='shrink-0' aria-hidden='true' />

@@ -1,6 +1,7 @@
 import { Stack, styled, Switch } from '@mui/material'
 import { useSelector } from 'react-redux'
 import type { RootType } from '../../../store/store'
+import type { UseMutateAsyncFunction } from '@tanstack/react-query'
 
 const AntSwitch = styled(Switch, {
 	shouldForwardProp: prop => prop !== 'appTheme',
@@ -44,13 +45,41 @@ const AntSwitch = styled(Switch, {
 		backgroundColor: appTheme === 'dark' ? '#1E1E26' : '#EBEBF0',
 	},
 }))
-export default function SettingsSwitch({ label }: { label: string }) {
+
+type SettingsSwitchProps = {
+	label: "typingSounds" | "messageSounds" | "lastSeen" | "readReceipts"
+	ifChecked: boolean
+	onChange: UseMutateAsyncFunction<any, Error, {
+    type: "typingSounds" | "messageSounds" | "lastSeen" | "readReceipts";
+    value: boolean;
+}, unknown>,
+	isPending?: boolean
+}
+
+export default function SettingsSwitch({
+	label,
+	onChange,
+	ifChecked,
+	isPending,
+}: SettingsSwitchProps) {
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
+
+	const labels = {
+		typingSounds: 'Typing Sound',
+		messageSounds: 'Message Sound',
+		lastSeen: 'Last Seen',
+		readReceipts: 'Read Receipts',
+	}
+
 	return (
-		<>
-			<Stack>
-				<AntSwitch appTheme={appTheme} aria-label={label} />
-			</Stack>
-		</>
+		<Stack>
+			<AntSwitch
+				disabled={isPending}	
+				checked={ifChecked}
+				onChange={async (_, newChecked) => await onChange({ type: label, value: newChecked })}
+				appTheme={appTheme}
+				aria-label={labels[label]}
+			/>
+		</Stack>
 	)
 }

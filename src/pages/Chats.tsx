@@ -4,15 +4,24 @@ import { Outlet, useLocation } from 'react-router-dom'
 import ChatList from '../components/main/chats-page/ChatList'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { authClient } from '../lib/auth-client'
+import { useSelector } from 'react-redux'
+import type { RootType } from '../store/store'
+import GlobalSocketError from '../components/globalSocketError'
+
 
 const possiblePreviousLocations = ['/chats', '/groups', '/calls', '/settings']
 
 export default function Chats() {
 	const isMobile = useIsMobile()
 
+	const globalSocketError = useSelector(
+		(state: RootType) => state.socketState.globalSocketError,
+	)
+
 	const { isPending } = authClient.useSession()
 	const location = useLocation()
 	const currentLocation = location.pathname
+	const isChatDetailsRoute = /^\/chats\//.test(currentLocation)
 	const previousLocation =
 		typeof location.state?.from === 'string' ? location.state.from : undefined
 	const currentIndex = possiblePreviousLocations.indexOf(currentLocation)
@@ -27,10 +36,9 @@ export default function Chats() {
 				? -100
 				: 100
 			: -100
-
 	useGSAP(
 		() => {
-			if (isPending) return
+			if (isPending || isChatDetailsRoute) return
 
 			gsap.from('.chats', {
 				xPercent: isMobile ? animationXPercent : -100,
@@ -39,17 +47,29 @@ export default function Chats() {
 			})
 		},
 		{
-			dependencies: [isPending, isMobile, currentLocation, previousLocation],
+			dependencies: [
+				isPending,
+				isMobile,
+				currentLocation,
+				previousLocation,
+				isChatDetailsRoute,
+			],
 			revertOnUpdate: true,
 		},
 	)
 
 	return (
 		<div className='flex w-full h-full min-w-0 relative'>
-			<div className='chats messagesSection outline-1 outline-gray-700/60 md:w-100 w-full shrink-0 flex'>
-				<ChatList />
+			<div className='chats messagesSection outline-1 outline-gray-700/60 md:w-100 w-full md:max-w-[30vw] shrink md:shrink-0 flex'>
+				{globalSocketError ? (
+					<GlobalSocketError />
+				) : (
+					<ChatList />
+				)}
 			</div>
-			<div className='flex-1 min-w-0 absolute top-0 left-0 md:relative md:top-auto md:left-auto h-full'>
+			<div
+				className={`${isMobile && !isChatDetailsRoute ? 'hidden md:block' : 'absolute inset-0'} md:relative md:inset-auto md:flex-1 min-w-0 md:shrink h-full`}
+			>
 				<Outlet />
 			</div>
 		</div>

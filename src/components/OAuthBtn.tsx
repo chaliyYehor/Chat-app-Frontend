@@ -11,6 +11,7 @@ interface Props {
 export default function OAuthBtn({ type, onClick, isSubmitting }: Props) {
 	return (
 		<Button
+			type='button'
 			aria-label={`Sign in with ${type}`}
 			aria-busy={isSubmitting}
 			variant='outlined'

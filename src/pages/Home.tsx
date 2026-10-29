@@ -14,16 +14,23 @@ import { useGetUserInfo } from '../hooks/useGetUserInfo'
 import { useDispatch } from 'react-redux'
 import type { AppDispatch } from '../store/store'
 import { setTheme } from '../store/slices/themeSlice'
+import PopUpError from '../components/PopUpError'
+import PopUpSuccess from '../components/PopUpSuccess'
+import PopUpLoading from '../components/PopUpLoading'
+import { setPopUpError } from '../store/slices/popUpSlice'
+import { useAppSocket } from '../hooks/useAppSocket'
 gsap.registerPlugin(useGSAP)
 
 export default function Home() {
 	const navigationRef = useRef<HTMLDivElement>(null)
 
 	const navigate = useNavigate()
+	const dispatch = useDispatch<AppDispatch>()
 
 	const isMobile = useIsMobile()
 
 	const { data: session, isPending } = authClient.useSession()
+	useAppSocket(!isPending && Boolean(session))
 
 	useEffect(() => {
 		if (!isPending && !session) {
@@ -31,11 +38,19 @@ export default function Home() {
 		}
 	}, [isPending, session, navigate])
 
-	const {data: userInfo} = useGetUserInfo()
-	const dispatch = useDispatch<AppDispatch>()
+	const { data: userInfo, isError: isUserInfoError } = useGetUserInfo()
 
 	useEffect(() => {
-		if(isPending || !userInfo) return
+		if (isUserInfoError) {
+			dispatch(setPopUpError({
+				heading: 'Error',
+				text: 'Failed to load user info. Please try again.',
+			}))
+		}
+	}, [dispatch, isUserInfoError])
+
+	useEffect(() => {
+		if (isPending || !userInfo) return
 
 		dispatch(setTheme(userInfo.theme))
 	}, [userInfo, isPending])
@@ -54,7 +69,16 @@ export default function Home() {
 
 	return (
 		<>
+			<a
+				href='#main-content'
+				className='sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-100 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-black'
+			>
+				Skip to main content
+			</a>
 			<div className='w-screen h-dvh flex flex-col-reverse md:flex-row'>
+				<PopUpError />
+				<PopUpSuccess />
+				<PopUpLoading />
 				<nav
 					className='flex z-20 flex-col gap-5 w-full md:w-25 items-center justify-between h-auto md:h-dvh py-4 dark:bg-black bg-[#f5f5f8]'
 					aria-label='Main navigation'
@@ -66,7 +90,8 @@ export default function Home() {
 						{!isMobile && (
 							<div
 								className='messageUI w-14 h-14 rounded-2xl flex justify-center items-center mb-3'
-								aria-label='Chat App'
+								role='img'
+								aria-label='Pulse'
 							>
 								<RiMessage2Fill color='white' size={30} aria-hidden='true' />
 							</div>
@@ -80,7 +105,7 @@ export default function Home() {
 					{!isMobile && <Profile />}
 				</nav>
 
-				<main className='dark:bg-black bg-[#f5f5f8] flex-1 min-h-0 md:h-dvh flex min-w-0'>
+				<main id='main-content' className='dark:bg-black bg-[#f5f5f8] flex-1 min-h-0 md:h-dvh flex min-w-0' tabIndex={-1}>
 					<Outlet />
 				</main>
 			</div>

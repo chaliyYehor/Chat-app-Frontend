@@ -1,12 +1,18 @@
 import { Button } from '@mui/material'
 import { EllipsisVertical } from 'lucide-react'
-import { useState } from 'react'
+import { useState, type SetStateAction } from 'react'
 import MoreInfoRightClick from './MoreInfoRightClick'
 
 export default function MoreInfoButton({
 	isGroup = false,
+	chatId,
+	isPinned,
+	onSearchClick,
 }: {
 	isGroup?: boolean
+	chatId: string
+	isPinned: boolean
+	onSearchClick: (value: SetStateAction<boolean>) => void
 }) {
 	const [chatToolsPosition, setChatToolsPosition] = useState<{
 		x: number
@@ -22,12 +28,16 @@ export default function MoreInfoButton({
 		<>
 			{chatToolsPosition && (
 				<MoreInfoRightClick
+					chatId={chatId}
+					isPinned={isPinned}
+					onSearchClick={onSearchClick}
 					position={chatToolsPosition}
 					onClose={() => setChatToolsPosition(null)}
 					isGroup={isGroup}
 				/>
 			)}
 			<Button
+				type='button'
 				onClick={handleClick}
 				aria-label='More conversation options'
 				sx={{

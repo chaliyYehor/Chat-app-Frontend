@@ -11,7 +11,7 @@ export default function NewGroupChatBtn({
 	return (
 		<Button
 			onClick={() => onClick(true)}
-			type='submit'
+			type='button'
 			variant='contained'
 			sx={{
 				width: '158px',

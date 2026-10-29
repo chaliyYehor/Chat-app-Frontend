@@ -7,7 +7,7 @@ const isImageFile = (file: File) =>
 
 export const changeUserInfoSchema = z
 	.object({
-		status: z.enum(['online', 'away', 'offline']).optional(),
+		previouslySetStatus: z.enum(['online', 'away', 'offline']).optional(),
 		userId: z
 			.string()
 			.optional(),

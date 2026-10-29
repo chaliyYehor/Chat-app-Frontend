@@ -19,9 +19,9 @@ export const sendAMessageSchema = z
 					})
 					.refine(isImageFile, {
 						message: 'Only images are allowed',
-					}),
+					})
+					.optional(),
 			)
-			.optional(),
 	})
 	.refine(data => Boolean(data.message?.trim() || data.image), {
 		message: 'Message or image is required',

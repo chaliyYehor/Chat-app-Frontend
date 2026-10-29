@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@mui/material'
 import { Lock } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm, type SubmitHandler } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import BackToSignUp from '../components/BackToSignUp'
@@ -13,8 +13,8 @@ import {
 	type ResetPasswordType,
 } from '../schemas/auth/resetPassword'
 
-const token = new URLSearchParams(window.location.search).get('token')
 
+const token = new URLSearchParams(window.location.search).get('token')
 export default function ResetPassword() {
 	const [globalError, setGlobalError] = useState('')
 
@@ -30,47 +30,28 @@ export default function ResetPassword() {
 		},
 	})
 
-	const onSubmit: SubmitHandler<ResetPasswordType> = async data => {
-		if (!token) {
-			setGlobalError('Invalid or missing token')
-			navigate('/chats')
-			return
-		}
-
-		const { password } = data
-
-		const { error } = await authClient.resetPassword(
-			{
-				newPassword: password,
-				token,
-			},
-			{
-				onSuccess: () => {
-					navigate('/login')
-				},
-			},
-		)
-
-		if (error) {
-			setGlobalError(error.message!)
-			return
-		}
-	}
-
-	const { data: session, isPending } = authClient.useSession()
 	const navigate = useNavigate()
-	useEffect(() => {
-		if (!isPending && session) {
-			navigate('/chats')
-		}
-	}, [isPending, session, navigate])
-	if (isPending) {
-		return (
-			<div className='w-screen h-screen absolute top-0 left-0 flex justify-center items-center'>
-				<div className='loader dark:bg-white bg-black' />
-			</div>
-		)
-	}
+
+    const onSubmit: SubmitHandler<ResetPasswordType> = async ({
+        password,
+    }) => {
+        if (!token) {
+            setGlobalError('Invalid or missing token')
+            return
+        }
+
+        const { error } = await authClient.resetPassword({
+            newPassword: password,
+            token,
+        })
+
+        if (error) {
+            setGlobalError(error.message ?? 'Failed to reset password')
+            return
+        }
+
+        navigate('/login')
+    }
 
 	return (
 		<div className='w-screen h-dvh flex justify-center items-center'>
@@ -113,6 +94,7 @@ export default function ResetPassword() {
 					<Button
 						type='submit'
 						variant='contained'
+						aria-busy={isSubmitting}
 						disabled={isSubmitting}
 						sx={{
 							width: '100%',
@@ -140,12 +122,12 @@ export default function ResetPassword() {
 							},
 						}}
 					>
-						{isSubmitting ? <div className='loader' /> : 'Reset Password'}
+						{isSubmitting ? <div className='loader' role='status' aria-label='Resetting password' /> : 'Reset Password'}
 					</Button>
 
 					<BackToSignUp />
 
-					<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center'>
+					<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center' role='alert'>
 						{globalError || '\u00A0'}
 					</p>
 				</div>

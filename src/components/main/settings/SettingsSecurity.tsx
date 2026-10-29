@@ -4,8 +4,33 @@ import SettingsLabel from './SettingsLabel'
 import SettingsChangePassword from './SettingsChangePassword'
 import SettingsActSess from './SettingsActSess'
 import SettingsDanger from './SettingsDanger'
+import { authClient } from '../../../lib/auth-client'
+import { useEffect, useState } from 'react'
+import SettingsSetNewPassword from './SettingsSetNewPassword'
 
 export default function SettingsSecurity() {
+	const [hasPassword, setHasPassword] = useState<boolean | null>(
+    null,
+  );
+	const { isPending } = authClient.useSession()
+  useEffect(() => {
+    async function checkPassword() {
+      const { data: accounts, error } =
+        await authClient.listAccounts();
+
+      if (error || !accounts) {
+        return;
+      }
+
+      setHasPassword(
+        accounts.some(
+          (account) => account.providerId === "credential",
+        ),
+      );
+    }
+
+    void checkPassword();
+  }, []);
 	return (
 		<div className='chats chatListContainer h-full w-full min-w-0 dark:bg-[#16161b] bg-white'>
 			<div className='mb-10 flex flex-col mt-5 gap-2'>
@@ -22,7 +47,8 @@ export default function SettingsSecurity() {
 			<div className='flex flex-col gap-4'>
 				<div className='flex flex-col md:w-full w-[80%]'>
 					<SettingsLabel label={'Authentication'} />
-					<SettingsChangePassword />
+					{isPending && <div className='h-14 w-[90%] ml-5 rounded-2xl skeleton-shimmer' />}
+					{hasPassword ? <SettingsChangePassword /> : <SettingsSetNewPassword />}
 				</div>
 
 				<div className='flex flex-col md:w-full w-[80%]'>

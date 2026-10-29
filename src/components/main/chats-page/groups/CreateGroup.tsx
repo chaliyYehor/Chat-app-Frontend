@@ -13,6 +13,7 @@ import CreateGroupBtn from './CreateGroupBtn'
 import PickPerson from './PickPerson'
 import type { RootType } from '../../../../store/store'
 import { useSelector } from 'react-redux'
+import { useAccessibleDialog } from '../../../../hooks/useAccessibleDialog'
 
 export default function CreateGroup({
 	setIsAdding,
@@ -43,8 +44,10 @@ export default function CreateGroup({
 	}
 
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
+	const dialogRef = useAccessibleDialog(() => setIsAdding(false))
 	return createPortal(
 		<div
+			ref={dialogRef}
 			onClick={() => {
 				setIsAdding(false)
 			}}
@@ -65,7 +68,7 @@ export default function CreateGroup({
 								id='new-group-title'
 								className='dark:text-[#F0F0F5] font-inter text-[20px] font-bold text-base'
 							>
-								New Message
+								New Group
 							</h2>
 							<p className='text-[#6B6B80] font-inter text-sm mt-0.5'>
 								Name your group and choose members
