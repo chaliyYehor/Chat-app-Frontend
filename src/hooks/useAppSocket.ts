@@ -44,6 +44,10 @@ export function useAppSocket(enabled: boolean) {
 			void queryClient.invalidateQueries({ queryKey: ['chats'] })
 		}
 
+		const handlePresenceChanged = () => {
+			void queryClient.invalidateQueries({ queryKey: ['chats'] })
+		}
+
 		socket.on('connect', handleConnect)
 		socket.on('disconnect', handleDisconnect)
 		socket.on('connect_error', handleConnectError)
@@ -51,6 +55,7 @@ export function useAppSocket(enabled: boolean) {
 		socket.on('chat:deleted', invalidateChats)
 		socket.on('message:received', invalidateChats)
 		socket.on('message:deleted', invalidateChats)
+		socket.on('presence:changed', handlePresenceChanged)
 
 		socket.connect()
 
@@ -62,6 +67,7 @@ export function useAppSocket(enabled: boolean) {
 			socket.off('chat:deleted', invalidateChats)
 			socket.off('message:received', invalidateChats)
 			socket.off('message:deleted', invalidateChats)
+			socket.off('presence:changed', handlePresenceChanged)
 			socket.disconnect()
 		}
 	}, [dispatch, enabled, queryClient])

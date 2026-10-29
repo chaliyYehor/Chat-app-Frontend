@@ -51,6 +51,8 @@ export default function SendAMessage({
 
 	const [imagePreviewError, setImagePreviewError] = useState(false)
 	const [isImageUploading, setIsImageUploading] = useState(false)
+	const [isSending, setIsSending] = useState(false)
+	const isSendingRef = useRef(false)
 	const [uploadedImage, setUploadedImage] = useState<{
 		imageUrl: string
 		imagePublicId: string
@@ -125,9 +127,16 @@ export default function SendAMessage({
 	const queryClient = useQueryClient()
 
 	const onSubmit: SubmitHandler<SendAMessageType> = async data => {
-		if (isImageUploading || (data.image && !uploadedImage)) {
+		if (
+			isSendingRef.current ||
+			isImageUploading ||
+			(data.image && !uploadedImage)
+		) {
 			return
 		}
+
+		isSendingRef.current = true
+		setIsSending(true)
 
 		socket.emit(
 			'message:send',
@@ -141,6 +150,8 @@ export default function SendAMessage({
 			},
 			({ success, error }: { success: boolean; error?: string }) => {
 				if (!success) {
+					isSendingRef.current = false
+					setIsSending(false)
 					console.error('Failed to send message:', error)
 					dispatch(
 						setPopUpError({
@@ -156,6 +167,8 @@ export default function SendAMessage({
 				})
 				stopTyping()
 				resetAfterSend()
+				isSendingRef.current = false
+				setIsSending(false)
 				console.log('Message sent successfully')
 			},
 		)
@@ -255,7 +268,13 @@ export default function SendAMessage({
 				className='messageInput w-full dark:bg-[#1e1e26] bg-[#ebebf0] flex items-center gap-4 rounded-2xl px-4 py-2 text-[#6B6B80]'
 			>
 				<span className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
-					{isImageUploading ? 'Uploading image' : uploadedImage ? 'Image ready to send' : ''}
+					{isSending
+						? 'Sending message'
+						: isImageUploading
+							? 'Uploading image'
+							: uploadedImage
+								? 'Image ready to send'
+								: ''}
 				</span>
 				<input
 					{...imageInput}
@@ -351,8 +370,8 @@ export default function SendAMessage({
 					className='message-composer-input flex-1 dark:text-white bg-transparent text-md py-2'
 				/>
 				<button
-					disabled={isImageUploading}
-					aria-busy={isImageUploading}
+					disabled={isImageUploading || isSending}
+					aria-busy={isImageUploading || isSending}
 					type='submit'
 					aria-label='Send message'
 				>
