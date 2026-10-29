@@ -204,6 +204,10 @@ export default function SendAMessage({
 			)
 		}
 	}, [isPreferencesError, dispatch])
+	const isTouchDevice =
+		typeof window !== 'undefined' &&
+		window.matchMedia('(pointer: coarse)').matches
+
 	const playTypeSound = useTypeSound()
 
 	return (
@@ -322,7 +326,7 @@ export default function SendAMessage({
 					aria-label='Message'
 					{...messageInput}
 					onChange={event => {
-						if (preferences && preferences.typingSounds) {
+						if (preferences && preferences.typingSounds && !isTouchDevice) {
 							playTypeSound()
 						}
 						messageInput.onChange(event)

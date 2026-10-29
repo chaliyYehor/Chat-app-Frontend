@@ -35,6 +35,8 @@ import SearchInChat from './SearchInChat'
 import { formatLastSeen } from '../../../../lib/formatLastSeen'
 import IsTyping from './IsTyping'
 import { setPopUpError } from '../../../../store/slices/popUpSlice'
+import { useGetUserPreferences } from '../../../../hooks/useGetUserPreferences'
+import { useMessageSound } from '../../../../hooks/useMessageSound'
 
 export function Chat() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
@@ -77,16 +79,20 @@ export function Chat() {
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 
 	const dispatch = useDispatch<AppDispatch>()
-			
+
 	const chatId = useParams().chatId
 	const userId = authClient.useSession().data?.user?.id
 
-	const { data: userInfo, isError: isUserInfoError, isPending: isUserInfoPending } = useGetUserInfoChat(
-		chatId as string,
-	)
-	const { data: chatInfo, isError: isChatInfoError, isPending: isChatInfoPending } = useGetChatInfo(
-		chatId as string,
-	)
+	const {
+		data: userInfo,
+		isError: isUserInfoError,
+		isPending: isUserInfoPending,
+	} = useGetUserInfoChat(chatId as string)
+	const {
+		data: chatInfo,
+		isError: isChatInfoError,
+		isPending: isChatInfoPending,
+	} = useGetChatInfo(chatId as string)
 
 	const queryClient = useQueryClient()
 
@@ -105,7 +111,7 @@ export function Chat() {
 	})
 
 	useEffect(() => {
-		if(isMessagesError) {
+		if (isMessagesError) {
 			dispatch(
 				setPopUpError({
 					heading: 'Error',
@@ -113,7 +119,7 @@ export function Chat() {
 				}),
 			)
 		}
-		if(isUserInfoError) {
+		if (isUserInfoError) {
 			dispatch(
 				setPopUpError({
 					heading: 'Error',
@@ -121,7 +127,7 @@ export function Chat() {
 				}),
 			)
 		}
-		if(isChatInfoError) {
+		if (isChatInfoError) {
 			dispatch(
 				setPopUpError({
 					heading: 'Error',
@@ -270,6 +276,22 @@ export function Chat() {
 		console.log(latestMessageRef.current)
 	}, [messagesState, isMessagesPending])
 
+	const { data: preferences, isError: isPreferencesError } =
+		useGetUserPreferences()
+
+	useEffect(() => {
+		if (isPreferencesError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to fetch user preferences. Please try again.',
+				}),
+			)
+		}
+	}, [isPreferencesError, dispatch])
+
+	const playMessageSound = useMessageSound()
+
 	useEffect(() => {
 		const handleNewMessages = (data: Messages['messages']) => {
 			const chatMessages = data
@@ -339,6 +361,10 @@ export function Chat() {
 			queryClient.invalidateQueries({
 				queryKey: ['sharedMedia', { chatId }],
 			})
+
+			if (preferences?.messageSounds) {
+				playMessageSound()
+			}
 		}
 
 		const handleMessagesRead = ({
@@ -424,7 +450,14 @@ export function Chat() {
 			socket.off('message:new_messages', handleNewMessages)
 			socket.off('message:received', handleMessageReceived)
 		}
-	}, [chatId, messageQueryKey, navigate, queryClient])
+	}, [
+		chatId,
+		messageQueryKey,
+		navigate,
+		playMessageSound,
+		preferences?.messageSounds,
+		queryClient,
+	])
 
 	useEffect(() => {
 		const handleDeletedMessage = (data: {

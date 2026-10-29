@@ -14,7 +14,7 @@ export default function GlobalSocketError() {
 			</div>
 
 			<p className='text-md text-[#c52424] leading-relaxed font-inter'>
-				{globalSocketError} afdasfasdfasdfasdf
+				{globalSocketError}
 			</p>
 		</div>
 	)
