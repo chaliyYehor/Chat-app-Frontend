@@ -1,6 +1,6 @@
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { RiMessage2Fill } from 'react-icons/ri'
 import { Outlet, useNavigate } from 'react-router-dom'
 import CallsSectionBtn from '../components/main/CallsSectionBtn'
@@ -23,11 +23,38 @@ gsap.registerPlugin(useGSAP)
 
 export default function Home() {
 	const navigationRef = useRef<HTMLDivElement>(null)
+	const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
 
 	const navigate = useNavigate()
 	const dispatch = useDispatch<AppDispatch>()
 
 	const isMobile = useIsMobile()
+
+	useEffect(() => {
+		if (!isMobile) {
+			setIsKeyboardOpen(false)
+			return
+		}
+
+		const viewport = window.visualViewport
+		if (!viewport) return
+
+		let initialHeight = viewport.height
+		let initialWidth = window.innerWidth
+		const handleViewportResize = () => {
+			if (Math.abs(window.innerWidth - initialWidth) > 100) {
+				initialHeight = viewport.height
+				initialWidth = window.innerWidth
+				setIsKeyboardOpen(false)
+				return
+			}
+
+			setIsKeyboardOpen(initialHeight - viewport.height > 120)
+		}
+
+		viewport.addEventListener('resize', handleViewportResize)
+		return () => viewport.removeEventListener('resize', handleViewportResize)
+	}, [isMobile])
 
 	const { data: session, isPending } = authClient.useSession()
 	useAppSocket(!isPending && Boolean(session))
@@ -80,7 +107,7 @@ export default function Home() {
 				<PopUpSuccess />
 				<PopUpLoading />
 				<nav
-					className='flex z-20 flex-col gap-5 w-full md:w-25 items-center justify-between h-auto md:h-dvh py-4 dark:bg-black bg-[#f5f5f8]'
+					className={`${isMobile && isKeyboardOpen ? 'hidden' : 'flex'} z-20 flex-col gap-5 w-full md:w-25 items-center justify-between h-auto md:h-dvh py-4 dark:bg-black bg-[#f5f5f8]`}
 					aria-label='Main navigation'
 				>
 					<div
