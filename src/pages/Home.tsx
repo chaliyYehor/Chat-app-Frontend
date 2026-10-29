@@ -14,16 +14,11 @@ import { useGetUserInfo } from '../hooks/useGetUserInfo'
 import { useDispatch } from 'react-redux'
 import type { AppDispatch } from '../store/store'
 import { setTheme } from '../store/slices/themeSlice'
-import { socket } from '../socket'
-import {
-	setGlobalSocketError,
-	setIsSocketConnected,
-} from '../store/slices/socketSlice'
-import { useQueryClient } from '@tanstack/react-query'
 import PopUpError from '../components/PopUpError'
 import PopUpSuccess from '../components/PopUpSuccess'
 import PopUpLoading from '../components/PopUpLoading'
 import { setPopUpError } from '../store/slices/popUpSlice'
+import { useAppSocket } from '../hooks/useAppSocket'
 gsap.registerPlugin(useGSAP)
 
 export default function Home() {
@@ -35,6 +30,7 @@ export default function Home() {
 	const isMobile = useIsMobile()
 
 	const { data: session, isPending } = authClient.useSession()
+	useAppSocket(!isPending && Boolean(session))
 
 	useEffect(() => {
 		if (!isPending && !session) {
@@ -58,86 +54,6 @@ export default function Home() {
 
 		dispatch(setTheme(userInfo.theme))
 	}, [userInfo, isPending])
-
-	const queryClient = useQueryClient()
-	useEffect(() => {
-		if (isPending || !session) return
-
-		const handleConnect = () => {
-			dispatch(setIsSocketConnected(true))
-			dispatch(setGlobalSocketError(null))
-
-			queryClient.invalidateQueries({
-				queryKey: ['userInfo'],
-			})
-
-			queryClient.invalidateQueries({
-				queryKey: ['chats'],
-			})
-		}
-
-		const handleConnectError = (error: Error) => {
-			dispatch(setIsSocketConnected(false))
-			if (error.message === 'Too Many Requests') {
-				dispatch(setGlobalSocketError('Too many requests'))
-			} else if (error.message === 'Forbidden') {
-				dispatch(setGlobalSocketError('Connection forbidden'))
-			} else {
-				dispatch(setGlobalSocketError('Unable to connect to server'))
-			}
-		}
-
-		const handleDisconnect = () => {
-			dispatch(setIsSocketConnected(false))
-			dispatch(setGlobalSocketError(null))
-		}
-
-		const handleChatAdded = () => {
-			queryClient.invalidateQueries({
-				queryKey: ['chats'],
-			})
-		}
-
-		const handleChatDeleted = () => {
-			queryClient.invalidateQueries({
-				queryKey: ['chats'],
-			})
-		}
-
-		const handleMessageReceived = () => {
-			queryClient.invalidateQueries({
-				queryKey: ['chats'],
-			})
-		}
-
-		const handleMessageDeleted = () => {
-			queryClient.invalidateQueries({
-				queryKey: ['chats'],
-			})
-		}
-
-		socket.on('connect', handleConnect)
-		socket.on('disconnect', handleDisconnect)
-		socket.on('connect_error', handleConnectError)
-
-		socket.on('chat:added', handleChatAdded)
-		socket.on('chat:deleted', handleChatDeleted)
-		socket.on('message:received', handleMessageReceived)
-		socket.on('message:deleted', handleMessageDeleted)
-
-		socket.connect()
-
-		return () => {
-			socket.off('connect', handleConnect)
-			socket.off('disconnect', handleDisconnect)
-			socket.off('connect_error', handleConnectError)
-			socket.off('chat:added', handleChatAdded)
-			socket.off('chat:deleted', handleChatDeleted)
-			socket.off('message:received', handleMessageReceived)
-			socket.off('message:deleted', handleMessageDeleted)
-			socket.disconnect()
-		}
-	}, [dispatch, isPending, session])
 
 	if (isPending) {
 		return (

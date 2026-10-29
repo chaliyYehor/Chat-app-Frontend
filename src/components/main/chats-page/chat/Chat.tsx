@@ -15,7 +15,7 @@ import VideoCallBtn from './VideoCallBtn'
 import UserInfo from '../../UserInfo'
 import ImageMessage from './ImageMessage'
 import { ArrowLeft } from 'lucide-react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import type { AppDispatch, RootType } from '../../../../store/store'
 import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
@@ -24,12 +24,7 @@ import { useGetChatInfo } from '../../../../hooks/useGetChatInfo'
 import clsx from 'clsx'
 import { useGetMessages } from '../../../../hooks/useGetMessages'
 import { authClient } from '../../../../lib/auth-client'
-import type {
-	Message as MessageData,
-	Messages,
-} from '../../../../schemas/main/messages'
-import { socket } from '../../../../socket'
-import { useQueryClient, type InfiniteData } from '@tanstack/react-query'
+import type { Message as MessageData } from '../../../../schemas/main/messages'
 import ScrollDownBtn from '../../../ScrollDownBtn'
 import SearchInChat from './SearchInChat'
 import { formatLastSeen } from '../../../../lib/formatLastSeen'
@@ -37,6 +32,7 @@ import IsTyping from './IsTyping'
 import { setPopUpError } from '../../../../store/slices/popUpSlice'
 import { useGetUserPreferences } from '../../../../hooks/useGetUserPreferences'
 import { useMessageSound } from '../../../../hooks/useMessageSound'
+import { useChatSocketEvents } from '../../../../features/chat/hooks/useChatSocketEvents'
 
 export function Chat() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
@@ -46,9 +42,6 @@ export function Chat() {
 
 	const [isTyping, setIsTyping] = useState(false)
 	const [isUserTyping, setIsUserTyping] = useState(false)
-	const typingTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
-		undefined,
-	)
 
 	const chatref = useRef<HTMLDivElement>(null)
 	const pendingScrollAdjustmentRef = useRef<{
@@ -94,9 +87,6 @@ export function Chat() {
 		isPending: isChatInfoPending,
 	} = useGetChatInfo(chatId as string)
 
-	const queryClient = useQueryClient()
-
-	const navigate = useNavigate()
 
 	const {
 		data: messages,
@@ -141,6 +131,18 @@ export function Chat() {
 		() => ['messages', chatId, 'infinite'] as const,
 		[chatId],
 	)
+	const { data: preferences, isError: isPreferencesError } =
+		useGetUserPreferences()
+	const playMessageSound = useMessageSound()
+	const { markAsRead } = useChatSocketEvents({
+		chatId: chatId as string,
+		userId,
+		messageQueryKey,
+		messageSoundsEnabled: preferences?.messageSounds ?? false,
+		setMessages: setMessagesState,
+		setIsUserTyping,
+		playMessageSound,
+	})
 
 	const loadOlderMessages = useCallback(() => {
 		const container = chatref.current
@@ -164,32 +166,6 @@ export function Chat() {
 		setNewestMessageElement(node)
 	}, [])
 
-	const markAsRead = () => {
-		socket.emit(
-			'message:mark_as_read',
-			{ chatId },
-			({ success, error }: { success: boolean; error: string | null }) => {
-				if (success) {
-					queryClient.invalidateQueries({
-						queryKey: ['chats'],
-					})
-					queryClient.invalidateQueries({
-						queryKey: ['messages', chatId],
-					})
-				}
-				if (error) {
-					dispatch(
-						setPopUpError({
-							heading: 'Error',
-							text: 'Failed to mark messages as read. Please try again.',
-						}),
-					)
-					console.error('Error marking messages as read:', error)
-				}
-			},
-		)
-	}
-
 	useEffect(() => {
 		if (!newestMessageElement) return
 
@@ -205,7 +181,7 @@ export function Chat() {
 		observer.observe(newestMessageElement)
 
 		return () => observer.disconnect()
-	}, [newestMessageElement])
+	}, [markAsRead, newestMessageElement])
 
 	useEffect(() => {
 		if (!oldestMessageElement || !hasNextPage) return
@@ -276,9 +252,6 @@ export function Chat() {
 		console.log(latestMessageRef.current)
 	}, [messagesState, isMessagesPending])
 
-	const { data: preferences, isError: isPreferencesError } =
-		useGetUserPreferences()
-
 	useEffect(() => {
 		if (isPreferencesError) {
 			dispatch(
@@ -289,207 +262,6 @@ export function Chat() {
 			)
 		}
 	}, [isPreferencesError, dispatch])
-
-	const playMessageSound = useMessageSound()
-
-	useEffect(() => {
-		const handleNewMessages = (data: Messages['messages']) => {
-			const chatMessages = data
-				.filter(message => message.conversationId === chatId)
-				.map(message => ({
-					...message,
-					createdAt: new Date(message.createdAt),
-				}))
-
-			setMessagesState(currentMessages => {
-				const newMessages = chatMessages.filter(
-					message =>
-						!currentMessages.some(current => current.id === message.id),
-				)
-
-				if (newMessages.length > 0) {
-					console.log(newMessages)
-				}
-
-				return newMessages.length > 0
-					? [...newMessages, ...currentMessages]
-					: currentMessages
-			})
-
-			queryClient.setQueryData<InfiniteData<Messages, number>>(
-				messageQueryKey,
-				current => {
-					const firstPage = current?.pages[0]
-					if (!current || !firstPage) return current
-
-					const existingIds = new Set(
-						firstPage.messages.map(message => message.id),
-					)
-					const newMessages = chatMessages.filter(
-						message => !existingIds.has(message.id),
-					)
-					if (newMessages.length === 0) return current
-
-					return {
-						...current,
-						pages: [
-							{
-								...firstPage,
-								messages: [...newMessages, ...firstPage.messages],
-							},
-							...current.pages.slice(1),
-						],
-					}
-				},
-			)
-		}
-
-		queryClient.invalidateQueries({
-			queryKey: ['chats'],
-		})
-		queryClient.invalidateQueries({
-			queryKey: ['userInfoChat', chatId],
-		})
-
-		const handleMessageReceived = () => {
-			queryClient.invalidateQueries({
-				queryKey: ['chats'],
-			})
-			queryClient.invalidateQueries({
-				queryKey: ['userInfoChat', chatId],
-			})
-			queryClient.invalidateQueries({
-				queryKey: ['sharedMedia', { chatId }],
-			})
-
-			if (preferences?.messageSounds) {
-				playMessageSound()
-			}
-		}
-
-		const handleMessagesRead = ({
-			conversationId,
-		}: {
-			conversationId: string
-		}) => {
-			queryClient.invalidateQueries({
-				queryKey: ['messages', conversationId],
-			})
-		}
-
-		const handleChatCleared = ({
-			conversationId,
-		}: {
-			conversationId: string
-		}) => {
-			if (conversationId === chatId) setMessagesState([])
-			queryClient.invalidateQueries({
-				queryKey: ['messages', conversationId],
-			})
-			queryClient.invalidateQueries({
-				queryKey: ['chats'],
-			})
-		}
-
-		const handleChatDeleted = ({
-			conversationId,
-		}: {
-			conversationId: string
-		}) => {
-			if (conversationId === chatId) {
-				navigate('/chats', { replace: true })
-			}
-		}
-
-		const handleIsTypingStart = ({
-			chatId: typingChatId,
-			userId: typingUserId,
-		}: {
-			chatId: string
-			userId: string
-		}) => {
-			if (typingChatId !== chatId || typingUserId === userId) return
-
-			setIsUserTyping(true)
-			clearTimeout(typingTimerRef.current)
-			typingTimerRef.current = setTimeout(() => {
-				setIsUserTyping(false)
-				typingTimerRef.current = undefined
-			}, 5000)
-		}
-		const handleIsTypingStop = ({
-			chatId: typingChatId,
-			userId: typingUserId,
-		}: {
-			chatId: string
-			userId: string
-		}) => {
-			if (typingChatId !== chatId || typingUserId === userId) return
-
-			clearTimeout(typingTimerRef.current)
-			typingTimerRef.current = undefined
-			setIsUserTyping(false)
-		}
-
-		socket.on('typing:start', handleIsTypingStart)
-		socket.on('typing:stop', handleIsTypingStop)
-		socket.on('message:read', handleMessagesRead)
-		socket.on('message:new_messages', handleNewMessages)
-		socket.on('message:received', handleMessageReceived)
-		socket.on('chat:deleted', handleChatDeleted)
-		socket.on('chat:cleared', handleChatCleared)
-
-		return () => {
-			socket.off('typing:start', handleIsTypingStart)
-			socket.off('typing:stop', handleIsTypingStop)
-			clearTimeout(typingTimerRef.current)
-			typingTimerRef.current = undefined
-			socket.off('message:read', handleMessagesRead)
-			socket.off('chat:deleted', handleChatDeleted)
-			socket.off('chat:cleared', handleChatCleared)
-			socket.off('message:new_messages', handleNewMessages)
-			socket.off('message:received', handleMessageReceived)
-		}
-	}, [
-		chatId,
-		messageQueryKey,
-		navigate,
-		playMessageSound,
-		preferences?.messageSounds,
-		queryClient,
-	])
-
-	useEffect(() => {
-		const handleDeletedMessage = (data: {
-			conversationId: string
-			messageId: string
-		}) => {
-			if (data.conversationId !== chatId) return
-
-			setMessagesState(currentMessages =>
-				currentMessages.filter(message => message.id !== data.messageId),
-			)
-			queryClient.setQueryData<InfiniteData<Messages, number>>(
-				messageQueryKey,
-				current =>
-					current && {
-						...current,
-						pages: current.pages.map(page => ({
-							...page,
-							messages: page.messages.filter(
-								message => message.id !== data.messageId,
-							),
-						})),
-					},
-			)
-		}
-
-		socket.on('message:deleted', handleDeletedMessage)
-
-		return () => {
-			socket.off('message:deleted', handleDeletedMessage)
-		}
-	}, [chatId, messageQueryKey, queryClient])
 
 	return (
 		<div className='w-full h-full overflow-hidden flex flex-col dark:bg-[#16161b] bg-white border-l border-gray-700/60'>
