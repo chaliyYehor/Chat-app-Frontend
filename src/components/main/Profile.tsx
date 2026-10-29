@@ -11,13 +11,17 @@ import { setPopUpError } from '../../store/slices/popUpSlice'
 export default function Profile() {
 	const [isProfileOpened, setIsProfileOpened] = useState(false)
 
-	const { data: userInfo, isError: isUserInfoError, isPending } = useGetUserInfo()
+	const {
+		data: userInfo,
+		isError: isUserInfoError,
+		isPending,
+	} = useGetUserInfo()
 	const { data: session, isPending: isSessionPending } = authClient.useSession()
 
 	const dispatch = useDispatch<AppDispatch>()
 
 	useEffect(() => {
-		if(isUserInfoError) {
+		if (isUserInfoError) {
 			dispatch(
 				setPopUpError({
 					heading: 'Error',
@@ -41,7 +45,6 @@ export default function Profile() {
 			<button
 				type='button'
 				onClick={() => setIsProfileOpened(true)}
-				type='button'
 				className='cursor-pointer hover:outline-2 hover:outline-[#7C5CFC] transition-all duration-200 ease-in-out rounded-full'
 			>
 				{isPending ? (

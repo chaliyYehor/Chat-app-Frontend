@@ -21,7 +21,6 @@ export default function Group() {
 					<button
 						type='button'
 						onClick={() => setIsProfileOpened(true)}
-						type='button'
 						className='cursor-pointer hover:outline-2 hover:outline-[#7C5CFC] transition-all duration-200 ease-in-out rounded-2xl'
 						aria-label='Open Group information'
 					>
@@ -39,17 +38,17 @@ export default function Group() {
 				<div className='h-full flex justify-center items-center gap-2'>
 					<CallButon />
 					<VideoCallBtn />
-					<MoreInfoButton isGroup={true} />
+					{/* <MoreInfoButton isGroup={true} /> */}
 				</div>
 			</div>
 
 			<div className='messages w-full min-h-0 flex-1 flex flex-col text-white p-5'>
-				<Message isGroup isMe={true} />
+				{/* <Message isGroup isMe={true} />
 				<Message isGroup isMe={false} />
-				<ImageMessage isMe isGroup />
+				<ImageMessage isMe isGroup /> */}
 			</div>
 
-			<SendAMessage />
+			{/* <SendAMessage /> */}
 		</div>
 	)
 }
