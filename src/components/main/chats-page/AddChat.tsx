@@ -14,6 +14,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { setPopUpError } from '../../../store/slices/popUpSlice'
+import { useAccessibleDialog } from '../../../hooks/useAccessibleDialog'
 
 export default function AddChat({
 	setIsAdding,
@@ -53,9 +54,11 @@ export default function AddChat({
 	const navigate = useNavigate()
 
 	const dispatch = useDispatch<AppDispatch>()
+	const dialogRef = useAccessibleDialog(() => setIsAdding(false))
 
 	return createPortal(
 		<div
+			ref={dialogRef}
 			onClick={() => {
 				setIsAdding(false)
 			}}
@@ -117,7 +120,7 @@ export default function AddChat({
 					</form>
 					{isPending && isFetching ? (
 						<div className='w-full h-full flex justify-center items-center'>
-							<div className='loader' />
+							<div className='loader' role='status' aria-label='Loading contacts' />
 						</div>
 					) : (
 						<div className='suggestedPeople p-2'>

@@ -57,6 +57,8 @@ export default function PopUpError() {
 	return (
 		<div
 			ref={popupRef}
+			role='alert'
+			aria-atomic='true'
 			style={{ border: `1px solid ${states.error.bg}` }}
 			className='pop-up-error absolute pointer-events-none opacity-0 left-1/2 z-50 top-4  flex w-[calc(100%-2rem)] max-w-100 px-3 py-2 -translate-x-1/2 justify-start items-center gap-3 rounded-2xl shadow-xl dark:bg-[#16161B] bg-white'
 		>

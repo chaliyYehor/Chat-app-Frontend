@@ -106,6 +106,7 @@ export function SetNewPassword() {
 					<Button
 						type='submit'
 						variant='contained'
+						aria-busy={isSubmitting}
 						disabled={isSubmitting || isSend}
 						sx={{
 							width: '100%',
@@ -133,17 +134,18 @@ export function SetNewPassword() {
 							},
 						}}
 					>
-						{isSubmitting ? <div className='loader' /> : 'Send Link'}
+						{isSubmitting ? <div className='loader' role='status' aria-label='Sending verification link' /> : 'Send Link'}
 					</Button>
 
 					<button
+						type='button'
 						onClick={() => navigate(-1)}
 						className='text-[#6B6B80] cursor-pointer text-sm hover:text-white flex justify-center items-center'
 					>
 						<span aria-hidden='true'>&#8592;</span>&nbsp;Back
 					</button>
-					{isSend && <p className='text-green-500 text-md flex justify-center items-center'>Check your email for the reset link.</p>}
-					<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center'>
+					{isSend && <p className='text-green-500 text-md flex justify-center items-center' role='status' aria-live='polite'>Check your email for the reset link.</p>}
+					<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center' role='alert'>
 						{globalError || '\u00A0'}
 					</p>
 				</div>

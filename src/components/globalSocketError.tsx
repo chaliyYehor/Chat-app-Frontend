@@ -6,10 +6,11 @@ export default function GlobalSocketError() {
 	const globalSocketError = useSelector(
 		(state: RootType) => state.socketState.globalSocketError,
 	)
+	if (!globalSocketError) return null
 
 	return (
-		<div className='w-full flex flex-col justify-center items-center gap-4'>
-			<div className='w-18 bg-[#fb2c365c] h-18 flex rounded-xl justify-center items-center'>
+		<div className='w-full flex flex-col justify-center items-center gap-4' role='alert'>
+			<div className='w-18 bg-[#fb2c365c] h-18 flex rounded-xl justify-center items-center' aria-hidden='true'>
 				<CircleX size={40} color='#FB2C36' />
 			</div>
 

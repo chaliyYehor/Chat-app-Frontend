@@ -37,6 +37,7 @@ export default function MoreInfoButton({
 				/>
 			)}
 			<Button
+				type='button'
 				onClick={handleClick}
 				aria-label='More conversation options'
 				sx={{

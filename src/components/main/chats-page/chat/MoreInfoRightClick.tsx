@@ -11,6 +11,7 @@ import {
 	setPopUpSuccess,
 } from '../../../../store/slices/popUpSlice'
 import { closePopUpLoading, openPopUpLoading } from '../../../../lib/openPopUps'
+import { useAccessibleMenu } from '../../../../hooks/useAccessibleMenu'
 
 interface MoreInfoRightClickProps {
 	position: { x: number; y: number }
@@ -38,6 +39,7 @@ export default function MoreInfoRightClick({
 	onSearchClick,
 }: MoreInfoRightClickProps) {
 	const menuRef = useRef<HTMLDivElement>(null)
+	useAccessibleMenu(menuRef)
 
 	const queryClient = useQueryClient()
 

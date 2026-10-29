@@ -217,15 +217,11 @@ export default function SendAMessage({
 					<img
 						className='max-w-40 max-h-40 object-cover rounded-xl border border-white/50'
 						src={imagePreview}
-						alt='preview'
+						alt={`Preview of ${image?.name ?? 'attached image'}`}
 					/>
 					{isImageUploading && (
-						<div className='absolute inset-0 flex items-center justify-center rounded-xl bg-black/50'>
-							<div
-								className='loader'
-								role='status'
-								aria-label='Uploading image'
-							/>
+						<div aria-hidden='true' className='absolute inset-0 flex items-center justify-center rounded-xl bg-black/50'>
+							<div className='loader' />
 						</div>
 					)}
 					<button
@@ -254,9 +250,13 @@ export default function SendAMessage({
 				</div>
 			) : null}
 			<form
+				aria-label='Send a message'
 				onSubmit={handleSubmit(onSubmit, errors => console.log(errors))}
 				className='messageInput w-full dark:bg-[#1e1e26] bg-[#ebebf0] flex items-center gap-4 rounded-2xl px-4 py-2 text-[#6B6B80]'
 			>
+				<span className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
+					{isImageUploading ? 'Uploading image' : uploadedImage ? 'Image ready to send' : ''}
+				</span>
 				<input
 					{...imageInput}
 					ref={element => {
@@ -309,11 +309,15 @@ export default function SendAMessage({
 					}}
 					type='file'
 					accept='image/*,.heic,.heif'
-					className='hidden'
+					className='peer sr-only'
 					id='fileInput'
 					aria-label='Attach an image'
 				/>
-				<label htmlFor='fileInput' aria-label='Attach an image'>
+				<label
+					htmlFor='fileInput'
+					aria-label='Attach an image'
+					className='cursor-pointer peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[#00d4aa]'
+				>
 					<Image
 						className='dark:hover:text-white hover:text-black cursor-pointer transition'
 						aria-hidden='true'
@@ -325,6 +329,13 @@ export default function SendAMessage({
 					placeholder='Message...'
 					aria-label='Message'
 					{...messageInput}
+					onPointerDown={event => {
+						event.currentTarget.dataset.pointerFocused = 'true'
+					}}
+					onBlur={event => {
+						delete event.currentTarget.dataset.pointerFocused
+						messageInput.onBlur(event)
+					}}
 					onChange={event => {
 						if (preferences && preferences.typingSounds && !isTouchDevice) {
 							playTypeSound()
@@ -337,10 +348,11 @@ export default function SendAMessage({
 						clearTimeout(stopTimer.current)
 						stopTimer.current = setTimeout(stopTyping, 2500)
 					}}
-					className='flex-1 dark:text-white bg-transparent text-md py-2 focus-visible:outline-none!'
+					className='message-composer-input flex-1 dark:text-white bg-transparent text-md py-2'
 				/>
 				<button
 					disabled={isImageUploading}
+					aria-busy={isImageUploading}
 					type='submit'
 					aria-label='Send message'
 				>

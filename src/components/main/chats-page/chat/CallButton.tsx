@@ -7,6 +7,7 @@ export default function CallButon({ size = 20 }: { size?: number }) {
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 	return (
 		<Button
+			type='button'
 			aria-label='Start voice call'
 			sx={{
 				width: size === 20 ? '50px' : '40px',

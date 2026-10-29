@@ -55,7 +55,7 @@ export default function ForgotPassword() {
 	if (isPending) {
 		return (
 			<div className='w-screen h-screen absolute top-0 left-0 flex justify-center items-center'>
-				<div className='loader dark:bg-white bg-black' />
+				<div className='loader dark:bg-white bg-black' role='status' aria-label='Loading session' />
 			</div>
 		)
 	}
@@ -90,6 +90,7 @@ export default function ForgotPassword() {
 					<Button
 						type='submit'
 						variant='contained'
+						aria-busy={isSubmitting}
 						disabled={isSubmitting || isSend}
 						sx={{
 							width: '100%',
@@ -117,17 +118,17 @@ export default function ForgotPassword() {
 							},
 						}}
 					>
-						{isSubmitting ? <div className='loader' /> : 'Send Reset Link'}
+						{isSubmitting ? <div className='loader' role='status' aria-label='Sending reset link' /> : 'Send Reset Link'}
 					</Button>
 
 					<BackToSignUp />
 
 					{isSend && (
-						<p className='text-green-500 text-md flex justify-center items-center'>
+						<p className='text-green-500 text-md flex justify-center items-center' role='status' aria-live='polite'>
 							Check your email for the reset link.
 						</p>
 					)}
-					<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center'>
+					<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center' role='alert'>
 						{globalError || '\u00A0'}
 					</p>
 				</div>

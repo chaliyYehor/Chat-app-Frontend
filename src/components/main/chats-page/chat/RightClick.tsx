@@ -5,6 +5,7 @@ import type { AppDispatch, RootType } from '../../../../store/store'
 import { useDispatch, useSelector } from 'react-redux'
 import { socket } from '../../../../socket'
 import { setPopUpError } from '../../../../store/slices/popUpSlice'
+import { useAccessibleMenu } from '../../../../hooks/useAccessibleMenu'
 
 interface RightClickProps {
 	position: { x: number; y: number }
@@ -31,6 +32,7 @@ export default function RightClick({
 	isMe,
 }: RightClickProps) {
 	const menuRef = useRef<HTMLDivElement>(null)
+	useAccessibleMenu(menuRef)
 
 	useEffect(() => {
 		function handleClickOutside(e: MouseEvent) {

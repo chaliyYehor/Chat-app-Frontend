@@ -8,7 +8,7 @@ export default function NotFound() {
 	const { data: session } = authClient.useSession()
 	return (
 		<div className='w-screen h-dvh flex flex-col justify-center items-center gap-6'>
-			<h2 className='text-[#7C5CFC] text-7xl font-bold err'>404</h2>
+		<h1 className='text-[#7C5CFC] text-7xl font-bold err'>404</h1>
 			<div className='flex flex-col items-center'>
 				<p className='text-[#F0F0F5] text-2xl font-bold mb-2'>Page not found</p>
 				<p className='text-sm text-[#6B6B80]'>
@@ -17,7 +17,7 @@ export default function NotFound() {
 			</div>
 
 			<Button
-				type='submit'
+				type='button'
 				variant='contained'
 				onClick={() => navigate('/signUp')}
 				sx={{

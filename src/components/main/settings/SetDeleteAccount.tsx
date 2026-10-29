@@ -8,6 +8,7 @@ import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useRef, useState } from 'react'
 import { authClient } from '../../../lib/auth-client'
+import { useAccessibleDialog } from '../../../hooks/useAccessibleDialog'
 
 gsap.registerPlugin(useGSAP)
 
@@ -23,6 +24,7 @@ export default function SetDeleteAccount({
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 	const modalRef = useRef<HTMLDivElement>(null)
 	const backdropRef = useRef<HTMLDivElement>(null)
+	const dialogRef = useAccessibleDialog(() => setShowPreview(false))
 
 	useGSAP(() => {
 		const timeline = gsap.timeline()
@@ -56,11 +58,14 @@ export default function SetDeleteAccount({
 
 	return createPortal(
 		<div
-			ref={backdropRef}
+			ref={element => {
+				dialogRef.current = element
+				backdropRef.current = element
+			}}
 			onClick={() => setShowPreview(false)}
 			role='dialog'
 			aria-modal='true'
-			aria-label='Image preview'
+			aria-labelledby='delete-account-title'
 			tabIndex={-1}
 			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-xs'
 		>
@@ -73,7 +78,9 @@ export default function SetDeleteAccount({
 				<div className='bg-[#FB2C36]/10 mb-4 flex items-center justify-center w-15 h-15 rounded-2xl'>
 					<Trash color='#FF6467' />
 				</div>
-				<h2 className='text-xl font-bold font-inter'>Delete your account?</h2>
+				<h2 id='delete-account-title' className='text-xl font-bold font-inter'>
+					Delete your account?
+				</h2>
 				<p className='mt-2 text-md leading-relaxed text-[#8080A0] font-inter'>
 					Are you sure? Your profile, messages, groups, and call history will be
 					permanently deleted. This action cannot be undone.
@@ -81,7 +88,7 @@ export default function SetDeleteAccount({
 
 				<div className='flex gap-3 mb-2 mt-3 w-full'>
 					<Button
-						type='submit'
+						type='button'
 						variant='contained'
 						onClick={() => setShowPreview(false)}
 						sx={{
@@ -114,8 +121,10 @@ export default function SetDeleteAccount({
 						Cancel
 					</Button>
 					<Button
-						type='submit'
+						type='button'
 						variant='contained'
+						aria-busy={isLoading}
+						disabled={isLoading}
 						onClick={handleDeleteAccount}
 						sx={{
 							width: '100%',
@@ -144,7 +153,7 @@ export default function SetDeleteAccount({
 							},
 						}}
 					>
-						{isLoading ? <div className='loader' /> : 'Yes, delete'}
+						{isLoading ? <div className='loader' role='status' aria-label='Deleting account' /> : 'Yes, delete'}
 					</Button>
 				</div>
 				<p

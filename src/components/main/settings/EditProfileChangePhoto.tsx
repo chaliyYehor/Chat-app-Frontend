@@ -184,10 +184,11 @@ export default function EditProfileChangePhoto() {
 				onChange={handleFileChange}
 				type='file'
 				accept='image/*,.heic,.heif'
-				className='hidden'
+				className='peer sr-only'
 				id='profilePhotoInput'
+				aria-label='Choose a profile photo'
 			/>
-			<div className='relative md:ml-0 ml-3 w-28 h-28'>
+			<div className='relative md:ml-0 ml-3 w-28 h-28 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[#00d4aa]'>
 				<label
 					htmlFor='profilePhotoInput'
 					className='relative block h-full w-full cursor-pointer rounded-3xl border dark:border-white/7'

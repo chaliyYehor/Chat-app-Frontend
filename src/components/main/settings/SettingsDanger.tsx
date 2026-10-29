@@ -23,6 +23,7 @@ export default function SettingsDanger() {
 			<div className='outline mx-4 mb-4 dark:outline-white/7 outline-black/10  rounded-2xl flex flex-col overflow-hidden'>
 				{items.map((item, index) => (
 					<button
+						type='button'
 						onClick={() => {
 							setIsDeleteOpen(true)
 						}}

@@ -71,12 +71,13 @@ export default function SearchInChat({ onClose }: { onClose: () => void }) {
 		})
 	}
 	return (
-		<div className='w-full absolute h-9 -bottom-9 z-10 search-in-chat'>
+		<div role='search' aria-label='Search in this chat' className='w-full absolute h-9 -bottom-9 z-10 search-in-chat'>
 			<div className='bg-[#F0F0F4] dark:bg-[#1A1A22] text-[#6B6B80] flex items-center gap-2 px-4 py-3 border-b border-gray-700/40'>
-				<div>
+				<div aria-hidden='true'>
 					<Search size={16} />
 				</div>
 				<input
+					aria-label='Search messages in this chat'
 					value={search}
 					onChange={e => setSearch(e.target.value)}
 					type='text'
@@ -85,35 +86,36 @@ export default function SearchInChat({ onClose }: { onClose: () => void }) {
 				/>
 				<button
 					type='button'
+					aria-label='Close message search'
 					onClick={handleClose}
 					className='cursor-pointer hover:dark:text-white hover:text-black transition-colors'
 				>
-					<X size={16} />
+					<X size={16} aria-hidden='true' />
 				</button>
 			</div>
 			<div className='bg-[#F0F0F4] dark:bg-[#1A1A22] text-[#6B6B80] flex items-center justify-center gap-2 px-4 py-1 border-b border-gray-700/40'>
 				<button
 					type='button'
+					aria-label='Previous search result'
 					onClick={() => goToResult(-1)}
 					disabled={results === 0}
 					className='cursor-pointer p-2 hover:dark:text-white hover:text-black transition-colors'
 				>
-					<ChevronUp size={16} />
+					<ChevronUp size={16} aria-hidden='true' />
 				</button>
-				{results === 0 ? (
-					<p className='font-mono font-light'>0 results</p>
-				) : results === 1 ? (
-					<p className='font-mono font-light'>1 result</p>
-				) : (
-					<p className='font-mono font-light'>{results} results</p>
-				)}
+				<p className='font-mono font-light' aria-live='polite' aria-atomic='true'>
+					{results === 0
+						? '0 results'
+						: `Result ${currentResultIndex + 1} of ${results}`}
+				</p>
 				<button
 					type='button'
+					aria-label='Next search result'
 					disabled={results === 0}
 					onClick={() => goToResult(1)}
 					className='cursor-pointer p-2 hover:dark:text-white hover:text-black transition-colors'
 				>
-					<ChevronDown size={16} />
+					<ChevronDown size={16} aria-hidden='true' />
 				</button>
 			</div>
 		</div>

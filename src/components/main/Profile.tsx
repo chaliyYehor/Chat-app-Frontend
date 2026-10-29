@@ -39,6 +39,7 @@ export default function Profile() {
 				/>
 			)}
 			<button
+				type='button'
 				onClick={() => setIsProfileOpened(true)}
 				type='button'
 				className='cursor-pointer hover:outline-2 hover:outline-[#7C5CFC] transition-all duration-200 ease-in-out rounded-full'

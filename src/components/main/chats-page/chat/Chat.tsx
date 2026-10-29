@@ -284,6 +284,7 @@ export function Chat() {
 						<ArrowLeft color='#6B6B80' />
 					</Link>
 					<button
+						type='button'
 						onClick={() => setIsProfileOpened(true)}
 						type='button'
 						className='cursor-pointer hover:outline-2 hover:outline-[#7C5CFC] transition-all duration-200 ease-in-out rounded-full'
@@ -330,7 +331,7 @@ export function Chat() {
 				<div className='h-full flex justify-center items-center gap-2'>
 					{isChatInfoPending ? (
 						<div className='w-full h-full flex justify-center items-center'>
-							<div className='loader' />
+							<div className='loader' role='status' aria-label='Loading chat information' />
 						</div>
 					) : (
 						<>
@@ -352,6 +353,10 @@ export function Chat() {
 			<div
 				ref={chatref}
 				onScroll={handleScroll}
+				role='log'
+				aria-label='Chat messages'
+				aria-live='polite'
+				aria-relevant='additions'
 				className='messages relative w-full min-h-0 flex-1 flex flex-col-reverse text-white p-5 pb-0 gap-2'
 			>
 				{
@@ -362,7 +367,7 @@ export function Chat() {
 				}
 				{isMessagesPending || isUserInfoPending ? (
 					<div className='w-full h-full flex justify-center items-center'>
-						<div className='loader' />
+						<div className='loader' role='status' aria-label='Loading messages' />
 					</div>
 				) : !userInfo ? (
 					<div className='w-full h-full flex justify-center items-center'>
@@ -414,7 +419,7 @@ export function Chat() {
 						)}
 						{hasNextPage && isFetchingNextPage && (
 							<div className='w-full flex justify-center items-center py-2'>
-								<div className='loader bg-black dark:bg-white' />
+								<div className='loader bg-black dark:bg-white' role='status' aria-label='Loading older messages' />
 							</div>
 						)}
 					</>

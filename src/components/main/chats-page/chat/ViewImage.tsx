@@ -1,4 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react'
+import { X } from 'lucide-react'
+import { useAccessibleDialog } from '../../../../hooks/useAccessibleDialog'
 
 interface Props {
 	src: string
@@ -7,8 +9,10 @@ interface Props {
 }
 
 export default function ViewImage({ src, alt, setShowPreview }: Props) {
+	const dialogRef = useAccessibleDialog(() => setShowPreview(false))
 	return (
 		<div
+			ref={dialogRef}
 			onClick={() => setShowPreview(false)}
 			role='dialog'
 			aria-modal='true'
@@ -25,10 +29,11 @@ export default function ViewImage({ src, alt, setShowPreview }: Props) {
 			</div>
 			<button
 				type='button'
-				className='sr-only'
+				aria-label='Close image preview'
+				className='absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80'
 				onClick={() => setShowPreview(false)}
 			>
-				Close image preview
+				<X aria-hidden='true' />
 			</button>
 		</div>
 	)

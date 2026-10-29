@@ -1,6 +1,6 @@
 import { TextField } from '@mui/material'
 import { Eye, EyeOff } from 'lucide-react'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useSelector } from 'react-redux'
 import type { RootType } from '../../../store/store'
@@ -25,6 +25,7 @@ export default function PasswordItem({
 	const { ref, ...passwordRegistration } = register(registerName)
 
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
+	const inputId = useId()
 	return (
 		<div
 			style={{
@@ -38,10 +39,10 @@ export default function PasswordItem({
 			className='w-full min-w-0 flex flex-col justify-center items-center pb-4'
 		>
 			<div className='w-fit self-start'>
-				<SettingsLabel isPersonalInfo label={label} />
+				<SettingsLabel isPersonalInfo label={label} htmlFor={inputId} />
 			</div>
 			<TextField
-				id='standard-basic'
+				id={inputId}
 				variant='standard'
 				disabled={isDisabled}
 				{...passwordRegistration}

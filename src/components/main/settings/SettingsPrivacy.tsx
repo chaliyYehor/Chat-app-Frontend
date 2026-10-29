@@ -52,7 +52,7 @@ export default function SettingsPrivacy() {
 	if (isPending) {
 		return (
 			<div className='w-full h-125 flex justify-center items-center'>
-				<div className='loader' />
+				<div className='loader' role='status' aria-label='Loading privacy preferences' />
 			</div>
 		)
 	}

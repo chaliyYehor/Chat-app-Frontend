@@ -88,6 +88,7 @@ export default function SettingsAccount() {
 						</Link>
 					) : (
 						<button
+							type='button'
 							key={index}
 							onClick={'onClick' in item ? item.onClick : undefined}
 							style={{

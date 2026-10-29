@@ -57,6 +57,9 @@ export default function PopUpSuccess() {
 	return (
 		<div
 			ref={popupRef}
+			role='status'
+			aria-live='polite'
+			aria-atomic='true'
 			style={{ border: `1px solid ${state.success.bg}` }}
 			className='pop-up-success absolute pointer-events-none opacity-0 left-1/2 z-50 top-4  flex w-[calc(100%-2rem)] max-w-100 px-3 py-2 -translate-x-1/2 justify-start items-center gap-3 rounded-2xl shadow-xl dark:bg-[#16161B] bg-white'
 		>

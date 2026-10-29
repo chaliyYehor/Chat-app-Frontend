@@ -94,6 +94,7 @@ export default function ResetPassword() {
 					<Button
 						type='submit'
 						variant='contained'
+						aria-busy={isSubmitting}
 						disabled={isSubmitting}
 						sx={{
 							width: '100%',
@@ -121,12 +122,12 @@ export default function ResetPassword() {
 							},
 						}}
 					>
-						{isSubmitting ? <div className='loader' /> : 'Reset Password'}
+						{isSubmitting ? <div className='loader' role='status' aria-label='Resetting password' /> : 'Reset Password'}
 					</Button>
 
 					<BackToSignUp />
 
-					<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center'>
+					<p className='mt-1 min-h-5 first-letter:capitalize select-none text-sm text-red-500 dark:text-red-400 text-center' role='alert'>
 						{globalError || '\u00A0'}
 					</p>
 				</div>

@@ -8,6 +8,7 @@ export default function VideoCallBtn({ size = 20 }: { size?: number }) {
 
 	return (
 		<Button
+			type='button'
 			aria-label='Start video call'
 			sx={{
 				width: size === 20 ? '50px' : '40px',

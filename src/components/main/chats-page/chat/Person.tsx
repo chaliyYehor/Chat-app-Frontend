@@ -15,6 +15,7 @@ export default function Person({
 }) {
 	return (
 		<button
+			type='button'
 			onClick={() => setIsAdding()}
 			style={{
 				padding: isListItem ? '0' : '8px',
@@ -22,8 +23,8 @@ export default function Person({
 			className='cursor-pointer chatPreview w-full h-17.5 flex justify-center items-center gap-3 dark:hover:bg-[#1e1e26] hover:bg-[#ebebf0] rounded-lg transition-all duration-200 ease-in-out'
 		>
 			{isLoading ? (
-				<div className='w-full h-full flex justify-center items-center'>
-					<div className='loader' />
+			<div className='w-full h-full flex justify-center items-center'>
+					<div className='loader' role='status' aria-label={`Opening chat with ${user.name}`} />
 				</div>
 			) : (
 				<>

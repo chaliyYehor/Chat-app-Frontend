@@ -80,6 +80,10 @@ body {
 	outline-offset: 3px;
 }
 
+.message-composer-input[data-pointer-focused='true']:focus-visible {
+	outline: none;
+}
+
 .backgroundRadial {
 	background: radial-gradient(
 		80% 60% at 50% -10%,

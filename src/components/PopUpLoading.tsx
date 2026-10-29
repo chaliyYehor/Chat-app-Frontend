@@ -3,6 +3,8 @@ import type { RootType } from '../store/store'
 
 export default function PopUpLoading() {
 	const loading = useSelector((state: RootType) => state.popUpState.loading)
+	if (!loading.heading && !loading.text) return null
+
 	const state = {
 		loading: {
 			bg: '#7c5cfc5d',
@@ -12,6 +14,9 @@ export default function PopUpLoading() {
 
 	return (
 		<div
+			role='status'
+			aria-live='polite'
+			aria-busy='true'
 			style={{ border: `1px solid ${state.loading.bg}` }}
 			className='pop-up-loading absolute pointer-events-none opacity-0 left-1/2 z-50 top-4 flex w-[calc(100%-2rem)] max-w-100 -translate-x-1/2 items-center justify-start gap-3 rounded-2xl bg-white px-3 py-2 shadow-xl dark:bg-[#16161B]'
 		>

@@ -56,12 +56,15 @@ export default function IsTyping({
 		<>
 			<div
 				ref={containerRef}
+				role='status'
+				aria-live='polite'
+				aria-atomic='true'
+				aria-hidden={!isTyping}
 				className={clsx('justify-start w-full flex message relative shrink-0 overflow-hidden')}
 			>
 				<div className='md:max-w-[70%] max-w-[90%] min-w-0 flex relative gap-2'>
 					<>
 						<div
-							aria-label='Open sender profile'
 							className={`sticky bottom-0 self-end w-10 h-10 rounded-[50%] dark:text-white text-black flex justify-center items-center border-2 border-gray-700 shrink-0`.trim()}
 						>
 							{userInfo?.imageUrl ? (
@@ -69,7 +72,7 @@ export default function IsTyping({
 									<img
 										className='w-full max-h-60 lg:max-h-120 object-cover'
 										src={userInfo.imageUrl}
-										alt='Profile picture'
+										alt={`Profile picture of ${userInfo.name}`}
 									/>
 								</div>
 							) : (
@@ -91,8 +94,9 @@ export default function IsTyping({
 							/>
 						</div>
 					</>
-					<div className='w-15 px-4 py-3 rounded-2xl rounded-bl-sm dark:bg-[#1E1E26] bg-[#EBEBF0] flex justify-center items-center rounded-e-3xl'>
-						<div className='typingIndicator' />
+						<div className='w-15 px-4 py-3 rounded-2xl rounded-bl-sm dark:bg-[#1E1E26] bg-[#EBEBF0] flex justify-center items-center rounded-e-3xl'>
+						<span className='sr-only'>{userInfo.name} is typing</span>
+						<div className='typingIndicator' aria-hidden='true' />
 					</div>
 				</div>
 			</div>

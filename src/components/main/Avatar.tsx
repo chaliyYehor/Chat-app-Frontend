@@ -17,7 +17,7 @@ export default function Avatar({ lightColor, state, imageUrl, isLoading }: Avata
 		<div
 			className={`w-15 h-15 rounded-[50%] dark:text-white flex justify-center items-center border-2 border-gray-700 relative shrink-0 ${'text-' + lightColor}`.trim()}
 		>
-			{isLoading ? <div className='loader' /> : imageUrl ? (
+			{isLoading ? <div className='loader' role='status' aria-label='Loading profile' /> : imageUrl ? (
 				<img
 					src={imageUrl}
 					alt='Profile'
@@ -29,7 +29,8 @@ export default function Avatar({ lightColor, state, imageUrl, isLoading }: Avata
 			<div
 				style={{ backgroundColor: colors[state].bg }}
 				className='w-3 capitalize h-3 border dark:border-white border-black rounded-[50%] absolute right-0 top-[68%]'
-				aria-label='Online'
+				role='img'
+				aria-label={`Status: ${state}`}
 			/>
 		</div>
 	)

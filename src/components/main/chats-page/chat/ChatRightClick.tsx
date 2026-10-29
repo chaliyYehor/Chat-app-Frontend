@@ -7,6 +7,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { socket } from '../../../../socket'
 import { useNavigate } from 'react-router-dom'
 import { setPopUpError } from '../../../../store/slices/popUpSlice'
+import { useAccessibleMenu } from '../../../../hooks/useAccessibleMenu'
 
 interface ChatRightClickProps {
 	position: { x: number; y: number }
@@ -26,6 +27,7 @@ export default function ChatRightClick({
 	chatId,
 }: ChatRightClickProps) {
 	const menuRef = useRef<HTMLDivElement>(null)
+	useAccessibleMenu(menuRef)
 
 	const queryClient = useQueryClient()
 

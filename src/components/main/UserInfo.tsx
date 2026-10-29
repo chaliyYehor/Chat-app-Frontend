@@ -12,6 +12,7 @@ import { useEffect } from 'react'
 import { setPopUpError } from '../../store/slices/popUpSlice'
 import type { AppDispatch } from '../../store/store'
 import { useDispatch } from 'react-redux'
+import { useAccessibleDialog } from '../../hooks/useAccessibleDialog'
 
 type DisplayedUserInfo = UserProfile | GetUserInfoChat
 
@@ -54,6 +55,7 @@ export default function UserInfo({
 	})
 
 	const dispatch = useDispatch<AppDispatch>()
+	const dialogRef = useAccessibleDialog(() => setIsProfileOpened(false))
 
 	useEffect(() => {
 		if (isSharedMediaError) {
@@ -67,6 +69,7 @@ export default function UserInfo({
 	}, [isSharedMediaError])
 	return (
 		<div
+			ref={dialogRef}
 			onClick={() => {
 				setIsProfileOpened(false)
 			}}
@@ -240,7 +243,7 @@ export default function UserInfo({
 					</div>
 					{isSharedMediaLoading && (
 						<div className='w-full h-20 flex justify-center items-center'>
-							<div className='loader dark:bg-white bg-black' />
+							<div className='loader dark:bg-white bg-black' role='status' aria-label='Loading shared media' />
 						</div>
 					)}
 					{sharedMediaData &&

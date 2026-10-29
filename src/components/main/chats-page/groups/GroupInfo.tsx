@@ -1,14 +1,17 @@
 import { Button } from '@mui/material'
 import { X } from 'lucide-react'
 import GroupPfp from './GroupPfp'
+import { useAccessibleDialog } from '../../../../hooks/useAccessibleDialog'
 
 export default function GroupInfo({
 	setIsProfileOpened,
 }: {
 	setIsProfileOpened: React.Dispatch<React.SetStateAction<boolean>>
 }) {
+	const dialogRef = useAccessibleDialog(() => setIsProfileOpened(false))
 	return (
 		<div
+			ref={dialogRef}
 			onClick={() => {
 				setIsProfileOpened(false)
 			}}

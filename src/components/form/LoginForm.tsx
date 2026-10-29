@@ -66,7 +66,6 @@ export default function LoginForm({ globalError, setGlobalError }: Props) {
 						<Link
 							to='/forgotPassword'
 							aria-label='Forgot password'
-							type='button'
 							className='text-[#7C5CFC] text-sm font-medium hover:underline cursor-pointer'
 						>
 							Forgot password?

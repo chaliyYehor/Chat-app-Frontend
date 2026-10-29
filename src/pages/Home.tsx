@@ -69,6 +69,12 @@ export default function Home() {
 
 	return (
 		<>
+			<a
+				href='#main-content'
+				className='sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-black'
+			>
+				Skip to main content
+			</a>
 			<div className='w-screen h-dvh flex flex-col-reverse md:flex-row'>
 				<PopUpError />
 				<PopUpSuccess />
@@ -84,7 +90,8 @@ export default function Home() {
 						{!isMobile && (
 							<div
 								className='messageUI w-14 h-14 rounded-2xl flex justify-center items-center mb-3'
-								aria-label='Chat App'
+								role='img'
+								aria-label='Pulse'
 							>
 								<RiMessage2Fill color='white' size={30} aria-hidden='true' />
 							</div>
@@ -98,7 +105,7 @@ export default function Home() {
 					{!isMobile && <Profile />}
 				</nav>
 
-				<main className='dark:bg-black bg-[#f5f5f8] flex-1 min-h-0 md:h-dvh flex min-w-0'>
+				<main id='main-content' className='dark:bg-black bg-[#f5f5f8] flex-1 min-h-0 md:h-dvh flex min-w-0' tabIndex={-1}>
 					<Outlet />
 				</main>
 			</div>
