@@ -124,7 +124,7 @@ export default function Message({
 					)}
 					<div className='flex-1 min-w-0 flex flex-col'>
 						{!isMe && isGroup && (
-							<p className='text-[#6B6B80] text-[12px] font-medium font-inter ml-2 mb-1'>
+							<p translate='no' className='text-[#6B6B80] text-[12px] font-medium font-inter ml-2 mb-1'>
 								{userInfo?.name}
 							</p>
 						)}
@@ -161,6 +161,7 @@ export default function Message({
 											? 'white'
 											: 'black',
 								}}
+								translate='no'
 								className={
 									'message-text font-inter px-3.5 py-2 md:text-sm text-base leading-relaxed wrap-anywhere whitespace-pre-wrap'
 								}

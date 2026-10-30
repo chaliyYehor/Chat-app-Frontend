@@ -52,7 +52,7 @@ export default function SettingsProfile() {
 						)}
 					>
 						<h2 className='dark:text-[#F0F0F5] font-inter font-semibold max-w-[90%] truncate'>
-							{userInfo?.name || ''}
+							<span translate='no'>{userInfo?.name || ''}</span>
 						</h2>
 					</div>
 					<div

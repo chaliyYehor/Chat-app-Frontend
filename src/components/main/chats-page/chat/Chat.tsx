@@ -305,7 +305,7 @@ export function Chat() {
 								'font-semibold font-inter text-md truncate dark:text-white h-6 flex min-w-30 rounded-md',
 							)}
 						>
-							{userInfo?.name || ''}
+							<span translate='no'>{userInfo?.name || ''}</span>
 						</p>
 						<p
 							className={clsx(
@@ -389,7 +389,6 @@ export function Chat() {
 								{message.type === 'image' ? (
 									<ImageMessage
 										isFetching={isUserInfoPending}
-										imageUrl={userInfo?.imageUrl ?? undefined}
 										messageInfo={message}
 										userInfo={userInfo}
 										isMe={message.senderId === userId}

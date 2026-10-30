@@ -28,7 +28,7 @@ export default function ThemeSwitch() {
 			sx={{
 				bgcolor: theme === 'dark' ? '#1E1E26' : '#EBEBF0',
 				borderRadius: '8px',
-				width: '120px',
+				width: 'max-content',
 				height: '38px',
 				padding: '2px',
 

@@ -95,7 +95,7 @@ export default function IsTyping({
 						</div>
 					</>
 						<div className='w-15 px-4 py-3 rounded-2xl rounded-bl-sm dark:bg-[#1E1E26] bg-[#EBEBF0] flex justify-center items-center rounded-e-3xl'>
-						<span className='sr-only'>{userInfo.name} is typing</span>
+						<span translate='no' className='sr-only'>{userInfo.name} is typing</span>
 						<div className='typingIndicator' aria-hidden='true' />
 					</div>
 				</div>
