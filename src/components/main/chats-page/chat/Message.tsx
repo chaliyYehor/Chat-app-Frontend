@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { Check, CheckCheck, User } from 'lucide-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import UserInfo from '../../UserInfo'
 import RightClick from './RightClick'
 import ViewImage from './ViewImage'
@@ -40,11 +40,31 @@ export default function Message({
 		x: number
 		y: number
 	} | null>(null)
+	const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+	const longPressTriggered = useRef(false)
 
 	function handleContextMenu(e: React.MouseEvent) {
 		e.preventDefault()
 		e.stopPropagation()
 		setToolsPosition({ x: e.clientX, y: e.clientY })
+	}
+
+	function handlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
+		if (e.pointerType !== 'touch') return
+
+		longPressTriggered.current = false
+		const { clientX, clientY } = e
+		longPressTimer.current = setTimeout(() => {
+			longPressTriggered.current = true
+			setToolsPosition({ x: clientX, y: clientY })
+		}, 500)
+	}
+
+	function cancelLongPress() {
+		if (longPressTimer.current) {
+			clearTimeout(longPressTimer.current)
+			longPressTimer.current = null
+		}
 	}
 
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
@@ -74,6 +94,17 @@ export default function Message({
 					'w-full flex message relative',
 				)}
 				onContextMenu={handleContextMenu}
+				onPointerDown={handlePointerDown}
+				onPointerUp={cancelLongPress}
+				onPointerCancel={cancelLongPress}
+				onPointerLeave={cancelLongPress}
+				onClick={e => {
+					if (longPressTriggered.current) {
+						e.preventDefault()
+						e.stopPropagation()
+						longPressTriggered.current = false
+					}
+				}}
 			>
 				{toolsPosition && (
 					<RightClick
