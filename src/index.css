@@ -25,7 +25,9 @@ button,
 [role='menu'],
 [role='menuitem'],
 svg,
-img {
+img,
+label,
+input[type='file'] {
 	user-select: none;
 	-webkit-user-select: none;
 	-webkit-touch-callout: none;
