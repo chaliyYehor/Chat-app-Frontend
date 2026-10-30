@@ -389,7 +389,6 @@ export function Chat() {
 								{message.type === 'image' ? (
 									<ImageMessage
 										isFetching={isUserInfoPending}
-										imageUrl={userInfo?.imageUrl ?? undefined}
 										messageInfo={message}
 										userInfo={userInfo}
 										isMe={message.senderId === userId}
