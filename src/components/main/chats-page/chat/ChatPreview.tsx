@@ -128,8 +128,8 @@ export default function ChatPreview({
 						imageUrl={imageUrl || undefined}
 					/>
 					<div className='flex-1 min-w-0 flex flex-col dark:text-white'>
-						<p className='truncate max-w-[60%] font-semibold'>{name}</p>
-						<p className='truncate max-w-[80%] text-sm'>
+						<p translate='no' className='truncate max-w-[60%] font-semibold'>{name}</p>
+						<p translate='no' className='truncate max-w-[80%] text-sm'>
 							{lastMessage?.lastMessage || ''}
 						</p>
 					</div>

@@ -122,7 +122,7 @@ export default function UserInfo({
 									alt='pfp'
 								/>
 							) : (
-								<div className='w-full h-full flex items-center justify-center'>
+								<div className='w-full h-full flex items-center justify-center text-black dark:text-white'>
 									<User size={34} />
 								</div>
 							)}
@@ -148,7 +148,7 @@ export default function UserInfo({
 									'w-full min-h-fit h-5 rounded-2xl mb-2',
 								)}
 							>
-								<h2 className='dark:text-[#F0F0F5] font-bold text-xl leading-tight font-inter'>
+								<h2 translate='no' className='dark:text-[#F0F0F5] font-bold text-xl leading-tight font-inter'>
 									{userInfo && !isFetching ? userInfo.name : ''}
 								</h2>
 							</div>
@@ -163,6 +163,7 @@ export default function UserInfo({
 												)
 											]?.text,
 								}}
+								translate='no'
 								className={clsx(
 									!isYourProfile ? 'text-green-500' : '',
 									'text-sm font-inter text-[#6B6B80] capitalize',
@@ -213,7 +214,7 @@ export default function UserInfo({
 										<p className='text-[10px] text-[#6B6B80] font-inter font-medium'>
 											{isFetching ? '' : 'Email'}
 										</p>
-										<p className='text-sm dark:text-[#F0F0F5] text-black font-inter'>
+										<p translate='no' className='text-sm dark:text-[#F0F0F5] text-black font-inter'>
 											{displayedEmail && !isFetching
 												? `@${displayedEmail}`
 												: ''}
@@ -233,7 +234,7 @@ export default function UserInfo({
 										<p className='text-[10px] text-[#6B6B80] font-inter font-medium'>
 											{isFetching ? '' : 'User ID'}
 										</p>
-										<p className='text-sm dark:text-[#F0F0F5] text-black font-inter'>
+										<p translate='no' className='text-sm dark:text-[#F0F0F5] text-black font-inter'>
 											{userInfo && !isFetching ? '@' + userInfo.userPubId : ''}
 										</p>
 									</div>
@@ -241,7 +242,7 @@ export default function UserInfo({
 							</div>
 						</div>
 					</div>
-					{isSharedMediaLoading && (
+					{isSharedMediaLoading && !isYourProfile && (
 						<div className='w-full h-20 flex justify-center items-center'>
 							<div className='loader dark:bg-white bg-black' role='status' aria-label='Loading shared media' />
 						</div>

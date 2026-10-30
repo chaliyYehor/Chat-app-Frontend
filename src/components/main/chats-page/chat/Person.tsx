@@ -34,7 +34,7 @@ export default function Person({
 					/>
 
 					<div className='flex-1 min-w-0 flex flex-col items-start dark:text-white'>
-						<p className='truncate max-w-[60%] font-semibold'>{user.name}</p>
+						<p translate='no' className='truncate max-w-[60%] font-semibold'>{user.name}</p>
 						<p className='text-[#6B6B80] capitalize text-sm font-inter text-[12px]'>
 							{getDisplayedStatus(user.status, user.previouslySetStatus)}
 						</p>

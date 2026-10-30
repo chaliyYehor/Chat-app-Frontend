@@ -248,7 +248,7 @@ export default function SendAMessage({
 				</div>
 			) : imagePreviewError && image ? (
 				<div className='relative max-w-40 rounded-xl border border-white/50 bg-[#1e1e26] p-3 text-white'>
-					<p className='truncate text-sm'>{image.name}</p>
+					<p translate='no' className='truncate text-sm'>{image.name}</p>
 					<p className='mt-1 text-xs text-[#6B6B80]'>
 						Preview is not supported for this HEIC file
 					</p>

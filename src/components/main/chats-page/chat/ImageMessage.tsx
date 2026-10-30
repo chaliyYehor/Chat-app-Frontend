@@ -12,7 +12,6 @@ export default function ImageMessage({
 	isMe = true,
 	isGroup = false,
 	isSeen,
-	imageUrl,
 	messageInfo,
 	userInfo,
 	isFetching,
@@ -21,7 +20,6 @@ export default function ImageMessage({
 	isMe: boolean
 	isGroup?: boolean
 	isSeen?: boolean
-	imageUrl?: string
 	messageInfo: Message
 	userInfo: GetUserInfoChat
 	isFetching: boolean
@@ -50,9 +48,9 @@ export default function ImageMessage({
 
 	return (
 		<>
-			{isPreviewOpen && imageUrl && (
+			{isPreviewOpen && messageInfo.imageUrl && (
 				<ViewImage
-					src={imageUrl}
+					src={messageInfo.imageUrl}
 					alt='Preview'
 					setShowPreview={setIsPreviewOpen}
 				/>
@@ -121,7 +119,7 @@ export default function ImageMessage({
 					)}
 					<div className='flex-1 min-w-0 flex flex-col'>
 						{!isMe && isGroup && (
-							<p className='text-[#6B6B80] text-[12px] font-medium font-inter ml-2 mb-1'>
+							<p translate='no' className='text-[#6B6B80] text-[12px] font-medium font-inter ml-2 mb-1'>
 								{userInfo?.name}
 							</p>
 						)}
