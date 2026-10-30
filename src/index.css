@@ -20,6 +20,10 @@ body {
 	scrollbar-width: thin;
 }
 
+svg {
+	user-select: none;
+}
+
 :root {
 	--scrollbar-thumb: #6b6b80;
 	--scrollbar-track: transparent;
