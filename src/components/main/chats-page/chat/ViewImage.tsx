@@ -18,7 +18,7 @@ export default function ViewImage({ src, alt, setShowPreview }: Props) {
 			aria-modal='true'
 			aria-label='Image preview'
 			tabIndex={-1}
-			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-xs'
+			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex items-center justify-center z-60 backdrop-blur-xs'
 		>
 			<div className='relative flex justify-center'>
 				<img
