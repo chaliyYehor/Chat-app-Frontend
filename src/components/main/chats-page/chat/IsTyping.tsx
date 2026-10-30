@@ -60,6 +60,7 @@ export default function IsTyping({
 				aria-live='polite'
 				aria-atomic='true'
 				aria-hidden={!isTyping}
+				style={{ height: 0, opacity: 0, visibility: 'hidden', marginTop: 0 }}
 				className={clsx('justify-start w-full flex message relative shrink-0 overflow-hidden')}
 			>
 				<div className='md:max-w-[70%] max-w-[90%] min-w-0 flex relative gap-2'>
