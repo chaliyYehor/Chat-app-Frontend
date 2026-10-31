@@ -1,9 +1,17 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { ChatMenuPosition } from '../chat/ChatPreview'
 import NoConvosYet from '../NoConvosYet'
 import CreateGroup from './CreateGroup'
 import GroupPreview from './GroupPreview'
 import NewGroupChatBtn from './NewGroupChatBtn'
+import { useGetGroups } from '../../../../hooks/useGetGroups'
+import { setPopUpError } from '../../../../store/slices/popUpSlice'
+import { useDispatch } from 'react-redux'
+import type { AppDispatch } from '../../../../store/store'
+import type {
+	GroupResponse,
+	GroupsResponse,
+} from '../../../../schemas/main/getGroupsResponse'
 
 export default function GroupList() {
 	const [isAdding, setIsAdding] = useState(false)
@@ -12,12 +20,30 @@ export default function GroupList() {
 		position: ChatMenuPosition
 	} | null>(null)
 
-	const chats = true // Replace with actual logic to determine if there are chats
+	const {
+		data: groups,
+		isError: isGroupsError,
+		isPending: isGroupsLoading,
+	} = useGetGroups()
 
-	function renderGroupPreview(id: string) {
+	const dispatch = useDispatch<AppDispatch>()
+
+	useEffect(() => {
+		if (isGroupsError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load groups. Please try again.',
+				}),
+			)
+		}
+	}, [isGroupsError, dispatch])
+
+	function renderGroupPreview(id: string, groupInfo: GroupResponse) {
 		return (
 			<GroupPreview
 				key={id}
+				groupInfo={groupInfo}
 				menuPosition={
 					activeGroupMenu?.id === id ? activeGroupMenu.position : null
 				}
@@ -32,22 +58,25 @@ export default function GroupList() {
 			<div className='mb-10 flex flex-col gap-4 mt-5'>
 				<div className='flex items-center justify-between px-4 py-2'>
 					<h2 className='dark:text-white text-3xl font-bold '>Groups</h2>
-					{chats && <NewGroupChatBtn isGroup onClick={setIsAdding} />}
+					{groups && groups?.groups.length > 0 && <NewGroupChatBtn isGroup onClick={setIsAdding} />}
 				</div>
 			</div>
 
-			{!chats ? (
+			{!groups && isGroupsLoading ? (
+				<div className='w-full h-full flex justify-center items-center'>
+					<div className='loader bg-black dark:bg-white' />
+				</div>
+			) : !groups || groups.groups.length === 0 ? (
 				<NoConvosYet isGroup onClick={setIsAdding} />
 			) : (
 				<>
 					<section className='px-4 font-semibold text-sm mb-5'>
 						<p className='text-[#6B6B80] font-inter mb-3'>YOUR GROUPS</p>
 						<div className='flex flex-col gap-4'>
-							{renderGroupPreview('group-1')}
-							{renderGroupPreview('group-2')}
-							{renderGroupPreview('group-3')}
-							{renderGroupPreview('group-4')}
-							{renderGroupPreview('group-5')}
+							{groups.groups.map(group => {
+
+								return renderGroupPreview(group.group.id, group)
+							})}
 						</div>
 					</section>
 				</>

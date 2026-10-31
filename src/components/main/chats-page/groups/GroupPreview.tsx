@@ -3,17 +3,21 @@ import { Link } from 'react-router-dom'
 import type { ChatMenuPosition } from '../chat/ChatPreview'
 import MessagesIndicator from '../chat/MessagesIndicator'
 import GroupPfp from './GroupPfp'
+import ChatRightClick from '../chat/ChatRightClick'
+import type { GroupResponse } from '../../../../schemas/main/getGroupsResponse'
 
 interface GroupPreviewProps {
 	menuPosition: ChatMenuPosition | null
 	onOpenMenu: (position: ChatMenuPosition) => void
 	onCloseMenu: () => void
+	groupInfo: GroupResponse
 }
 
 export default function GroupPreview({
 	// menuPosition,
 	onOpenMenu,
 	// onCloseMenu,
+	groupInfo,
 }: GroupPreviewProps) {
 	const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 	const longPressTriggered = useRef(false)
@@ -66,20 +70,26 @@ export default function GroupPreview({
 					isGroup={true}
 				/>
 			)} */}
-			<GroupPfp />
+			<GroupPfp groupName={groupInfo.group.groupName} />
 			<div className='flex-1 min-w-0 flex flex-col dark:text-white'>
 				<p className='truncate max-w-[60%] font-bold font-inter text-[16px]'>
-					Design Team
+					{groupInfo.group.groupName}
 				</p>
-				<p className='truncate max-w-full text-sm text-[#6B6B80]'>4 members</p>
 				<p className='truncate max-w-full text-sm text-[#6B6B80]'>
-					Lorem ipsum dolor sit, amet consectetur adipisicing elit. Animi quam
-					rerum debitis mollitia eius eaque adipisci reiciendis quos itaque
-					tempore.
+					{groupInfo.group.memberIds.length === 1
+						? '1 member'
+						: `${groupInfo.group.memberIds.length} members`}
+				</p>
+				<p className='truncate max-w-full text-sm text-[#6B6B80]'>
+					{groupInfo.group.lastMessage
+						? groupInfo.group.lastMessage.length === 0
+						: 'No messages yet'}
 				</p>
 			</div>
 			<div className='info flex flex-col items-end  gap-1'>
-				<MessagesIndicator numberOfMessages={3} />
+				{groupInfo.groupUser.unreadMessagesCount > 0 && (
+					<MessagesIndicator numberOfMessages={groupInfo.groupUser.unreadMessagesCount} />
+				)}
 			</div>
 		</Link>
 	)

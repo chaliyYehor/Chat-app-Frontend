@@ -1,19 +1,29 @@
-import { TextField } from '@mui/material'
+import { InputAdornment, TextField } from '@mui/material'
 import Button from '@mui/material/Button'
-import { X } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import {
 	useFieldArray,
 	useFormContext,
+	useWatch,
 	type SubmitHandler,
 } from 'react-hook-form'
 import type { GroupCreation } from '../../../../schemas/main/groupCreation'
 import { ChatSearch } from '../ChatSearch'
 import CreateGroupBtn from './CreateGroupBtn'
 import PickPerson from './PickPerson'
-import type { RootType } from '../../../../store/store'
-import { useSelector } from 'react-redux'
+import type { AppDispatch, RootType } from '../../../../store/store'
+import { useDispatch, useSelector } from 'react-redux'
 import { useAccessibleDialog } from '../../../../hooks/useAccessibleDialog'
+import { useGetChats } from '../../../../hooks/useGetChats'
+import { authClient } from '../../../../lib/auth-client'
+import { useEffect, useState } from 'react'
+import { socket } from '../../../../socket'
+import { useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
+import { setPopUpError } from '../../../../store/slices/popUpSlice'
+import type { ChatsResponse } from '../../../../schemas/main/getChatsResponse'
+import { useDebounce } from '../../../../hooks/useDebounce'
 
 export default function CreateGroup({
 	setIsAdding,
@@ -27,20 +37,91 @@ export default function CreateGroup({
 		formState: { errors },
 	} = useFormContext<GroupCreation>()
 
+	const [isLoading, setIsLoading] = useState(false)
+
 	const { fields, append, remove } = useFieldArray({
 		control,
 		name: 'peopleToAdd',
 		keyName: 'fieldId',
 	})
 
-	const people = [
-		{ id: 'sofia-chen', label: 'Sofia Chen' },
-		{ id: 'john-doe', label: 'John Doe' },
-		{ id: 'jane-smith', label: 'Jane Smith' },
-	]
+	const userId = authClient.useSession().data?.user.id
+
+	const { data: peopleData, isPending: isPeopleLoading } = useGetChats()
+	const [people, setPeople] = useState<ChatsResponse>([])
+
+	const [search, setSearch] = useState('')
+	const debouncedSearch = useDebounce(search, 300)
+
+	useEffect(() => {
+		if (peopleData) {
+			setPeople(peopleData)
+		}
+	}, [peopleData])
+
+	useEffect(() => {
+		const query = debouncedSearch.trim().toLocaleLowerCase()
+
+		if (!query) {
+			setPeople(peopleData ?? [])
+			return
+		}
+
+		setPeople(
+			(peopleData ?? []).filter(chat => {
+				const person =
+					chat.userOne?.userId === userId ? chat.userTwo : chat.userOne
+
+				return person?.name.toLocaleLowerCase().includes(query) ?? false
+			}),
+		)
+	}, [debouncedSearch, peopleData, userId])
+
+	const watchFields = useWatch({
+		control,
+		name: ['peopleToAdd'],
+	})
+
+	const queryClient = useQueryClient()
+
+	const navigate = useNavigate()
+
+	const dispatch = useDispatch<AppDispatch>()
 
 	const onSubmit: SubmitHandler<GroupCreation> = data => {
-		console.log(data)
+		setIsLoading(true)
+		socket.emit(
+			'group:create',
+			data,
+			async ({
+				success,
+				error,
+				groupId,
+			}: {
+				success: boolean
+				error: string | null
+				groupId: string
+			}) => {
+				if (success) {
+					console.log('Chat created successfully')
+					await queryClient.invalidateQueries({ queryKey: ['groups'] })
+					setIsLoading(false)
+					setIsAdding(false)
+					navigate(`/groups/${groupId}`)
+				}
+
+				if (error) {
+					setIsLoading(false)
+
+					dispatch(
+						setPopUpError({
+							heading: 'Error',
+							text: 'Failed to create group. Please try again.',
+						}),
+					)
+				}
+			},
+		)
 	}
 
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
@@ -123,7 +204,8 @@ export default function CreateGroup({
 									transition: 'all 0.2s ease-in-out',
 									'& .MuiOutlinedInput-root': {
 										borderRadius: '10px',
-										backgroundColor: appTheme === 'dark' ? '#1f1f26' : '#ebebf0',
+										backgroundColor:
+											appTheme === 'dark' ? '#1f1f26' : '#ebebf0',
 										height: '46px',
 
 										'& .MuiOutlinedInput-notchedOutline': {
@@ -145,30 +227,92 @@ export default function CreateGroup({
 									},
 								}}
 							/>
-							<ChatSearch isChatSearch control={control} name='search' />
+							<TextField
+								variant='outlined'
+								autoComplete='false'
+								value={search}
+								onChange={e => setSearch(e.target.value)}
+								placeholder={'Search contacts...'}
+								slotProps={{
+									input: {
+										startAdornment: (
+											<InputAdornment position='start'>
+												<Search size={20} color='#6B6B80' />
+											</InputAdornment>
+										),
+									},
+									htmlInput: {
+										'aria-label': 'Search contacts',
+									},
+								}}
+								sx={{
+									width: '100%',
+									paddingInline: '15px',
+									'& .MuiOutlinedInput-root': {
+										borderRadius: '10px',
+										backgroundColor:
+											appTheme === 'dark' ? '#1f1f26' : '#ebebf0',
+										height: '46px',
+
+										'& .MuiOutlinedInput-notchedOutline': {
+											borderColor: '#333',
+										},
+
+										'&:hover .MuiOutlinedInput-notchedOutline': {
+											borderColor: appTheme === 'dark' ? '#333' : '#ccc',
+										},
+
+										'&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+											borderColor: '#333',
+											borderWidth: '1px',
+										},
+									},
+
+									'& .MuiInputBase-input': {
+										color: appTheme === 'dark' ? '#eee' : '#333',
+									},
+								}}
+							/>
 						</div>
 
 						<div className='w-full suggestedPeople min-h-0 p-2 flex flex-1 flex-col gap-1 overflow-y-auto'>
-							{people.map(person => {
-								const selectedIndex = fields.findIndex(
-									field => field.id === person.id,
-								)
+							{!isPeopleLoading &&
+								people &&
+								people.map(person => {
+									const p =
+										person.userOne?.userId === userId
+											? person.userTwo
+											: person.userOne
+									if (!p) return null
 
-								return (
-									<PickPerson
-										key={person.id}
-										person={person}
-										isPicked={selectedIndex !== -1}
-										add={append}
-										remove={remove}
-										selectedIndex={selectedIndex}
-									/>
-								)
-							})}
+									const selectedIndex = fields.findIndex(
+										field => field.id === p.userId,
+									)
+
+									return (
+										<PickPerson
+											key={p.userId}
+											person={p}
+											isPicked={selectedIndex !== -1}
+											add={append}
+											remove={remove}
+											selectedIndex={selectedIndex}
+										/>
+									)
+								})}
+							{isPeopleLoading && (
+								<div className='flex justify-center items-center h-full'>
+									<div className='loader bg-black dark:bg-white' />
+								</div>
+							)}
 						</div>
 
 						<div className='w-full shrink-0'>
-							<CreateGroupBtn />
+							<CreateGroupBtn
+								isLoading={isLoading}
+								numberOfMembers={watchFields[0]?.length || 0}
+								isDisabled={watchFields[0]?.length === 0}
+							/>
 						</div>
 					</form>
 				</div>
