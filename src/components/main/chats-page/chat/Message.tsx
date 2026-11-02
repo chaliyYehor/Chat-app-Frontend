@@ -42,6 +42,7 @@ export default function Message({
 	} | null>(null)
 	const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 	const longPressTriggered = useRef(false)
+	const longPressOrigin = useRef({ x: 0, y: 0 })
 
 	function handleContextMenu(e: React.MouseEvent) {
 		e.preventDefault()
@@ -54,10 +55,19 @@ export default function Message({
 
 		longPressTriggered.current = false
 		const { clientX, clientY } = e
+		longPressOrigin.current = { x: clientX, y: clientY }
 		longPressTimer.current = setTimeout(() => {
 			longPressTriggered.current = true
 			setToolsPosition({ x: clientX, y: clientY })
 		}, 500)
+	}
+
+	function handlePointerMove(e: React.PointerEvent<HTMLDivElement>) {
+		if (e.pointerType !== 'touch' || !longPressTimer.current) return
+
+		const movedX = Math.abs(e.clientX - longPressOrigin.current.x)
+		const movedY = Math.abs(e.clientY - longPressOrigin.current.y)
+		if (movedX > 10 || movedY > 10) cancelLongPress()
 	}
 
 	function cancelLongPress() {
@@ -96,6 +106,7 @@ export default function Message({
 				)}
 				onContextMenu={handleContextMenu}
 				onPointerDown={handlePointerDown}
+				onPointerMove={handlePointerMove}
 				onPointerUp={cancelLongPress}
 				onPointerCancel={cancelLongPress}
 				onPointerLeave={cancelLongPress}
