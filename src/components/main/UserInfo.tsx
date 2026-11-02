@@ -21,6 +21,7 @@ export default function UserInfo({
 	setIsProfileOpened,
 	isYourProfile,
 	sharedMedia,
+	isGroup = false,
 	userInfo,
 	chatId,
 	email,
@@ -28,6 +29,7 @@ export default function UserInfo({
 }: {
 	isYourProfile: boolean
 	sharedMedia: boolean
+	isGroup?: boolean
 	chatId?: string
 	isFetching?: boolean
 	email?: string
@@ -52,7 +54,8 @@ export default function UserInfo({
 		isError: isSharedMediaError,
 		isPending: isSharedMediaLoading,
 	} = useGetSharedMedia({
-		chatId: chatId ?? '',
+		chatId: isGroup ? '' : (chatId ?? ''),
+		groupId: isGroup ? (chatId ?? '') : '',
 		otherUserId: userInfo?.userId ?? '',
 		enabled: sharedMedia,
 	})
