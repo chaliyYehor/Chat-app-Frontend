@@ -61,7 +61,6 @@ function App() {
 		resolver: zodResolver(groupCreationSchema),
 		defaultValues: {
 			groupName: '',
-			search: '',
 			peopleToAdd: [],
 		},
 	})

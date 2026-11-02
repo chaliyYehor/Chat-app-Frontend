@@ -4,15 +4,23 @@ import { Outlet, useLocation } from 'react-router-dom'
 import GroupList from '../components/main/chats-page/groups/GroupList'
 import { useIsMobile } from '../hooks/useIsMobile'
 import { authClient } from '../lib/auth-client'
+import GlobalSocketError from '../components/globalSocketError'
+import { useSelector } from 'react-redux'
+import type { RootType } from '../store/store'
 
 const possiblePreviousLocations = ['/chats', '/groups', '/calls', '/settings']
 
 export default function Groups() {
 	const isMobile = useIsMobile()
 
+	const globalSocketError = useSelector(
+		(state: RootType) => state.socketState.globalSocketError,
+	)
+
 	const { isPending } = authClient.useSession()
 	const location = useLocation()
 	const currentLocation = location.pathname
+	const isChatDetailsRoute = /^\/groups\//.test(currentLocation)
 	const previousLocation =
 		typeof location.state?.from === 'string' ? location.state.from : undefined
 	const currentIndex = possiblePreviousLocations.indexOf(currentLocation)
@@ -30,7 +38,7 @@ export default function Groups() {
 
 	useGSAP(
 		() => {
-			if (isPending) return
+			if (isPending || isChatDetailsRoute) return
 
 			gsap.from('.chats', {
 				xPercent: isMobile ? animationXPercent : -100,
@@ -45,10 +53,12 @@ export default function Groups() {
 	)
 	return (
 		<div className='flex w-full h-full min-w-0 relative'>
-			<div className='chats messagesSection outline-1 outline-gray-700/60 md:w-100 w-full shrink-0 flex'>
-				<GroupList />
+			<div className='chats messagesSection outline-1 outline-gray-700/60 md:w-100 w-full md:max-w-[30vw] shrink md:shrink-0 flex'>
+				{globalSocketError ? <GlobalSocketError /> : <GroupList />}
 			</div>
-			<div className='flex-1 min-w-0 absolute top-0 left-0 md:relative md:top-auto md:left-auto h-full'>
+			<div
+				className={`${isMobile && !isChatDetailsRoute ? 'hidden md:block' : 'absolute inset-0'} md:relative md:inset-auto md:flex-1 min-w-0 md:shrink h-full`}
+			>
 				<Outlet />
 			</div>
 		</div>

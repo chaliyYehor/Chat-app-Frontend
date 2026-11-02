@@ -14,18 +14,21 @@ export default function NewGroupChatBtn({
 			type='button'
 			variant='contained'
 			sx={{
-				width: '158px',
-				height: '40px',
-				borderRadius: '10px',
+				width: 'clamp(86px, 28vw, 158px)',
+				minWidth: 0,
+				maxWidth: '100%',
+				height: { xs: '36px', sm: '40px' },
+				borderRadius: { xs: '9px', sm: '10px' },
 
-				marginTop: '10px',
+				marginTop: { xs: 0, sm: '10px' },
 
 				background: 'linear-gradient(90deg, #7654E8 0%, #5437C9 100%)',
 
 				color: '#fff',
-				fontSize: '16px',
+				fontSize: { xs: '12px', sm: '16px' },
 				fontWeight: 600,
-				padding: '12px 0',
+				padding: { xs: '8px 10px', sm: '12px 0' },
+				whiteSpace: 'nowrap',
 				textTransform: 'none',
 
 				boxShadow: 'none',
@@ -40,7 +43,10 @@ export default function NewGroupChatBtn({
 				},
 			}}
 		>
-			{isGroup ? '+ New Group' : '+ New Message'}
+			<span className='sm:hidden'>+ {isGroup ? 'Group' : 'Message'}</span>
+			<span className='hidden sm:inline'>
+				+ New {isGroup ? 'Group' : 'Message'}
+			</span>
 		</Button>
 	)
 }

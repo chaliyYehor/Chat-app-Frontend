@@ -8,10 +8,14 @@ export default function MoreInfoButton({
 	chatId,
 	isPinned,
 	onSearchClick,
+	messagesLength,
+	isAdmin
 }: {
 	isGroup?: boolean
 	chatId: string
 	isPinned: boolean
+	isAdmin?: boolean
+	messagesLength?: number
 	onSearchClick: (value: SetStateAction<boolean>) => void
 }) {
 	const [chatToolsPosition, setChatToolsPosition] = useState<{
@@ -28,6 +32,8 @@ export default function MoreInfoButton({
 		<>
 			{chatToolsPosition && (
 				<MoreInfoRightClick
+					isAdmin={isAdmin}
+					messagesLength={messagesLength}
 					chatId={chatId}
 					isPinned={isPinned}
 					onSearchClick={onSearchClick}
@@ -40,10 +46,12 @@ export default function MoreInfoButton({
 				type='button'
 				onClick={handleClick}
 				aria-label='More conversation options'
+				aria-haspopup='menu'
+				aria-expanded={chatToolsPosition !== null}
 				sx={{
-					width: '50px',
+					width: { xs: '40px', md: '50px' },
 					minWidth: '0',
-					height: '50px',
+					height: { xs: '40px', md: '50px' },
 					borderRadius: '10px',
 					fontSize: '1rem',
 					textTransform: 'none',

@@ -1,8 +1,26 @@
+import { useRef } from 'react'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
 import { useSelector } from 'react-redux'
 import type { RootType } from '../store/store'
 
 export default function PopUpLoading() {
 	const loading = useSelector((state: RootType) => state.popUpState.loading)
+	const popUpRef = useRef<HTMLDivElement>(null)
+
+	useGSAP(
+		() => {
+			if (!loading.heading && !loading.text) return
+
+			gsap.fromTo(
+				popUpRef.current,
+				{ opacity: 0, y: -12 },
+				{ opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' },
+			)
+		},
+		{ dependencies: [loading.heading, loading.text], revertOnUpdate: true },
+	)
+
 	if (!loading.heading && !loading.text) return null
 
 	const state = {
@@ -14,6 +32,7 @@ export default function PopUpLoading() {
 
 	return (
 		<div
+			ref={popUpRef}
 			role='status'
 			aria-live='polite'
 			aria-busy='true'

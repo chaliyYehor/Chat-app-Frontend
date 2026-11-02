@@ -15,7 +15,7 @@ import VideoCallBtn from './VideoCallBtn'
 import UserInfo from '../../UserInfo'
 import ImageMessage from './ImageMessage'
 import { ArrowLeft } from 'lucide-react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import type { AppDispatch, RootType } from '../../../../store/store'
 import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
@@ -52,9 +52,6 @@ export function Chat() {
 	const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
 		setHasScrolled(e.currentTarget.scrollTop < -400)
 	}, [])
-	useEffect(() => {
-		console.log('hasScrolled', hasScrolled)
-	}, [hasScrolled])
 
 	useEffect(() => {
 		if (isUserTyping && !hasScrolled) {
@@ -86,7 +83,6 @@ export function Chat() {
 		isError: isChatInfoError,
 		isPending: isChatInfoPending,
 	} = useGetChatInfo(chatId as string)
-
 
 	const {
 		data: messages,
@@ -130,7 +126,7 @@ export function Chat() {
 	const messageQueryKey = useMemo(
 		() => ['messages', chatId, 'infinite'] as const,
 		[chatId],
-	)
+	) 
 	const { data: preferences, isError: isPreferencesError } =
 		useGetUserPreferences()
 	const playMessageSound = useMessageSound()
@@ -263,6 +259,16 @@ export function Chat() {
 		}
 	}, [isPreferencesError, dispatch])
 
+	const socketError = useSelector((state: RootType) => state.socketState.globalSocketError)
+
+	const navigate = useNavigate()
+
+	useEffect(() => {
+		if(socketError) {
+			navigate('/chats', { replace: true })
+		}
+	}, [socketError])
+
 	return (
 		<div className='w-full h-full overflow-hidden flex flex-col dark:bg-[#16161b] bg-white border-l border-gray-700/60'>
 			<div className='relative p-4 pl-0 shrink-0 flex w-full justify-between items-center border-b border-gray-700/60'>
@@ -279,6 +285,7 @@ export function Chat() {
 					)}
 					<Link
 						to='/chats'
+						aria-label='Back to chats'
 						className={`cursor-pointer transition-all duration-200 ease-in-out rounded-full ml-4 ${appTheme === 'dark' ? 'hover:bg-[#2D2D3B]' : 'hover:bg-[#E5E5EA]'}`}
 					>
 						<ArrowLeft color='#6B6B80' />
@@ -298,7 +305,7 @@ export function Chat() {
 							)}
 						/>
 					</button>
-					<div className='w-[70%] flex flex-col gap-1'>
+					<div className='flex min-w-0 flex-1 flex-col gap-1'>
 						<p
 							className={clsx(
 								isUserInfoPending ? 'skeleton-shimmer' : '',
@@ -327,16 +334,17 @@ export function Chat() {
 						</p>
 					</div>
 				</div>
-				<div className='h-full flex justify-center items-center gap-2'>
+				<div className='h-full shrink-0 flex justify-center items-center gap-1 md:gap-2'>
 					{isChatInfoPending ? (
 						<div className='w-full h-full flex justify-center items-center'>
 							<div className='loader' role='status' aria-label='Loading chat information' />
 						</div>
 					) : (
 						<>
-							<CallButon />
-							<VideoCallBtn />
+							<CallButon size={16} />
+							<VideoCallBtn size={16} />
 							<MoreInfoButton
+								messagesLength={messagesState.length}
 								onSearchClick={() => setIsSearchOpened(true)}
 								isPinned={chatInfo?.conversationUserData.isPinned!}
 								chatId={chatId as string}

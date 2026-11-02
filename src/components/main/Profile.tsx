@@ -44,6 +44,7 @@ export default function Profile() {
 			)}
 			<button
 				type='button'
+				aria-label='Open your profile'
 				onClick={() => setIsProfileOpened(true)}
 				className='cursor-pointer hover:outline-2 hover:outline-[#7C5CFC] transition-all duration-200 ease-in-out rounded-full'
 			>

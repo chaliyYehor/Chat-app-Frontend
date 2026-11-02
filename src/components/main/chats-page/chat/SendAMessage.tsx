@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod/dist/zod.js'
 import heic2any from 'heic2any'
-import { Image, Send } from 'lucide-react'
+import { Image, Send, X } from 'lucide-react'
 import {
 	useEffect,
 	useRef,
@@ -33,6 +33,7 @@ interface Props {
 	chatId: string
 	lastMessageAt?: Date
 	isTyping: boolean
+	isFromGroup?: boolean
 	setIsTyping: Dispatch<SetStateAction<boolean>>
 }
 
@@ -40,6 +41,7 @@ export default function SendAMessage({
 	chatId,
 	lastMessageAt,
 	isTyping,
+	isFromGroup = false,
 	setIsTyping,
 }: Props) {
 	const [image, setImage] = useState<File | undefined>(undefined)
@@ -139,13 +141,13 @@ export default function SendAMessage({
 		setIsSending(true)
 
 		socket.emit(
-			'message:send',
+			isFromGroup ? 'group:message:send' : 'message:send',
 			{
 				type: uploadedImage && !data.message ? 'image' : 'text_or_image',
 				text: data.message.trim() || undefined,
 				imageUrl: uploadedImage?.imageUrl ?? undefined,
 				imagePubId: uploadedImage?.imagePublicId ?? undefined,
-				conversationId: chatId,
+				...(isFromGroup ? { groupId: chatId } : { conversationId: chatId }),
 				lastMessageAt: lastMessageAt ?? new Date(),
 			},
 			({ success, error }: { success: boolean; error?: string }) => {
@@ -201,7 +203,11 @@ export default function SendAMessage({
 		clearTimeout(stopTimer.current)
 		stopTimer.current = undefined
 		setIsTyping(false)
-		socket.volatile.emit('typing:stop', { chatId })
+		if (isFromGroup) {
+			socket.volatile.emit('group:typing:stop', { groupId: chatId })
+		} else {
+			socket.volatile.emit('typing:stop', { chatId })
+		}
 	}
 
 	const { data: preferences, isError: isPreferencesError } =
@@ -258,14 +264,14 @@ export default function SendAMessage({
 						className='absolute right-1 top-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded-2xl bg-white text-black'
 						aria-label='Remove image'
 					>
-						x
+						<X />
 					</button>
 				</div>
 			) : null}
 			<form
 				aria-label='Send a message'
 				onSubmit={handleSubmit(onSubmit, errors => console.log(errors))}
-				className='messageInput w-full dark:bg-[#1e1e26] bg-[#ebebf0] flex items-center gap-4 rounded-2xl px-4 py-2 text-[#6B6B80]'
+				className='messageInput w-full dark:bg-[#1e1e26] bg-[#ebebf0] flex items-center gap-4 rounded-2xl px-4 py-2 text-[#6B6B80] select-none'
 			>
 				<span className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
 					{isSending
@@ -363,11 +369,15 @@ export default function SendAMessage({
 						if (!isTyping) {
 							setIsTyping(true)
 						}
-						socket.volatile.emit('typing:start', { chatId })
+						if (isFromGroup) {
+							socket.volatile.emit('group:typing:start', { groupId: chatId })
+						} else {
+							socket.volatile.emit('typing:start', { chatId })
+						}
 						clearTimeout(stopTimer.current)
 						stopTimer.current = setTimeout(stopTyping, 2500)
 					}}
-					className='message-composer-input flex-1 dark:text-white bg-transparent text-md py-2'
+					className='message-composer-input flex-1 dark:text-white bg-transparent text-md py-2 select-text'
 				/>
 				<button
 					disabled={isImageUploading || isSending}

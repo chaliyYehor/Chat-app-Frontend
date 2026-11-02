@@ -19,12 +19,7 @@ export default function CallButon({ size = 20 }: { size?: number }) {
 				color: '#6B6B80',
 				borderColor: '#333',
 				transition: 'all 0.2s ease-in-out',
-				backgroundColor:
-					appTheme === 'dark' && size !== 20
-						? '#1f1f26'
-						: appTheme === 'light' && size !== 20
-							? '#EBEBF0'
-							: 'transparent',
+			backgroundColor: 'transparent',
 
 				'&:hover': {
 					backgroundColor: appTheme === 'dark' ? '#1f1f26' : '#EBEBF0',

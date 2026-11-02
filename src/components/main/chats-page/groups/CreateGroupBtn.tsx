@@ -1,10 +1,19 @@
 import { Button } from '@mui/material'
 
-export default function CreateGroupBtn() {
+export default function CreateGroupBtn({
+	isDisabled,
+	numberOfMembers,
+	isLoading,
+}: {
+	isDisabled: boolean
+	numberOfMembers: number
+	isLoading: boolean
+}) {
 	return (
 		<Button
 			type='submit'
 			variant='contained'
+			disabled={isDisabled}
 			aria-label='Create group'
 			sx={{
 				width: '100%',
@@ -32,7 +41,11 @@ export default function CreateGroupBtn() {
 				},
 			}}
 		>
-			Create group · ... members
+			{isLoading ? (
+				<div className='loader' />
+			) : (
+				`Create group · ${numberOfMembers} member${numberOfMembers > 1 ? 's' : ''}`
+			)}
 		</Button>
 	)
 }
