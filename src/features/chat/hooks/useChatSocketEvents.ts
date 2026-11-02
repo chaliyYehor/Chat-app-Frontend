@@ -194,7 +194,7 @@ export function useChatSocketEvents({
 		socket.on('notification:new_message', handleNotificationReceived)
 		socket.on('typing:start', handleTypingStart)
 		socket.on('typing:stop', handleTypingStop)
-		socket.on('message:read', handleMessagesRead)
+		socket.on('message:read',  handleMessagesRead)
 		socket.on('message:new_messages', handleNewMessages)
 		socket.on('message:received', handleMessageReceived)
 		socket.on('message:deleted', handleDeletedMessage)
