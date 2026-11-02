@@ -241,6 +241,28 @@ input:-webkit-autofill:active {
 	scrollbar-width: none;
 }
 
+.message {
+	animation: message-enter 180ms ease-out both;
+}
+
+@keyframes message-enter {
+	from {
+		opacity: 0;
+		transform: translateY(8px) scale(0.98);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.message {
+		animation: none;
+	}
+}
+
 .suggestedPeople {
 	overflow-y: auto;
 	scrollbar-width: thin;
