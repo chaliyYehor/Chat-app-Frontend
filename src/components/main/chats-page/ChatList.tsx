@@ -3,7 +3,7 @@ import {
 	FormProvider,
 	useForm,
 	useFormContext,
-	type SubmitHandler,
+	useWatch,
 } from 'react-hook-form'
 import type { ChatSearch as ChatSearchType } from '../../../schemas/main/chatSearch'
 import AddChat from './AddChat'
@@ -28,10 +28,10 @@ export default function ChatList() {
 		position: ChatMenuPosition
 	} | null>(null)
 
-	const { control, handleSubmit } = useFormContext<ChatSearchType>()
-
 	const { data: chatsData, isError: isChatsError, isPending } = useGetChats()
 	const userId = authClient.useSession().data?.user.id
+	const { control } = useFormContext<ChatSearchType>()
+	const search = useWatch({ control, name: 'search' }).trim().toLocaleLowerCase()
 
 	const dispatch = useDispatch<AppDispatch>()
 
@@ -56,10 +56,6 @@ export default function ChatList() {
 			}))
 			.filter(chat => chat.otherUser !== null)
 	}, [chatsData, userId])
-
-	const onSubmit: SubmitHandler<ChatSearchType> = data => {
-		console.log(data)
-	}
 
 	function renderChatPreview(
 		id: string,
@@ -95,8 +91,11 @@ export default function ChatList() {
 		mode: 'onSubmit',
 	})
 
-	const pinnedChats = chatsRes.filter(chat => chat.conversationUser.isPinned)
-	const chats = chatsRes.filter(chat => !chat.conversationUser.isPinned)
+	const filteredChats = chatsRes.filter(chat =>
+		chat.otherUser?.name.toLocaleLowerCase().includes(search),
+	)
+	const pinnedChats = filteredChats.filter(chat => chat.conversationUser.isPinned)
+	const chats = filteredChats.filter(chat => !chat.conversationUser.isPinned)
 
 	return (
 		<div className='chatListContainer h-full w-full min-w-0 dark:bg-[#16161b] bg-white pb-15'>
@@ -105,9 +104,7 @@ export default function ChatList() {
 					<h2 className='dark:text-white text-3xl font-bold '>Messages</h2>
 					<AddChatBtn onClick={setIsAdding} />
 				</div>
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<ChatSearch control={control} name='search' isChatSearch={false} />
-				</form>
+				<ChatSearch control={control} name='search' isChatSearch />
 			</div>
 
 			{isPending ? (
@@ -118,6 +115,8 @@ export default function ChatList() {
 				/>
 			) : chatsRes.length === 0 ? (
 				<NoConvosYet onClick={setIsAdding} />
+			) : filteredChats.length === 0 ? (
+				<p className='px-4 text-center text-[#6B6B80]'>No chats found</p>
 			) : (
 				<>
 					{pinnedChats.length !== 0 && (
@@ -144,26 +143,29 @@ export default function ChatList() {
 							<hr className='text-gray-500/50 mt-3' />
 						</section>
 					)}
-					{chats.length !== 0 && <section className='px-4 font-semibold text-sm'>
-						<h3 className='text-[#6B6B80] font-inter mb-3'>ALL MESSAGES</h3>
-						<div className='flex flex-col gap-4'>
-							{chats
-								.filter(chat => !chat.conversationUser.isPinned)
-								.map(chat =>
-									renderChatPreview(
-										chat.conversation.id,
-										chat.conversationUser.isPinned,
-										chat.otherUser ?? undefined,
-										{
-											lastMessage: chat.conversation.lastMessage ?? undefined,
-											lastMessageSentAt:
-												chat.conversation.lastMessageAt ?? undefined,
-											unreadMessages: chat.conversationUser.unreadMessagesCount,
-										},
-									),
-								)}
-						</div>
-					</section>}
+					{chats.length !== 0 && (
+						<section className='px-4 font-semibold text-sm'>
+							<h3 className='text-[#6B6B80] font-inter mb-3'>ALL MESSAGES</h3>
+							<div className='flex flex-col gap-4'>
+								{chats
+									.filter(chat => !chat.conversationUser.isPinned)
+									.map(chat =>
+										renderChatPreview(
+											chat.conversation.id,
+											chat.conversationUser.isPinned,
+											chat.otherUser ?? undefined,
+											{
+												lastMessage: chat.conversation.lastMessage ?? undefined,
+												lastMessageSentAt:
+													chat.conversation.lastMessageAt ?? undefined,
+												unreadMessages:
+													chat.conversationUser.unreadMessagesCount,
+											},
+										),
+									)}
+							</div>
+						</section>
+					)}
 				</>
 			)}
 			<FormProvider {...addChatMethods}>
