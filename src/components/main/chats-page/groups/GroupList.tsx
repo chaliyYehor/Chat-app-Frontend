@@ -10,8 +10,9 @@ import { useDispatch } from 'react-redux'
 import type { AppDispatch } from '../../../../store/store'
 import type {
 	GroupResponse,
-	GroupsResponse,
 } from '../../../../schemas/main/getGroupsResponse'
+import { socket } from '../../../../socket'
+import { useQueryClient } from '@tanstack/react-query'
 
 export default function GroupList() {
 	const [isAdding, setIsAdding] = useState(false)
@@ -27,6 +28,22 @@ export default function GroupList() {
 	} = useGetGroups()
 
 	const dispatch = useDispatch<AppDispatch>()
+	const queryClient = useQueryClient()
+
+	useEffect(() => {
+		const refreshGroups = () => {
+			void queryClient.invalidateQueries({ queryKey: ['groups'] })
+		}
+
+		socket.on('group:added', refreshGroups)
+		socket.on('group:deleted', refreshGroups)
+		socket.on('group:member-left', refreshGroups)
+		return () => {
+			socket.off('group:added', refreshGroups)
+			socket.off('group:deleted', refreshGroups)
+			socket.off('group:member-left', refreshGroups)
+		}
+	}, [queryClient])
 
 	useEffect(() => {
 		if (isGroupsError) {
@@ -54,16 +71,16 @@ export default function GroupList() {
 	}
 
 	return (
-		<div className='chatListContainer h-full w-full min-w-0 dark:bg-[#16161b] bg-white pb-15'>
-			<div className='mb-10 flex flex-col gap-4 mt-5'>
+		<div className='chatListContainer flex h-full min-h-0 w-full min-w-0 flex-col dark:bg-[#16161b] bg-white pb-15'>
+			<div className='mb-10 flex shrink-0 flex-col gap-4 mt-5'>
 				<div className='flex items-center justify-between px-4 py-2'>
-					<h2 className='dark:text-white text-3xl font-bold '>Groups</h2>
+					<h2 className='dark:text-white text-3xl font-bold'>Groups</h2>
 					{groups && groups?.groups.length > 0 && <NewGroupChatBtn isGroup onClick={setIsAdding} />}
 				</div>
 			</div>
 
 			{!groups && isGroupsLoading ? (
-				<div className='w-full h-full flex justify-center items-center'>
+				<div className='flex min-h-0 flex-1 items-center justify-center'>
 					<div className='loader bg-black dark:bg-white' />
 				</div>
 			) : !groups || groups.groups.length === 0 ? (
@@ -74,7 +91,6 @@ export default function GroupList() {
 						<p className='text-[#6B6B80] font-inter mb-3'>YOUR GROUPS</p>
 						<div className='flex flex-col gap-4'>
 							{groups.groups.map(group => {
-
 								return renderGroupPreview(group.group.id, group)
 							})}
 						</div>
