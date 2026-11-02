@@ -32,7 +32,7 @@ export function ChatSearch<T extends FieldValues>({
 					id={name}
 					inputRef={field.ref}
 					variant='outlined'
-					autoComplete='false'
+					autoComplete='off'
 					placeholder={
 						isChatSearch ? 'Search contacts...' : 'Search messages...'
 					}

@@ -78,6 +78,7 @@ export default function SearchInChat({ onClose }: { onClose: () => void }) {
 				</div>
 				<input
 					aria-label='Search messages in this chat'
+					autoComplete='off'
 					value={search}
 					onChange={e => setSearch(e.target.value)}
 					type='text'
