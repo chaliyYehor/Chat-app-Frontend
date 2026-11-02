@@ -158,7 +158,7 @@ export default function GroupInfo({
 						</div>
 						<div className='w-full px-5 mb-5'>
 							<div className='dark:bg-[#1E1E26] bg-[#EBEBF0] w-full flex flex-col gap-1 rounded-2xl p-4'>
-								<p className='text-[#6B6B80] flex justify-between font-inter w-full font-semibold text-[10px]'>
+								<p id='group-about-label' className='text-[#6B6B80] flex justify-between font-inter w-full font-semibold text-[10px]'>
 									<span>ABOUT</span>
 									{groupInfo.groupUser.role === 'admin' && <Edit size={13} />}
 								</p>
@@ -171,6 +171,8 @@ export default function GroupInfo({
 								) : (
 									<textarea
 										value={value}
+										aria-label='Group description'
+										aria-describedby='group-about-label'
 										onBlur={handleDescriptionBlur}
 										placeholder={value === '...' ? '...' : value}
 										onChange={e => setValue(e.target.value)}

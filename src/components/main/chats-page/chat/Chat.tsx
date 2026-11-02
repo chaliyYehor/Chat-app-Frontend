@@ -285,6 +285,7 @@ export function Chat() {
 					)}
 					<Link
 						to='/chats'
+						aria-label='Back to chats'
 						className={`cursor-pointer transition-all duration-200 ease-in-out rounded-full ml-4 ${appTheme === 'dark' ? 'hover:bg-[#2D2D3B]' : 'hover:bg-[#E5E5EA]'}`}
 					>
 						<ArrowLeft color='#6B6B80' />

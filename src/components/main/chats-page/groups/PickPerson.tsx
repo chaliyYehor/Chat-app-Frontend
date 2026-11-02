@@ -30,6 +30,7 @@ export default function PickPerson({
 	return (
 		<button
 			type='button'
+			aria-pressed={isPicked}
 			onClick={() => {
 				if (isPicked) {
 					remove(selectedIndex)

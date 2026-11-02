@@ -9,7 +9,6 @@ import {
 	type SubmitHandler,
 } from 'react-hook-form'
 import type { GroupCreation } from '../../../../schemas/main/groupCreation'
-import { ChatSearch } from '../ChatSearch'
 import CreateGroupBtn from './CreateGroupBtn'
 import PickPerson from './PickPerson'
 import type { AppDispatch, RootType } from '../../../../store/store'

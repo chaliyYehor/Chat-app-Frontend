@@ -132,6 +132,7 @@ export default function UserInfo({
 								{userInfo && !isFetching && userInfo.imageUrl ? (
 									<button
 										type='button'
+						aria-label='Preview profile picture'
 										className='cursor-pointer w-full h-full'
 										onClick={() => setIsPreviewOpen(true)}
 									>

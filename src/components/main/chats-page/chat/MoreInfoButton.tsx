@@ -46,6 +46,8 @@ export default function MoreInfoButton({
 				type='button'
 				onClick={handleClick}
 				aria-label='More conversation options'
+				aria-haspopup='menu'
+				aria-expanded={chatToolsPosition !== null}
 				sx={{
 					width: { xs: '40px', md: '50px' },
 					minWidth: '0',
