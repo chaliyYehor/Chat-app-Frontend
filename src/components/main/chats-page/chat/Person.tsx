@@ -2,6 +2,7 @@ import Avatar from '../../Avatar'
 import type { AddChatResponseType } from '../../../../schemas/main/addChat'
 import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
 import clsx from 'clsx'
+import Badge from '../Badge'
 
 export default function Person({
 	isListItem = false,
@@ -10,6 +11,8 @@ export default function Person({
 	isLoading,
 	isMe,
 	className,
+	isAdmin,
+	isCreator
 }: {
 	isMe?: boolean
 	isListItem?: boolean
@@ -17,6 +20,8 @@ export default function Person({
 	user: AddChatResponseType
 	setIsAdding: () => void
 	className?: string
+	isAdmin?: boolean
+	isCreator?: boolean
 }) {
 	return (
 		<button
@@ -55,7 +60,10 @@ export default function Person({
 								? getDisplayedStatus(user.status, user.previouslySetStatus)
 								: 'You'}
 						</p>
+						
 					</div>
+					{isAdmin && <Badge text='Admin' />}
+					{isCreator && <Badge text='Creator' />}
 				</>
 			)}
 		</button>

@@ -108,10 +108,9 @@ export default function GroupInfo({
 				className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex md:items-start justify-center z-50 backdrop-blur-xs'
 			>
 				<div
-					onClick={e => e.stopPropagation()}
 					className='relative flex w-full justify-center px-1'
 				>
-					<div className='cursor-default dark:bg-[#16161B] bg-white w-full md:w-100 flex flex-col border dark:border-white/30 border-gray-600/30 rounded-3xl md:rounded-2xl overflow-hidden animate-fade-in my-10 md:max-h-142.5 h-[90vh]'>
+					<div onClick={e => e.stopPropagation()} className='cursor-default dark:bg-[#16161B] bg-white w-full md:w-100 flex flex-col border dark:border-white/30 border-gray-600/30 rounded-3xl md:rounded-2xl overflow-hidden animate-fade-in my-10 md:max-h-142.5 h-[90vh]'>
 						<div className='profileGrad h-25 w-full flex justify-end items-start p-2'>
 							<Button
 								variant='contained'
@@ -206,6 +205,7 @@ export default function GroupInfo({
 										return (
 											<Person
 												key={member.userId}
+												isAdmin={member.role === 'admin'}
 												isMe={userId === member.userId}
 												setIsAdding={() => {
 													if (userId === member.userId) return

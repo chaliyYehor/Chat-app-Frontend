@@ -16,4 +16,5 @@ export const chatResponseSchema = z.object({
 
 export const addChatResponseSchema = z.array(chatResponseSchema)
 
+export type PersonType = z.infer<typeof chatResponseSchema>
 export type AddChatResponseType = z.infer<typeof chatResponseSchema>
