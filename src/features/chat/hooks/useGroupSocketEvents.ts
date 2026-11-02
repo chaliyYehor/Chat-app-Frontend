@@ -3,32 +3,94 @@ import {
 	type InfiniteData,
 	type QueryKey,
 } from '@tanstack/react-query'
-import { useEffect, type Dispatch, type SetStateAction } from 'react'
+import {
+	useCallback,
+	useEffect,
+	useRef,
+	type Dispatch,
+	type SetStateAction,
+} from 'react'
 import {
 	groupMessageSchema,
 	type GroupMessage,
 } from '../../../schemas/main/getGroupMessagesResponse'
 import { socket } from '../../../socket'
 import { useNavigate } from 'react-router-dom'
+import type { AppDispatch } from '../../../store/store'
+import { useDispatch } from 'react-redux'
+import { setPopUpError } from '../../../store/slices/popUpSlice'
 
 interface Params {
 	groupId: string
+	userId?: string
 	messageQueryKey: QueryKey
 	setMessages: Dispatch<SetStateAction<GroupMessage[]>>
 	messageSoundsEnabled: boolean
 	playMessageSound: () => void
+	setTypingUserId: Dispatch<SetStateAction<string | null>>
 }
 
 export function useGroupSocketEvents({
 	groupId,
+	userId,
 	messageQueryKey,
 	messageSoundsEnabled,
 	playMessageSound,
 	setMessages,
+	setTypingUserId,
 }: Params) {
 	const queryClient = useQueryClient()
 	const navigate = useNavigate()
+	const typingTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+		undefined,
+	)
+
+	const dispatch = useDispatch<AppDispatch>()
+
+	const markAsRead = useCallback(() => {
+		socket.emit(
+			'group:mark_as_read',
+			{ groupId },
+			({ success, error }: { success: boolean; error: string | null }) => {
+				if (success) {
+					void queryClient.invalidateQueries({ queryKey: ['groups'] })
+				}
+				if (error) {
+					dispatch(
+						setPopUpError({
+							heading: 'Error',
+							text: 'Failed to mark messages as read. Please try again.',
+						}),
+					)
+					console.error('Error marking messages as read:', error)
+				}
+			},
+		)
+	}, [groupId, dispatch, queryClient])
+
 	useEffect(() => {
+		const clearTypingTimer = () => {
+			clearTimeout(typingTimerRef.current)
+			typingTimerRef.current = undefined
+		}
+
+		const handleTypingStart = (data: { groupId: string; userId: string }) => {
+			if (data.groupId !== groupId || data.userId === userId) return
+
+			setTypingUserId(data.userId)
+			clearTypingTimer()
+			typingTimerRef.current = setTimeout(() => {
+				setTypingUserId(current => (current === data.userId ? null : current))
+				typingTimerRef.current = undefined
+			}, 5000)
+		}
+
+		const handleTypingStop = (data: { groupId: string; userId: string }) => {
+			if (data.groupId !== groupId || data.userId === userId) return
+			clearTypingTimer()
+			setTypingUserId(current => (current === data.userId ? null : current))
+		}
+
 		const handleMessageReceived = (data: { groupId: string }) => {
 			if (data.groupId !== groupId) return
 			void queryClient.invalidateQueries({
@@ -156,6 +218,8 @@ export function useGroupSocketEvents({
 		}
 
 		socket.on('group:deleted', handleGroupDeleted)
+		socket.on('group:typing:start', handleTypingStart)
+		socket.on('group:typing:stop', handleTypingStop)
 		socket.on('notification:new_group_message', handleNotificationReceived)
 		socket.on('group:left', handleGroupLeft)
 		socket.on('group:message:received', handleMessageReceived)
@@ -165,6 +229,8 @@ export function useGroupSocketEvents({
 		socket.on('group:description:updated', handleGroupDescriptionUpdated)
 		return () => {
 			socket.off('group:deleted', handleGroupDeleted)
+			socket.off('group:typing:start', handleTypingStart)
+			socket.off('group:typing:stop', handleTypingStop)
 			socket.off('group:message:received', handleMessageReceived)
 			socket.off('notification:new_group_message', handleNotificationReceived)
 			socket.off('message:new_group_messages', handleNewGroupMessages)
@@ -172,6 +238,19 @@ export function useGroupSocketEvents({
 			socket.off('message:deleted_group', handleDeletedMessage)
 			socket.off('group:description:updated', handleGroupDescriptionUpdated)
 			socket.off('group:chat:cleared', handleGroupChatCleared)
+			clearTypingTimer()
+			setTypingUserId(null)
 		}
-	}, [groupId, queryClient, messageQueryKey, setMessages, navigate, messageSoundsEnabled, playMessageSound])
+	}, [
+		groupId,
+		userId,
+		queryClient,
+		messageQueryKey,
+		setMessages,
+		setTypingUserId,
+		navigate,
+		messageSoundsEnabled,
+		playMessageSound,
+	])
+	return { markAsRead }
 }
