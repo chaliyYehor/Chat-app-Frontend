@@ -6,7 +6,7 @@ import Person from './chat/Person'
 import { ChatSearch } from './ChatSearch'
 import type { AppDispatch, RootType } from '../../../store/store'
 import { useDispatch, useSelector } from 'react-redux'
-import type { AddChatType } from '../../../schemas/main/addChat'
+import type { AddChatType, PersonType } from '../../../schemas/main/addChat'
 import { useDebounce } from '../../../hooks/useDebounce'
 import { useAddChat } from '../../../hooks/useAddChat'
 import { socket } from '../../../socket'
@@ -15,12 +15,16 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { setPopUpError } from '../../../store/slices/popUpSlice'
 import { useAccessibleDialog } from '../../../hooks/useAccessibleDialog'
+import { useGetCreator } from '../../../hooks/useGetCreator'
+import { authClient } from '../../../lib/auth-client'
 
 export default function AddChat({
 	setIsAdding,
 }: {
 	setIsAdding: React.Dispatch<React.SetStateAction<boolean>>
 }) {
+	const userId = authClient.useSession().data?.user.id
+
 	const { control, handleSubmit } = useFormContext<AddChatType>()
 
 	const [isLoading, setIsLoading] = useState(false)
@@ -32,10 +36,23 @@ export default function AddChat({
 
 	const debouncedSearch = useDebounce(search, 500)
 
-	const { data: people, isPending, isError: isAddChatError, isFetching } = useAddChat(debouncedSearch)
+	const {
+		data: people,
+		isPending,
+		isError: isAddChatError,
+		isFetching,
+	} = useAddChat(debouncedSearch)
+
+	const {
+		data: creator,
+		isPending: isCreatorPending,
+		isError: isCreatorError,
+	} = useGetCreator()
+
+	const dispatch = useDispatch<AppDispatch>()
 
 	useEffect(() => {
-		if(isAddChatError) {
+		if (isAddChatError) {
 			dispatch(
 				setPopUpError({
 					heading: 'Error',
@@ -43,7 +60,15 @@ export default function AddChat({
 				}),
 			)
 		}
-	}, [isAddChatError])
+		if (isCreatorError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load user. Please try again.',
+				}),
+			)
+		}
+	}, [isAddChatError, isCreatorError, dispatch])
 
 	const onSubmit: SubmitHandler<AddChatType> = () => {}
 
@@ -53,8 +78,18 @@ export default function AddChat({
 
 	const navigate = useNavigate()
 
-	const dispatch = useDispatch<AppDispatch>()
 	const dialogRef = useAccessibleDialog(() => setIsAdding(false))
+	const normalizedSearch = debouncedSearch.trim().toLocaleLowerCase()
+	const visiblePeople: PersonType[] = [...(people ?? [])]
+	if (
+		normalizedSearch &&
+		creator &&
+		creator.userId !== userId &&
+		creator.name.toLocaleLowerCase().includes(normalizedSearch) &&
+		!visiblePeople.some(person => person.userId === creator.userId)
+	) {
+		visiblePeople.push(creator)
+	}
 
 	return createPortal(
 		<div
@@ -68,11 +103,11 @@ export default function AddChat({
 			tabIndex={-1}
 			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex md:items-start justify-center z-100 backdrop-blur-xs'
 		>
-			<div
-				onClick={e => e.stopPropagation()}
-				className='relative flex justify-center w-full px-1'
-			>
-				<div className='addChat cursor-default dark:bg-[#16161B] bg-white md:w-100 flex flex-col border border-white/50 rounded-3xl md:rounded-2xl overflow-hidden animate-fade-in my-auto md:max-h-142.5 h-[80vh] p-3'>
+			<div className='relative flex justify-center w-full px-1'>
+				<div
+					onClick={e => e.stopPropagation()}
+					className='addChat cursor-default dark:bg-[#16161B] bg-white md:w-100 flex flex-col border border-white/50 rounded-3xl md:rounded-2xl overflow-hidden animate-fade-in my-auto md:my-20 md:max-h-142.5 h-[80vh] p-3'
+				>
 					<div className='flex justify-between items-center px-4 py-3 border-b border-white/10 relative'>
 						<div className='flex flex-col items-start text-start'>
 							<h2
@@ -118,61 +153,125 @@ export default function AddChat({
 					>
 						<ChatSearch isChatSearch control={control} name='search' />
 					</form>
-					{isPending && isFetching ? (
+					{(isPending && isFetching) || isCreatorPending ? (
 						<div className='w-full h-full flex justify-center items-center'>
-							<div className='loader' role='status' aria-label='Loading contacts' />
+							<div
+								className='loader'
+								role='status'
+								aria-label='Loading contacts'
+							/>
+						</div>
+					) : normalizedSearch ? (
+						<div className='suggestedPeople p-2'>
+							{visiblePeople.length > 0 ? (
+								visiblePeople.map(person => (
+									<Person
+										key={person.userId}
+										isLoading={isLoading}
+										setIsAdding={() => {
+											setIsLoading(true)
+											socket.emit(
+												'chat:create-chat',
+												{ userId: person.userId },
+												async ({
+													success,
+													error,
+													conversationId,
+												}: {
+													success: boolean
+													error?: string
+													conversationId?: string
+												}) => {
+													if (success) {
+														console.log('Chat created successfully')
+														await queryClient.invalidateQueries({
+															queryKey: ['chats'],
+														})
+														setIsAdding(false)
+														setIsLoading(false)
+														navigate(`/chats/${conversationId}`)
+													}
+													if (error) {
+														setIsLoading(false)
+
+														if (error.includes('already exists')) {
+															setIsAdding(false)
+															navigate(`/chats/${conversationId}`)
+														} else {
+															dispatch(
+																setPopUpError({
+																	heading: 'Error',
+																	text: 'Failed to create chat. Please try again.',
+																}),
+															)
+														}
+													}
+												},
+											)
+										}}
+										user={person}
+									/>
+								))
+							) : (
+								<p className='text-[#6B6B80] font-inter text-sm  px-4 text-center font-mono'>
+									No Contacts were found
+								</p>
+							)}
+						</div>
+					) : creator && creator.userId !== userId ? (
+						<div className='suggestedPeople p-2'>
+							<Person
+								isCreator
+								key={creator?.userId}
+								isLoading={isLoading}
+								setIsAdding={() => {
+									setIsLoading(true)
+									socket.emit(
+										'chat:create-chat',
+										{ userId: creator?.userId },
+										async ({
+											success,
+											error,
+											conversationId,
+										}: {
+											success: boolean
+											error?: string
+											conversationId?: string
+										}) => {
+											if (success) {
+												console.log('Chat created successfully')
+												await queryClient.invalidateQueries({
+													queryKey: ['chats'],
+												})
+												setIsAdding(false)
+												setIsLoading(false)
+												navigate(`/chats/${conversationId}`)
+											}
+											if (error) {
+												setIsLoading(false)
+
+												if (error.includes('already exists')) {
+													setIsAdding(false)
+													navigate(`/chats/${conversationId}`)
+												} else {
+													dispatch(
+														setPopUpError({
+															heading: 'Error',
+															text: 'Failed to create chat. Please try again.',
+														}),
+													)
+												}
+											}
+										},
+									)
+								}}
+								user={creator!}
+							/>
 						</div>
 					) : (
-						<div className='suggestedPeople p-2'>
-							{people?.map(person => (
-								<Person
-									key={person.userId}
-									isLoading={isLoading}
-									setIsAdding={() => {
-										setIsLoading(true)
-										socket.emit(
-											'chat:create-chat',
-											{ userId: person.userId },
-											async ({
-												success,
-												error,
-												conversationId,
-											}: {
-												success: boolean
-												error?: string
-												conversationId?: string
-											}) => {
-												if (success) {
-													console.log('Chat created successfully')
-													await queryClient.invalidateQueries({
-														queryKey: ['chats'],
-													})
-													setIsAdding(false)
-													setIsLoading(false)
-													navigate(`/chats/${conversationId}`)
-												}
-												if (error) {
-													setIsLoading(false)
-
-													if (error.includes('already exists')) {
-														setIsAdding(false)
-														navigate(`/chats/${conversationId}`)
-													} else {
-														dispatch(
-															setPopUpError({
-																heading: 'Error',
-																text: 'Failed to create chat. Please try again.',
-															}),
-														)
-													}
-												}
-											},
-										)
-									}}
-									user={person}
-								/>
-							))}
-						</div>
+						<p className='text-[#6B6B80] font-inter text-sm mt-2 px-4 text-center font-mono'>
+							No Contacts were found
+						</p>
 					)}
 				</div>
 			</div>

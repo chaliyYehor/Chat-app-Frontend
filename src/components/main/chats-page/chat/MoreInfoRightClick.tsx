@@ -12,6 +12,7 @@ import {
 } from '../../../../store/slices/popUpSlice'
 import { closePopUpLoading } from '../../../../lib/openPopUps'
 import { useAccessibleMenu } from '../../../../hooks/useAccessibleMenu'
+import AreYouSure from '../AreYouSure'
 
 interface MoreInfoRightClickProps {
 	isAdmin?: boolean
@@ -49,6 +50,7 @@ export default function MoreInfoRightClick({
 	const queryClient = useQueryClient()
 
 	const [loading, setIsLoading] = useState(false)
+	const [isClearing, setIsClearing] = useState(false)
 
 	const pinChat = () => {
 		setIsLoading(true)
@@ -216,8 +218,7 @@ export default function MoreInfoRightClick({
 			label: 'Clear chat',
 			danger: true,
 			onClick: () => {
-				clearChat()
-				onClose()
+				setIsClearing(true)
 			},
 		},
 	]
@@ -228,8 +229,7 @@ export default function MoreInfoRightClick({
 		label: 'Clear group chat',
 		danger: true,
 		onClick: () => {
-			clearGroupChat()
-			onClose()
+			setIsClearing(true)
 		},
 	}
 	const searchInChatGroup = {
@@ -247,6 +247,8 @@ export default function MoreInfoRightClick({
 
 	const menuItemsToRender = isGroup ? groupMenuItems : menuItems
 	useEffect(() => {
+		if (isClearing) return
+
 		function handleClickOutside(e: MouseEvent) {
 			if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
 				onClose()
@@ -277,7 +279,7 @@ export default function MoreInfoRightClick({
 			window.removeEventListener('keydown', handleKeyDown)
 			window.removeEventListener('scroll', handleScroll, true)
 		}
-	}, [onClose])
+	}, [isClearing, onClose])
 
 	const menuWidth = 192
 	const menuHeight = 210
@@ -307,6 +309,21 @@ export default function MoreInfoRightClick({
 			}}
 			className='fixed dark:bg-[#16161B] bg-white text-black dark:text-white w-48 rounded-2xl z-50 border border-white/20 shadow-2xl p-1.5 overflow-hidden flex flex-col gap-0.5 select-none'
 		>
+			{isClearing && (
+				<AreYouSure
+					isGroupChat={isGroup}
+					onCancel={() => {
+						setIsClearing(false)
+						onClose()
+					}}
+					onConfirm={() => {
+						setIsClearing(false)
+						onClose()
+						if (isGroup) clearGroupChat()
+						else clearChat()
+					}}
+				/>
+			)}
 			{menuItemsToRender.map((item, index) => {
 				const Icon = item.icon
 				return (

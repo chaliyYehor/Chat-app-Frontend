@@ -20,7 +20,7 @@ export default function ViewImage({ src, alt, setShowPreview }: Props) {
 			tabIndex={-1}
 			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex items-center justify-center z-60 backdrop-blur-xs'
 		>
-			<div className='relative flex justify-center'>
+			<div onClick={event => event.stopPropagation()} className='relative flex justify-center'>
 				<img
 					className='max-w-[80%] max-h-[90vh] object-contain'
 					src={src}

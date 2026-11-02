@@ -212,7 +212,7 @@ export default function Message({
 								'text-[#6B6B80] md:text-[13px] text-[15px] font-mono ml-1 flex justify-center items-center gap-1',
 							)}
 						>
-							<span>
+							<span className='select-none'>
 								{messageInfo.createdAt.toLocaleTimeString([], {
 									hour: '2-digit',
 									minute: '2-digit',

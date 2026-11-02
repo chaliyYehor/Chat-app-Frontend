@@ -144,10 +144,9 @@ export default function CreateGroup({
 			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex md:items-start justify-center z-50 backdrop-blur-xs'
 		>
 			<div
-				onClick={e => e.stopPropagation()}
 				className='relative flex w-full justify-center px-1'
 			>
-				<div className='addChat cursor-default dark:bg-[#16161B] bg-white md:w-100 md:h-142.5 h-[80vh] flex flex-col border border-white/50 rounded-3xl md:rounded-2xl overflow-hidden animate-fade-in my-20 p-3'>
+				<div onClick={e => e.stopPropagation()} className='addChat cursor-default dark:bg-[#16161B] bg-white md:w-100 md:h-142.5 h-[80vh] flex flex-col border border-white/50 rounded-3xl md:rounded-2xl overflow-hidden animate-fade-in my-20 p-3'>
 					<div className='flex justify-between items-center px-4 py-3 border-b dark:border-white/10 border-black/10 relative'>
 						<div className='flex flex-col items-start text-start'>
 							<h2

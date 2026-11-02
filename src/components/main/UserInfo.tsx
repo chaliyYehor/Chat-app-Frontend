@@ -94,10 +94,9 @@ export default function UserInfo({
 				className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex md:items-start justify-center z-50 backdrop-blur-xs'
 			>
 				<div
-					onClick={e => e.stopPropagation()}
 					className='relative flex w-full justify-center px-1'
 				>
-					<div className='cursor-default dark:bg-[#16161B] bg-white w-90 flex flex-col border border-white/30 rounded-2xl overflow-y-auto scrollbar-none overflow-hidden animate-fade-in md:my-15 my-auto md:max-h-142.5 h-[90vh] pb-3 md:pb-0'>
+					<div onClick={e => e.stopPropagation()} className='cursor-default dark:bg-[#16161B] bg-white w-90 flex flex-col border border-white/30 rounded-2xl overflow-y-auto scrollbar-none overflow-hidden animate-fade-in md:my-15 my-auto md:max-h-142.5 h-[90vh] pb-3 md:pb-0'>
 						<div className='profileGrad h-25 w-full flex justify-end items-start p-2'>
 							<Button
 								variant='contained'
