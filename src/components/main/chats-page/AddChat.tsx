@@ -70,9 +70,9 @@ export default function AddChat({
 		>
 			<div
 				onClick={e => e.stopPropagation()}
-				className='relative flex justify-center'
+				className='relative flex justify-center w-full px-1'
 			>
-				<div className='addChat cursor-default dark:bg-[#16161B] bg-white md:w-100 flex flex-col border border-white/50 rounded-t-3xl md:rounded-2xl overflow-hidden animate-fade-in my-20 md:max-h-142.5 h-[80vh] p-3'>
+				<div className='addChat cursor-default dark:bg-[#16161B] bg-white md:w-100 flex flex-col border border-white/50 rounded-3xl md:rounded-2xl overflow-hidden animate-fade-in my-auto md:max-h-142.5 h-[80vh] p-3'>
 					<div className='flex justify-between items-center px-4 py-3 border-b border-white/10 relative'>
 						<div className='flex flex-col items-start text-start'>
 							<h2
