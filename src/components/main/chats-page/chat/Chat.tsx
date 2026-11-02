@@ -304,7 +304,7 @@ export function Chat() {
 							)}
 						/>
 					</button>
-					<div className='w-[70%] flex flex-col gap-1'>
+					<div className='flex min-w-0 flex-1 flex-col gap-1'>
 						<p
 							className={clsx(
 								isUserInfoPending ? 'skeleton-shimmer' : '',
@@ -333,15 +333,15 @@ export function Chat() {
 						</p>
 					</div>
 				</div>
-				<div className='h-full flex justify-center items-center gap-2'>
+				<div className='h-full shrink-0 flex justify-center items-center gap-1 md:gap-2'>
 					{isChatInfoPending ? (
 						<div className='w-full h-full flex justify-center items-center'>
 							<div className='loader' role='status' aria-label='Loading chat information' />
 						</div>
 					) : (
 						<>
-							<CallButon />
-							<VideoCallBtn />
+							<CallButon size={16} />
+							<VideoCallBtn size={16} />
 							<MoreInfoButton
 								messagesLength={messagesState.length}
 								onSearchClick={() => setIsSearchOpened(true)}

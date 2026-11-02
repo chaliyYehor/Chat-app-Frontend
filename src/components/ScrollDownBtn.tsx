@@ -51,7 +51,7 @@ export default function ScrollDownBtn({
 			type='button'
 			aria-label='Scroll to the latest message'
 			onClick={onClick}
-			className='fixed z-10 cursor-pointer bottom-26 right-4 w-12 h-12 rounded-full flex items-center justify-center border border-gray-300/50 dark:border-gray-300/15 bg-white dark:bg-[#16161B] shadow-xl transition-colors hover:dark:bg-[#252530] hover:bg-[#e8e8e8] dark:text-white text-gray-800 hover:text-purple-500'
+			className='fixed z-10 cursor-pointer md:bottom-26 right-4 w-12 h-12 rounded-full flex items-center justify-center border border-gray-300/50 dark:border-gray-300/15 bg-white dark:bg-[#16161B] shadow-xl transition-colors hover:dark:bg-[#252530] hover:bg-[#e8e8e8] dark:text-white text-gray-800 hover:text-purple-500'
 		>
 			<ChevronDown />
 		</button>

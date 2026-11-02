@@ -32,12 +32,15 @@ import Message from '../chat/Message'
 import { authClient } from '../../../../lib/auth-client'
 import { useMessageSound } from '../../../../hooks/useMessageSound'
 import { useGetUserPreferences } from '../../../../hooks/useGetUserPreferences'
+import IsTyping from '../chat/IsTyping'
 
 export default function Group() {
 	const [isGroupInfoOpen, setIsGroupInfoOpen] = useState(false)
 	const [isSearchOpened, setIsSearchOpened] = useState(false)
 
 	const [isTyping, setIsTyping] = useState(false)
+	const [typingUserId, setTypingUserId] = useState<string | null>(null)
+	const isUserTyping = typingUserId !== null
 
 	const groupId = useParams().groupId
 	const userId = authClient.useSession().data?.user?.id
@@ -85,8 +88,17 @@ export default function Group() {
 		setHasScrolled(e.currentTarget.scrollTop < -400)
 	}, [])
 
+	useEffect(() => {
+		if (isUserTyping && !hasScrolled) {
+			chatref.current?.scrollTo({ top: 0, behavior: 'smooth' })
+		}
+	}, [isUserTyping, hasScrolled])
+
 	const latestMessageRef = useRef<HTMLDivElement>(null)
 	const [messagesState, setMessagesState] = useState<GroupMessage[]>([])
+	const typingUserInfo = messagesState.find(
+		message => message.senderInfo.userId === typingUserId,
+	)?.senderInfo
 	const [oldestMessageElement, setOldestMessageElement] =
 		useState<HTMLDivElement | null>(null)
 	const [newestMessageElement, setNewestMessageElement] =
@@ -135,13 +147,15 @@ export default function Group() {
 	}, [isPreferencesError, dispatch])
 
 	const playMessageSound = useMessageSound()
-	
-	useGroupSocketEvents({
+
+	const { markAsRead } = useGroupSocketEvents({
 		groupId: groupId as string,
+		userId,
 		messageQueryKey: messagesQueryKey,
 		messageSoundsEnabled: preferences?.messageSounds || false,
 		playMessageSound: playMessageSound,
 		setMessages: setMessagesState,
+		setTypingUserId,
 	})
 
 	const loadOlderMessages = useCallback(() => {
@@ -182,6 +196,24 @@ export default function Group() {
 
 		return () => observer.disconnect()
 	}, [oldestMessageElement, hasNextPage, loadOlderMessages])
+
+	useEffect(() => {
+		if (!newestMessageElement) return
+
+		const observer = new IntersectionObserver(
+			([entry]) => {
+				if (entry?.isIntersecting) {
+					markAsRead()
+					console.log('New message is visible, mark as read')
+				}
+			},
+			{ threshold: 0.5 },
+		)
+
+		observer.observe(newestMessageElement)
+
+		return () => observer.disconnect()
+	}, [markAsRead, newestMessageElement])
 
 	useEffect(() => {
 		setMessagesState([])
@@ -270,8 +302,8 @@ export default function Group() {
 					>
 						<GroupPfp groupName={groupInfo?.group.groupName!} />
 					</button>
-					<div className='w-[70%]'>
-						<p className='font-semibold font-inter text-md truncate text-white'>
+					<div className='flex min-w-0 flex-1 flex-col'>
+						<p className='font-semibold font-inter text-md truncate dark:text-white text-black'>
 							{groupInfo?.group.groupName}
 						</p>
 						<p className='text-[#6B6B80] text-[13px] font-inter text-xs'>
@@ -281,9 +313,9 @@ export default function Group() {
 						</p>
 					</div>
 				</div>
-				<div className='h-full flex justify-center items-center gap-2'>
-					<CallButon />
-					<VideoCallBtn />
+				<div className='h-full shrink-0 flex justify-center items-center gap-1 md:gap-2'>
+					<CallButon size={16} />
+					<VideoCallBtn size={16} />
 					{groupInfo?.group && (
 						<MoreInfoButton
 							messagesLength={messagesState?.length}
@@ -329,6 +361,9 @@ export default function Group() {
 					</div>
 				) : (
 					<>
+						{!hasScrolled && typingUserInfo && (
+							<IsTyping userInfo={typingUserInfo} isTyping={isUserTyping} />
+						)}
 						{messagesState.map((message, index) => (
 							<div
 								key={message.id}
