@@ -47,6 +47,11 @@ export default function Message({
 	function handleContextMenu(e: React.MouseEvent) {
 		e.preventDefault()
 		e.stopPropagation()
+		window.dispatchEvent(
+			new CustomEvent('message-context-menu-open', {
+				detail: messageInfo.id,
+			}),
+		)
 		setToolsPosition({ x: e.clientX, y: e.clientY })
 	}
 
@@ -58,6 +63,11 @@ export default function Message({
 		longPressOrigin.current = { x: clientX, y: clientY }
 		longPressTimer.current = setTimeout(() => {
 			longPressTriggered.current = true
+			window.dispatchEvent(
+				new CustomEvent('message-context-menu-open', {
+					detail: messageInfo.id,
+				}),
+			)
 			setToolsPosition({ x: clientX, y: clientY })
 		}, 500)
 	}

@@ -39,6 +39,11 @@ export default function RightClick({
 	useAccessibleMenu(menuRef)
 
 	useEffect(() => {
+		function handleAnotherMessageMenu(event: Event) {
+			const openedMessageId = (event as CustomEvent<string>).detail
+			if (openedMessageId !== messageId) onClose()
+		}
+
 		function handleClickOutside(e: MouseEvent) {
 			if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
 				onClose()
@@ -56,6 +61,10 @@ export default function RightClick({
 		}
 
 		const timer = setTimeout(() => {
+			window.addEventListener(
+				'message-context-menu-open',
+				handleAnotherMessageMenu,
+			)
 			window.addEventListener('mousedown', handleClickOutside)
 			window.addEventListener('contextmenu', handleClickOutside)
 			window.addEventListener('keydown', handleKeyDown)
@@ -64,6 +73,10 @@ export default function RightClick({
 
 		return () => {
 			clearTimeout(timer)
+			window.removeEventListener(
+				'message-context-menu-open',
+				handleAnotherMessageMenu,
+			)
 			window.removeEventListener('mousedown', handleClickOutside)
 			window.removeEventListener('contextmenu', handleClickOutside)
 			window.removeEventListener('keydown', handleKeyDown)
