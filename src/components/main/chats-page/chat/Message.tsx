@@ -84,6 +84,7 @@ export default function Message({
 					isYourProfile={isMe}
 					isFetching={isFetching}
 					sharedMedia={true}
+					isGroup={isGroup}
 					userInfo={userInfo}
 					chatId={chatId}
 				/>
@@ -108,6 +109,8 @@ export default function Message({
 			>
 				{toolsPosition && (
 					<RightClick
+						isGroup={isGroup}
+						groupId={messageInfo.groupId ?? ''}
 						position={toolsPosition}
 						onClose={() => setToolsPosition(null)}
 						isMe={isMe}
@@ -155,7 +158,10 @@ export default function Message({
 					)}
 					<div className='flex-1 min-w-0 flex flex-col'>
 						{!isMe && isGroup && (
-							<p translate='no' className='text-[#6B6B80] text-[12px] font-medium font-inter ml-2 mb-1'>
+							<p
+								translate='no'
+								className='text-[#6B6B80] text-[12px] font-medium font-inter ml-2  mb-0.5'
+							>
 								{userInfo?.name}
 							</p>
 						)}
@@ -215,7 +221,7 @@ export default function Message({
 							{!isGroup && messageInfo.read && isMe && (
 								<CheckCheck color='#7c5cfc' size={13} />
 							)}
-							{!isGroup && !messageInfo.read  && isMe && (
+							{!isGroup && !messageInfo.read && isMe && (
 								<Check color='#6B6B80' size={13} />
 							)}
 						</p>

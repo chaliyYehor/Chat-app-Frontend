@@ -10,6 +10,8 @@ import { useAccessibleMenu } from '../../../../hooks/useAccessibleMenu'
 interface RightClickProps {
 	position: { x: number; y: number }
 	chatId: string
+	groupId?: string
+	isGroup?: boolean
 	messageId: string
 	messageText: string | null
 	isMe: boolean
@@ -30,6 +32,8 @@ export default function RightClick({
 	chatId,
 	messageText,
 	isMe,
+	groupId,
+	isGroup,
 }: RightClickProps) {
 	const menuRef = useRef<HTMLDivElement>(null)
 	useAccessibleMenu(menuRef)
@@ -102,6 +106,33 @@ export default function RightClick({
 			},
 		)
 	}
+	const deleteGroupMessage = () => {
+		if (!groupId) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to delete message. Please try again.',
+				}),
+			)
+		}
+
+		socket.emit(
+			'message:delete_group',
+			{ groupId, messageId },
+			({ success, error }: { success: boolean; error: string }) => {
+				if (!success) {
+					console.error('Failed to delete message:', error)
+					dispatch(
+						setPopUpError({
+							heading: 'Error',
+							text: 'Failed to delete message. Please try again.',
+						}),
+					)
+					return
+				}
+			},
+		)
+	}
 
 	const copyMessage = () => {
 		navigator.clipboard.writeText(messageText || '')
@@ -121,7 +152,11 @@ export default function RightClick({
 			label: 'Delete',
 			danger: true,
 			onClick: () => {
-				deleteMessage()
+				if (isGroup) {
+					deleteGroupMessage()
+				} else {
+					deleteMessage()
+				}
 				onClose()
 			},
 		},
@@ -150,7 +185,12 @@ export default function RightClick({
 		},
 	]
 
-	const menuItems = messageText && isMe ? menuItemsGeneral : !messageText && isMe ? imageMenuItems : notMeMenuItems
+	const menuItems =
+		messageText && isMe
+			? menuItemsGeneral
+			: !messageText && isMe
+				? imageMenuItems
+				: notMeMenuItems
 
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 

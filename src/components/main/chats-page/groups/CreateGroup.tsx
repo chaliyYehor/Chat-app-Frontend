@@ -34,8 +34,14 @@ export default function CreateGroup({
 		control,
 		register,
 		handleSubmit,
+		reset,
 		formState: { errors },
 	} = useFormContext<GroupCreation>()
+
+	function closeCreateGroup() {
+		reset({ groupName: '', peopleToAdd: [] })
+		setIsAdding(false)
+	}
 
 	const [isLoading, setIsLoading] = useState(false)
 
@@ -91,7 +97,7 @@ export default function CreateGroup({
 	const onSubmit: SubmitHandler<GroupCreation> = data => {
 		setIsLoading(true)
 		socket.emit(
-			'group:create',
+			'group:create-group',
 			data,
 			async ({
 				success,
@@ -106,7 +112,7 @@ export default function CreateGroup({
 					console.log('Chat created successfully')
 					await queryClient.invalidateQueries({ queryKey: ['groups'] })
 					setIsLoading(false)
-					setIsAdding(false)
+					closeCreateGroup()
 					navigate(`/groups/${groupId}`)
 				}
 
@@ -125,12 +131,12 @@ export default function CreateGroup({
 	}
 
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
-	const dialogRef = useAccessibleDialog(() => setIsAdding(false))
+	const dialogRef = useAccessibleDialog(closeCreateGroup)
 	return createPortal(
 		<div
 			ref={dialogRef}
 			onClick={() => {
-				setIsAdding(false)
+				closeCreateGroup()
 			}}
 			role='dialog'
 			aria-modal='true'
@@ -158,7 +164,7 @@ export default function CreateGroup({
 						<Button
 							variant='contained'
 							type='button'
-							onClick={() => setIsAdding(false)}
+							onClick={closeCreateGroup}
 							sx={{
 								width: 32,
 								minWidth: 0,
@@ -311,7 +317,7 @@ export default function CreateGroup({
 							<CreateGroupBtn
 								isLoading={isLoading}
 								numberOfMembers={watchFields[0]?.length || 0}
-								isDisabled={watchFields[0]?.length === 0}
+								isDisabled={watchFields[0]?.length < 2}
 							/>
 						</div>
 					</form>

@@ -14,14 +14,16 @@ interface ChatRightClickProps {
 	onClose: () => void
 	isGroup?: boolean
 	chatId: string
+	isAdmin?: boolean
 	setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
-	isPinned: boolean
+	isPinned?: boolean
 }
 
 export default function ChatRightClick({
 	position,
 	onClose,
 	isGroup,
+	isAdmin,
 	isPinned,
 	setIsLoading,
 	chatId,
@@ -75,7 +77,7 @@ export default function ChatRightClick({
 			async ({ success, error }: { success: boolean; error?: string }) => {
 				if (success) {
 					console.log('Chat deleted successfully')
-					
+
 					navigate('/chats', { replace: true })
 
 					await queryClient.invalidateQueries({
@@ -97,6 +99,65 @@ export default function ChatRightClick({
 		)
 	}
 
+	const deleteGroupChat = () => {
+		setIsLoading(true)
+		socket.emit(
+			'group:delete-group-chat',
+			{ groupId: chatId },
+			async ({ success, error }: { success: boolean; error?: string }) => {
+				if (success) {
+					console.log('Group deleted successfully')
+
+					navigate('/groups', { replace: true })
+
+					await queryClient.invalidateQueries({
+						queryKey: ['groups'],
+					})
+					setIsLoading(false)
+				}
+				if (error) {
+					console.error('Error deleting group:', error)
+					dispatch(
+						setPopUpError({
+							heading: 'Error',
+							text: 'Failed to delete group. Please try again.',
+						}),
+					)
+					setIsLoading(false)
+				}
+			},
+		)
+	}
+	const leaveGroupChat = () => {
+		setIsLoading(true)
+		socket.emit(
+			'group:leave-group-chat',
+			{ groupId: chatId },
+			async ({ success, error }: { success: boolean; error?: string }) => {
+				if (success) {
+					console.log('Group left successfully')
+
+					navigate('/groups', { replace: true })
+
+					await queryClient.invalidateQueries({
+						queryKey: ['groups'],
+					})
+					setIsLoading(false)
+				}
+				if (error) {
+					console.error('Error leaving group:', error)
+					dispatch(
+						setPopUpError({
+							heading: 'Error',
+							text: 'Failed to leave group. Please try again.',
+						}),
+					)
+					setIsLoading(false)
+				}
+			},
+		)
+	}
+
 	const menuItems = [
 		{
 			icon: Pin,
@@ -106,20 +167,38 @@ export default function ChatRightClick({
 				onClose()
 			},
 		},
-		{ icon: Trash2, label: 'Delete', danger: true, onClick: () => {
-			deleteChat()
-			onClose()
-		} },
-	]
-
-	const groupMenuItems = [
 		{
 			icon: Trash2,
-			label: 'Leave Group',
+			label: 'Delete',
 			danger: true,
-			onClick: () => onClose(),
+			onClick: () => {
+				deleteChat()
+				onClose()
+			},
 		},
 	]
+
+	const leaveGroupGroup = {
+		icon: Trash2,
+		label: 'Leave Group',
+		danger: true,
+		onClick: () => {
+			leaveGroupChat()
+			onClose()
+		},
+	}
+
+	const deleteGroup = {
+		icon: Trash2,
+		label: 'Delete Group',
+		danger: true,
+		onClick: () => {
+			deleteGroupChat()
+			onClose()
+		},
+	}
+
+	const groupMenuItems = [isAdmin ? deleteGroup : leaveGroupGroup]
 
 	const itemsToRender = isGroup ? groupMenuItems : menuItems
 
@@ -184,7 +263,7 @@ export default function ChatRightClick({
 				e.preventDefault()
 				e.stopPropagation()
 			}}
-			className='fixed dark:bg-[#16161B] bg-white w-48 rounded-2xl z-50 border border-white/20 shadow-2xl p-1.5 overflow-hidden flex flex-col gap-0.5 dark:text-white select-none'
+			className='fixed dark:bg-[#16161B] bg-white w-48 rounded-2xl z-50 border border-white/20 shadow-lg p-1.5 overflow-hidden flex flex-col gap-0.5 dark:text-white select-none'
 		>
 			{itemsToRender.map((item, index) => {
 				const Icon = item.icon

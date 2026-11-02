@@ -10,15 +10,17 @@ import {
 	setPopUpLoading,
 	setPopUpSuccess,
 } from '../../../../store/slices/popUpSlice'
-import { closePopUpLoading, openPopUpLoading } from '../../../../lib/openPopUps'
+import { closePopUpLoading } from '../../../../lib/openPopUps'
 import { useAccessibleMenu } from '../../../../hooks/useAccessibleMenu'
 
 interface MoreInfoRightClickProps {
+	isAdmin?: boolean
 	position: { x: number; y: number }
 	onClose: () => void
 	isGroup?: boolean
 	chatId: string
 	isPinned: boolean
+	messagesLength?: number
 	onSearchClick: (value: SetStateAction<boolean>) => void
 }
 
@@ -28,6 +30,7 @@ interface MenuItem {
 	onClick: () => void
 	danger?: boolean
 	isDisabled?: boolean
+	isAdmin?: boolean
 }
 
 export default function MoreInfoRightClick({
@@ -35,6 +38,8 @@ export default function MoreInfoRightClick({
 	onClose,
 	isGroup = false,
 	isPinned,
+	isAdmin,
+	messagesLength,
 	chatId,
 	onSearchClick,
 }: MoreInfoRightClickProps) {
@@ -84,12 +89,14 @@ export default function MoreInfoRightClick({
 	const dispatch = useDispatch<AppDispatch>()
 
 	const clearChat = () => {
+		if (messagesLength === 0) {
+			return
+		}
+
 		setIsLoading(true)
 		dispatch(
 			setPopUpLoading({ heading: 'Clearing chat', text: 'Please wait...' }),
 		)
-		openPopUpLoading()
-
 		socket.emit(
 			'chat:clear-chat',
 			{ conversationId: chatId },
@@ -128,6 +135,63 @@ export default function MoreInfoRightClick({
 			},
 		)
 	}
+	const clearGroupChat = () => {
+		if (messagesLength === 0) {
+			return
+		}
+
+		if (!isAdmin || !isGroup) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'You are not the admin of this group or it is not a group.',
+				}),
+			)
+			return
+		}
+
+		setIsLoading(true)
+		dispatch(
+			setPopUpLoading({
+				heading: 'Clearing group chat',
+				text: 'Please wait...',
+			}),
+		)
+		socket.emit(
+			'group:clear-group-chat',
+			{ groupId: chatId },
+			async ({ success, error }: { success: boolean; error?: string }) => {
+				if (success) {
+					console.log('Group chat cleared successfully')
+					await Promise.all([
+						queryClient.invalidateQueries({
+							queryKey: ['groups'],
+						}),
+					])
+					setIsLoading(false)
+					closePopUpLoading()
+					dispatch(setPopUpLoading({ heading: '', text: '' }))
+					dispatch(
+						setPopUpSuccess({
+							heading: 'Group chat cleared',
+							text: 'The group chat has been cleared successfully.',
+						}),
+					)
+				} else {
+					console.error('Error clearing group chat:', error)
+					dispatch(setPopUpLoading({ heading: '', text: '' }))
+					closePopUpLoading()
+					dispatch(
+						setPopUpError({
+							heading: 'Error',
+							text: 'Failed to clear the group chat. Please try again.',
+						}),
+					)
+					setIsLoading(false)
+				}
+			},
+		)
+	}
 
 	const menuItems: MenuItem[] = [
 		{
@@ -158,22 +222,28 @@ export default function MoreInfoRightClick({
 		},
 	]
 
-	const groupMenuItems: MenuItem[] = [
-		{
-			icon: Search,
-			label: 'Search in chat',
-			onClick: () => {
-				onSearchClick(true)
-				onClose()
-			},
+	const clearChatGroup = {
+		isAdmin: isAdmin ?? false,
+		icon: Trash2,
+		label: 'Clear group chat',
+		danger: true,
+		onClick: () => {
+			clearGroupChat()
+			onClose()
 		},
-		{
-			icon: Trash2,
-			label: 'Clear chat',
-			danger: true,
-			onClick: () => onClose(),
+	}
+	const searchInChatGroup = {
+		icon: Search,
+		label: 'Search in chat',
+		onClick: () => {
+			onSearchClick(true)
+			onClose()
 		},
-	]
+	}
+
+	const groupMenuItems: MenuItem[] = isAdmin
+		? [searchInChatGroup, clearChatGroup]
+		: [searchInChatGroup]
 
 	const menuItemsToRender = isGroup ? groupMenuItems : menuItems
 	useEffect(() => {

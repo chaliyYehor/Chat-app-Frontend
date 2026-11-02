@@ -81,6 +81,7 @@ export default function ImageMessage({
 					isYourProfile={isMe}
 					isFetching={isFetching}
 					sharedMedia={true}
+					isGroup={isGroup}
 					userInfo={userInfo}
 					chatId={chatId}
 				/>
@@ -105,6 +106,8 @@ export default function ImageMessage({
 			>
 				{toolsPosition && (
 					<RightClick
+						isGroup={isGroup}
+						groupId={messageInfo.groupId ?? ''}
 						position={toolsPosition}
 						isMe={isMe}
 						onClose={() => setToolsPosition(null)}
@@ -150,7 +153,10 @@ export default function ImageMessage({
 					)}
 					<div className='flex-1 min-w-0 flex flex-col'>
 						{!isMe && isGroup && (
-							<p translate='no' className='text-[#6B6B80] text-[12px] font-medium font-inter ml-2 mb-1'>
+							<p
+								translate='no'
+								className='text-[#6B6B80] text-[12px] font-medium font-inter ml-2 mb-0.5'
+							>
 								{userInfo?.name}
 							</p>
 						)}

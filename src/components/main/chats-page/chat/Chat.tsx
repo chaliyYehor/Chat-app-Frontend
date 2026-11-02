@@ -15,7 +15,7 @@ import VideoCallBtn from './VideoCallBtn'
 import UserInfo from '../../UserInfo'
 import ImageMessage from './ImageMessage'
 import { ArrowLeft } from 'lucide-react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import type { AppDispatch, RootType } from '../../../../store/store'
 import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
@@ -52,9 +52,6 @@ export function Chat() {
 	const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
 		setHasScrolled(e.currentTarget.scrollTop < -400)
 	}, [])
-	useEffect(() => {
-		console.log('hasScrolled', hasScrolled)
-	}, [hasScrolled])
 
 	useEffect(() => {
 		if (isUserTyping && !hasScrolled) {
@@ -86,7 +83,6 @@ export function Chat() {
 		isError: isChatInfoError,
 		isPending: isChatInfoPending,
 	} = useGetChatInfo(chatId as string)
-
 
 	const {
 		data: messages,
@@ -263,6 +259,16 @@ export function Chat() {
 		}
 	}, [isPreferencesError, dispatch])
 
+	const socketError = useSelector((state: RootType) => state.socketState.globalSocketError)
+
+	const navigate = useNavigate()
+
+	useEffect(() => {
+		if(socketError) {
+			navigate('/chats', { replace: true })
+		}
+	}, [socketError])
+
 	return (
 		<div className='w-full h-full overflow-hidden flex flex-col dark:bg-[#16161b] bg-white border-l border-gray-700/60'>
 			<div className='relative p-4 pl-0 shrink-0 flex w-full justify-between items-center border-b border-gray-700/60'>
@@ -337,6 +343,7 @@ export function Chat() {
 							<CallButon />
 							<VideoCallBtn />
 							<MoreInfoButton
+								messagesLength={messagesState.length}
 								onSearchClick={() => setIsSearchOpened(true)}
 								isPinned={chatInfo?.conversationUserData.isPinned!}
 								chatId={chatId as string}

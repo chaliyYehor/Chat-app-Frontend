@@ -8,10 +8,14 @@ export default function MoreInfoButton({
 	chatId,
 	isPinned,
 	onSearchClick,
+	messagesLength,
+	isAdmin
 }: {
 	isGroup?: boolean
 	chatId: string
 	isPinned: boolean
+	isAdmin?: boolean
+	messagesLength?: number
 	onSearchClick: (value: SetStateAction<boolean>) => void
 }) {
 	const [chatToolsPosition, setChatToolsPosition] = useState<{
@@ -28,6 +32,8 @@ export default function MoreInfoButton({
 		<>
 			{chatToolsPosition && (
 				<MoreInfoRightClick
+					isAdmin={isAdmin}
+					messagesLength={messagesLength}
 					chatId={chatId}
 					isPinned={isPinned}
 					onSearchClick={onSearchClick}

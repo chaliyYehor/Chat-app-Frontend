@@ -33,6 +33,7 @@ interface Props {
 	chatId: string
 	lastMessageAt?: Date
 	isTyping: boolean
+	isFromGroup?: boolean
 	setIsTyping: Dispatch<SetStateAction<boolean>>
 }
 
@@ -40,6 +41,7 @@ export default function SendAMessage({
 	chatId,
 	lastMessageAt,
 	isTyping,
+	isFromGroup = false,
 	setIsTyping,
 }: Props) {
 	const [image, setImage] = useState<File | undefined>(undefined)
@@ -139,13 +141,13 @@ export default function SendAMessage({
 		setIsSending(true)
 
 		socket.emit(
-			'message:send',
+			isFromGroup ? 'group:message:send' : 'message:send',
 			{
 				type: uploadedImage && !data.message ? 'image' : 'text_or_image',
 				text: data.message.trim() || undefined,
 				imageUrl: uploadedImage?.imageUrl ?? undefined,
 				imagePubId: uploadedImage?.imagePublicId ?? undefined,
-				conversationId: chatId,
+				...(isFromGroup ? { groupId: chatId } : { conversationId: chatId }),
 				lastMessageAt: lastMessageAt ?? new Date(),
 			},
 			({ success, error }: { success: boolean; error?: string }) => {
