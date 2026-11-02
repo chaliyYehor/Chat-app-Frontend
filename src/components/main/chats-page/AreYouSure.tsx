@@ -24,7 +24,7 @@ export default function AreYouSure({
 			aria-modal='true'
 			aria-labelledby='clear-chat-confirmation-title'
 			tabIndex={-1}
-			className='fixed inset-0 z-[100] flex h-dvh w-screen items-center justify-center bg-black/70 backdrop-blur-xs'
+			className='fixed inset-0 z-100 flex h-dvh w-screen items-center justify-center bg-black/70 backdrop-blur-xs'
 		>
 			<div
 				onClick={event => event.stopPropagation()}
