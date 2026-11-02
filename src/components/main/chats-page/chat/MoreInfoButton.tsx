@@ -47,9 +47,9 @@ export default function MoreInfoButton({
 				onClick={handleClick}
 				aria-label='More conversation options'
 				sx={{
-					width: '50px',
+					width: { xs: '40px', md: '50px' },
 					minWidth: '0',
-					height: '50px',
+					height: { xs: '40px', md: '50px' },
 					borderRadius: '10px',
 					fontSize: '1rem',
 					textTransform: 'none',
