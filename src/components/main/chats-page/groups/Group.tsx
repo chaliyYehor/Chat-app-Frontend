@@ -30,6 +30,8 @@ import ScrollDownBtn from '../../../ScrollDownBtn'
 import ImageMessage from '../chat/ImageMessage'
 import Message from '../chat/Message'
 import { authClient } from '../../../../lib/auth-client'
+import { useMessageSound } from '../../../../hooks/useMessageSound'
+import { useGetUserPreferences } from '../../../../hooks/useGetUserPreferences'
 
 export default function Group() {
 	const [isGroupInfoOpen, setIsGroupInfoOpen] = useState(false)
@@ -118,9 +120,27 @@ export default function Group() {
 		[groupId],
 	)
 
-	const _ = useGroupSocketEvents({
+	const { data: preferences, isError: isPreferencesError } =
+		useGetUserPreferences()
+
+	useEffect(() => {
+		if (isPreferencesError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'Failed to load user preferences. Please try again.',
+				}),
+			)
+		}
+	}, [isPreferencesError, dispatch])
+
+	const playMessageSound = useMessageSound()
+	
+	useGroupSocketEvents({
 		groupId: groupId as string,
 		messageQueryKey: messagesQueryKey,
+		messageSoundsEnabled: preferences?.messageSounds || false,
+		playMessageSound: playMessageSound,
 		setMessages: setMessagesState,
 	})
 

@@ -126,7 +126,7 @@ export function Chat() {
 	const messageQueryKey = useMemo(
 		() => ['messages', chatId, 'infinite'] as const,
 		[chatId],
-	)
+	) 
 	const { data: preferences, isError: isPreferencesError } =
 		useGetUserPreferences()
 	const playMessageSound = useMessageSound()

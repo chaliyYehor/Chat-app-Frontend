@@ -31,7 +31,7 @@ export function useChatSocketEvents({
 	chatId,
 	userId,
 	messageQueryKey,
-	messageSoundsEnabled,
+	messageSoundsEnabled, 
 	setMessages,
 	setIsUserTyping,
 	playMessageSound,

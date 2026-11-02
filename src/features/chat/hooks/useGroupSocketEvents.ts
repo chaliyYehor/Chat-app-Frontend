@@ -15,11 +15,15 @@ interface Params {
 	groupId: string
 	messageQueryKey: QueryKey
 	setMessages: Dispatch<SetStateAction<GroupMessage[]>>
+	messageSoundsEnabled: boolean
+	playMessageSound: () => void
 }
 
 export function useGroupSocketEvents({
 	groupId,
 	messageQueryKey,
+	messageSoundsEnabled,
+	playMessageSound,
 	setMessages,
 }: Params) {
 	const queryClient = useQueryClient()
@@ -144,7 +148,15 @@ export function useGroupSocketEvents({
 			}
 		}
 
+		const handleNotificationReceived = (data: { groupId: string }) => {
+			if (data.groupId !== groupId) return
+			if (messageSoundsEnabled) {
+				playMessageSound()
+			}
+		}
+
 		socket.on('group:deleted', handleGroupDeleted)
+		socket.on('notification:new_group_message', handleNotificationReceived)
 		socket.on('group:left', handleGroupLeft)
 		socket.on('group:message:received', handleMessageReceived)
 		socket.on('message:new_group_messages', handleNewGroupMessages)
@@ -154,11 +166,12 @@ export function useGroupSocketEvents({
 		return () => {
 			socket.off('group:deleted', handleGroupDeleted)
 			socket.off('group:message:received', handleMessageReceived)
+			socket.off('notification:new_group_message', handleNotificationReceived)
 			socket.off('message:new_group_messages', handleNewGroupMessages)
 			socket.off('group:left', handleGroupLeft)
 			socket.off('message:deleted_group', handleDeletedMessage)
 			socket.off('group:description:updated', handleGroupDescriptionUpdated)
 			socket.off('group:chat:cleared', handleGroupChatCleared)
 		}
-	}, [groupId, queryClient, messageQueryKey, setMessages, navigate])
+	}, [groupId, queryClient, messageQueryKey, setMessages, navigate, messageSoundsEnabled, playMessageSound])
 }
