@@ -109,9 +109,9 @@ export default function GroupInfo({
 			>
 				<div
 					onClick={e => e.stopPropagation()}
-					className='relative flex justify-center'
+					className='relative flex w-full justify-center px-1'
 				>
-					<div className='cursor-default bg-[#16161B] md:w-100 flex flex-col border border-white/30 rounded-t-3xl md:rounded-2xl overflow-hidden animate-fade-in my-20 md:max-h-142.5 h-[90vh]'>
+					<div className='cursor-default dark:bg-[#16161B] bg-white w-full md:w-100 flex flex-col border dark:border-white/30 border-gray-600/30 rounded-3xl md:rounded-2xl overflow-hidden animate-fade-in my-10 md:max-h-142.5 h-[90vh]'>
 						<div className='profileGrad h-25 w-full flex justify-end items-start p-2'>
 							<Button
 								variant='contained'
@@ -142,11 +142,11 @@ export default function GroupInfo({
 							</Button>
 						</div>
 						<div className=' flex flex-col items-start -mt-10 ml-5 mb-5'>
-							<div className='w-20 h-20  bg-[#16161B] text-white font-bold font-mono text-xl flex justify-center items-center rounded-2xl shadow-lg border border-[#0D0D0D] relative'>
+							<div className='w-20 h-20 dark:bg-[#16161B] bg-white dark:text-white text-black font-bold font-mono text-xl flex justify-center items-center rounded-2xl shadow-lg border dark:border-[#0D0D0D] border-gray-300 relative'>
 								<GroupPfp groupName={groupInfo.group.groupName} />
 							</div>
 							<div>
-								<h2 className='text-[#F0F0F5] font-bold text-xl leading-tight font-inter'>
+								<h2 className='dark:text-[#F0F0F5] text-black font-bold text-xl leading-tight font-inter'>
 									{groupInfo.group.groupName}
 								</h2>
 								<p className={'text-sm font-inter text-[#6B6B80]'}>
@@ -157,13 +157,13 @@ export default function GroupInfo({
 							</div>
 						</div>
 						<div className='w-full px-5 mb-5'>
-							<div className='bg-[#1E1E26] w-full flex flex-col gap-1 rounded-2xl p-4'>
+							<div className='dark:bg-[#1E1E26] bg-[#EBEBF0] w-full flex flex-col gap-1 rounded-2xl p-4'>
 								<p className='text-[#6B6B80] flex justify-between font-inter w-full font-semibold text-[10px]'>
 									<span>ABOUT</span>
 									{groupInfo.groupUser.role === 'admin' && <Edit size={13} />}
 								</p>
 								{groupInfo.groupUser.role !== 'admin' ? (
-									<p className='text-[#F0F0F5] font-inter max-h-30 scrollbar-none overflow-y-auto'>
+									<p className='dark:text-[#F0F0F5] text-black font-inter max-h-30 scrollbar-none overflow-y-auto'>
 										{groupInfo.group.groupDescription
 											? groupInfo.group.groupDescription
 											: '...'}
@@ -174,13 +174,13 @@ export default function GroupInfo({
 										onBlur={handleDescriptionBlur}
 										placeholder={value === '...' ? '...' : value}
 										onChange={e => setValue(e.target.value)}
-										className='placeholder:text-[#F0F0F5] w-full max-h-30 resize-none overflow-y-auto font-inter text-[#F0F0F5] bg-[#1E1E26]'
+										className='placeholder:text-[#6B6B80] dark:placeholder:text-[#F0F0F5] w-full max-h-30 resize-none overflow-y-auto font-inter dark:text-[#F0F0F5] text-black dark:bg-[#1E1E26] bg-[#EBEBF0]'
 									></textarea>
 								)}
 							</div>
 						</div>
 						<div className='w-full px-5 text-[#6B6B80] mb-5 flex-1 overflow-y-auto scrollbar-none flex flex-col gap-2'>
-							<div className='bg-[#1E1E26] w-full flex flex-col justify-center items-center rounded-2xl px-2 py-1'>
+							<div className='dark:bg-[#1E1E26] bg-[#EBEBF0] w-full flex flex-col justify-center items-center rounded-2xl px-2 py-1'>
 								{isGroupMembersLoading &&
 									!groupMembers &&
 									Array(4)
@@ -246,7 +246,7 @@ export default function GroupInfo({
 												user={user}
 												className={clsx(
 													userId === member.userId ? 'pointer-events-none' : '',
-													'w-full px-4 py-2 border-b border-black flex justify-center items-center',
+												'w-full px-4 py-2 border-b dark:border-black border-gray-600/20 flex justify-center items-center',
 												)}
 											/>
 										)
