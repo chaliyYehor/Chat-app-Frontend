@@ -1,278 +1,85 @@
 import { Button } from '@mui/material'
-import { X } from 'lucide-react'
 import { createPortal } from 'react-dom'
-import { useFormContext, useWatch, type SubmitHandler } from 'react-hook-form'
-import Person from './chat/Person'
-import { ChatSearch } from './ChatSearch'
-import type { AppDispatch, RootType } from '../../../store/store'
-import { useDispatch, useSelector } from 'react-redux'
-import type { AddChatType, PersonType } from '../../../schemas/main/addChat'
-import { useDebounce } from '../../../hooks/useDebounce'
-import { useAddChat } from '../../../hooks/useAddChat'
-import { socket } from '../../../socket'
-import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { setPopUpError } from '../../../store/slices/popUpSlice'
+import { useSelector } from 'react-redux'
+import type { RootType } from '../../../store/store'
 import { useAccessibleDialog } from '../../../hooks/useAccessibleDialog'
-import { useGetCreator } from '../../../hooks/useGetCreator'
-import { authClient } from '../../../lib/auth-client'
 
-export default function AddChat({
-	setIsAdding,
+export default function AreYouSure({
+	isGroupChat = false,
+	onCancel,
+	onConfirm,
 }: {
-	setIsAdding: React.Dispatch<React.SetStateAction<boolean>>
+	isGroupChat?: boolean
+	onCancel: () => void
+	onConfirm: () => void
 }) {
-	const userId = authClient.useSession().data?.user.id
-
-	const { control, handleSubmit } = useFormContext<AddChatType>()
-
-	const [isLoading, setIsLoading] = useState(false)
-
-	const search = useWatch({
-		control,
-		name: 'search',
-	})
-
-	const debouncedSearch = useDebounce(search, 500)
-
-	const {
-		data: people,
-		isPending,
-		isError: isAddChatError,
-		isFetching,
-	} = useAddChat(debouncedSearch)
-
-	const {
-		data: creator,
-		isPending: isCreatorPending,
-		isError: isCreatorError,
-	} = useGetCreator()
-
-	const dispatch = useDispatch<AppDispatch>()
-
-	useEffect(() => {
-		if (isAddChatError) {
-			dispatch(
-				setPopUpError({
-					heading: 'Error',
-					text: 'Failed to load people. Please try again.',
-				}),
-			)
-		}
-		if (isCreatorError) {
-			dispatch(
-				setPopUpError({
-					heading: 'Error',
-					text: 'Failed to load user. Please try again.',
-				}),
-			)
-		}
-	}, [isAddChatError, isCreatorError, dispatch])
-
-	const onSubmit: SubmitHandler<AddChatType> = () => {}
-
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
-
-	const queryClient = useQueryClient()
-
-	const navigate = useNavigate()
-
-	const dialogRef = useAccessibleDialog(() => setIsAdding(false))
-	const normalizedSearch = debouncedSearch.trim().toLocaleLowerCase()
-	const visiblePeople: PersonType[] = [...(people ?? [])]
-	if (
-		normalizedSearch &&
-		creator &&
-		creator.userId !== userId &&
-		creator.name.toLocaleLowerCase().includes(normalizedSearch) &&
-		!visiblePeople.some(person => person.userId === creator.userId)
-	) {
-		visiblePeople.push(creator)
-	}
+	const dialogRef = useAccessibleDialog(onCancel)
 
 	return createPortal(
 		<div
 			ref={dialogRef}
-			onClick={() => {
-				setIsAdding(false)
-			}}
+			onClick={onCancel}
 			role='dialog'
 			aria-modal='true'
-			aria-labelledby='new-message-title'
+			aria-labelledby='clear-chat-confirmation-title'
 			tabIndex={-1}
-			className='fixed w-screen h-dvh cursor-pointer inset-0 bg-black/70 flex md:items-start justify-center z-100 backdrop-blur-xs'
+			className='fixed inset-0 z-[100] flex h-dvh w-screen items-center justify-center bg-black/70 backdrop-blur-xs'
 		>
-			<div className='relative flex justify-center w-full px-1'>
-				<div
-					onClick={e => e.stopPropagation()}
-					className='addChat cursor-default dark:bg-[#16161B] bg-white md:w-100 flex flex-col border border-white/50 rounded-3xl md:rounded-2xl overflow-hidden animate-fade-in my-auto md:my-20 md:max-h-142.5 h-[80vh] p-3'
-				>
-					<div className='flex justify-between items-center px-4 py-3 border-b border-white/10 relative'>
-						<div className='flex flex-col items-start text-start'>
-							<h2
-								id='new-message-title'
-								className='dark:text-[#F0F0F5] font-inter text-[20px] font-bold text-base'
-							>
-								New Message
-							</h2>
-							<p className='text-[#6B6B80] font-inter text-sm mt-0.5'>
-								Choose a contact to start a chat
-							</p>
-						</div>
-						<Button
-							variant='contained'
-							type='button'
-							onClick={() => setIsAdding(false)}
-							sx={{
-								width: 32,
-								minWidth: 0,
-								height: 32,
-								padding: 0,
-								borderRadius: '50%',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'center',
-								backgroundColor: appTheme === 'dark' ? '#1E1E26' : '#f0f0f4',
-								border: 'none',
-								color: appTheme === 'dark' ? '#F0F0F5' : '#6B6B80',
-								cursor: 'pointer',
-								transition: '0.3s ease',
-								'&:hover': {
-									color: appTheme === 'dark' ? 'white' : 'black',
-								},
-							}}
-							aria-label='Close new message dialog'
-						>
-							<X size={16} />
-						</Button>
-					</div>
-					<form
-						onSubmit={handleSubmit(onSubmit)}
-						className='flex justify-between items-center border-b border-white/10 py-4'
+			<div
+				onClick={event => event.stopPropagation()}
+				className='mx-4 flex w-full max-w-md flex-col gap-4 rounded-2xl border border-white/10 bg-white p-6 text-black shadow-2xl dark:bg-[#16161B] dark:text-white'
+			>
+				<div>
+					<h2
+						id='clear-chat-confirmation-title'
+						className='text-xl font-bold font-inter'
 					>
-						<ChatSearch isChatSearch control={control} name='search' />
-					</form>
-					{(isPending && isFetching) || isCreatorPending ? (
-						<div className='w-full h-full flex justify-center items-center'>
-							<div
-								className='loader'
-								role='status'
-								aria-label='Loading contacts'
-							/>
-						</div>
-					) : normalizedSearch ? (
-						<div className='suggestedPeople p-2'>
-							{visiblePeople.length > 0 ? (
-								visiblePeople.map(person => (
-									<Person
-										key={person.userId}
-										isLoading={isLoading}
-										setIsAdding={() => {
-											setIsLoading(true)
-											socket.emit(
-												'chat:create-chat',
-												{ userId: person.userId },
-												async ({
-													success,
-													error,
-													conversationId,
-												}: {
-													success: boolean
-													error?: string
-													conversationId?: string
-												}) => {
-													if (success) {
-														console.log('Chat created successfully')
-														await queryClient.invalidateQueries({
-															queryKey: ['chats'],
-														})
-														setIsAdding(false)
-														setIsLoading(false)
-														navigate(`/chats/${conversationId}`)
-													}
-													if (error) {
-														setIsLoading(false)
-
-														if (error.includes('already exists')) {
-															setIsAdding(false)
-															navigate(`/chats/${conversationId}`)
-														} else {
-															dispatch(
-																setPopUpError({
-																	heading: 'Error',
-																	text: 'Failed to create chat. Please try again.',
-																}),
-															)
-														}
-													}
-												},
-											)
-										}}
-										user={person}
-									/>
-								))
-							) : (
-								<p className='text-[#6B6B80] font-inter text-sm  px-4 text-center font-mono'>
-									No Contacts were found
-								</p>
-							)}
-						</div>
-					) : creator && creator.userId !== userId ? (
-						<div className='suggestedPeople p-2'>
-							<Person
-								isCreator
-								key={creator?.userId}
-								isLoading={isLoading}
-								setIsAdding={() => {
-									setIsLoading(true)
-									socket.emit(
-										'chat:create-chat',
-										{ userId: creator?.userId },
-										async ({
-											success,
-											error,
-											conversationId,
-										}: {
-											success: boolean
-											error?: string
-											conversationId?: string
-										}) => {
-											if (success) {
-												console.log('Chat created successfully')
-												await queryClient.invalidateQueries({
-													queryKey: ['chats'],
-												})
-												setIsAdding(false)
-												setIsLoading(false)
-												navigate(`/chats/${conversationId}`)
-											}
-											if (error) {
-												setIsLoading(false)
-
-												if (error.includes('already exists')) {
-													setIsAdding(false)
-													navigate(`/chats/${conversationId}`)
-												} else {
-													dispatch(
-														setPopUpError({
-															heading: 'Error',
-															text: 'Failed to create chat. Please try again.',
-														}),
-													)
-												}
-											}
-										},
-									)
-								}}
-								user={creator!}
-							/>
-						</div>
-					) : (
-						<p className='text-[#6B6B80] font-inter text-sm mt-2 px-4 text-center font-mono'>
-							No Contacts were found
-						</p>
-					)}
+						{isGroupChat ? 'Clear this group chat?' : 'Clear this chat?'}
+					</h2>
+					<p className='mt-2 text-sm leading-relaxed text-[#6B6B80]'>
+						{isGroupChat
+							? 'This will permanently delete all messages for every group member.'
+							: 'This will permanently delete all messages in this chat.'}
+					</p>
+				</div>
+				<div className='flex w-full gap-3'>
+					<Button
+						type='button'
+						variant='contained'
+						onClick={onCancel}
+						sx={{
+							flex: 1,
+							backgroundColor: appTheme === 'dark' ? '#19191f' : '#EBEBF0',
+							color: appTheme === 'dark' ? '#fff' : '#000',
+							textTransform: 'none',
+							boxShadow: 'none',
+							'&:hover': {
+								backgroundColor: appTheme === 'dark' ? '#111116' : '#f1f1f3',
+								boxShadow: 'none',
+							},
+						}}
+					>
+						Cancel
+					</Button>
+					<Button
+						type='button'
+						variant='contained'
+						onClick={onConfirm}
+						sx={{
+							flex: 1,
+							backgroundColor: '#FB2C36',
+							color: '#fff',
+							textTransform: 'none',
+							boxShadow: 'none',
+							'&:hover': {
+								backgroundColor: '#c50f18',
+								boxShadow: 'none',
+							},
+						}}
+					>
+						{isGroupChat ? 'Clear group chat' : 'Clear chat'}
+					</Button>
 				</div>
 			</div>
 		</div>,
