@@ -13,7 +13,7 @@ export default function NoConvosYet({
 }) {
 	return (
 		<div
-			className={`flex min-h-0 flex-1 min-w-0 flex-col items-center justify-center gap-2 ${isGroup ? '' : 'mt-85'}`}
+			className='flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center gap-2 px-4 py-6'
 		>
 			<div className='select-convo-ui flex flex-col justify-center items-center max-w-50 gap-2'>
 				<div className='messageIco text-[#7C5CFC] flex justify-center items-center p-5 rounded-3xl border border-[#7c5cfc61] w-20 h-20'>

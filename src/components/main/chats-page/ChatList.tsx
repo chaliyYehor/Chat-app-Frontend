@@ -98,8 +98,8 @@ export default function ChatList() {
 	const chats = filteredChats.filter(chat => !chat.conversationUser.isPinned)
 
 	return (
-		<div className='chatListContainer h-full w-full min-w-0 dark:bg-[#16161b] bg-white pb-15'>
-			<div className=' mb-10 flex flex-col gap-4 mt-5'>
+		<div className='chatListContainer flex h-full min-h-0 w-full min-w-0 flex-col dark:bg-[#16161b] bg-white pb-15'>
+			<div className='mb-10 mt-5 flex shrink-0 flex-col gap-4'>
 				<div className='flex items-center justify-between px-4 py-2'>
 					<h2 className='dark:text-white text-3xl font-bold '>Messages</h2>
 					<AddChatBtn onClick={setIsAdding} />
