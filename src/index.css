@@ -39,7 +39,7 @@ input[type='file'] {
 }
 
 .dark {
-	--scrollbar-thumb: #6b6b80 ;
+	--scrollbar-thumb: #6b6b80;
 	--scrollbar-track: #16161b;
 }
 
@@ -305,76 +305,180 @@ input:-webkit-autofill:active {
 }
 
 .skeleton-shimmer {
-    position: relative;
-    overflow: hidden;
-    background: rgba(255, 255, 255, 0.08);
+	position: relative;
+	overflow: hidden;
+	background: rgba(255, 255, 255, 0.08);
 }
 
 .skeleton-shimmer::after {
-    content: '';
-    position: absolute;
-    inset: 0 auto 0 -45%;
-    width: 45%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.35),
-        transparent
-    );
-    filter: blur(12px);
-    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+	content: '';
+	position: absolute;
+	inset: 0 auto 0 -45%;
+	width: 45%;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		rgba(255, 255, 255, 0.35),
+		transparent
+	);
+	filter: blur(12px);
+	animation: skeleton-shimmer 1.4s ease-in-out infinite;
 }
 
 @keyframes skeleton-shimmer {
-    0% {
-        transform: translateX(0);
-    }
+	0% {
+		transform: translateX(0);
+	}
 
-    100% {
-        transform: translateX(330%);
-    }
+	100% {
+		transform: translateX(330%);
+	}
 }
 
 .typingIndicator {
-  width: 40px;
-  aspect-ratio: 2;
-  --_g: no-repeat radial-gradient(circle closest-side, rgb(124, 92, 252) 90%, rgba(91, 63, 219, 0));
-  background:
-    var(--_g) 0%   50%,
-    var(--_g) 50%  50%,
-    var(--_g) 100% 50%;
-  background-size: calc(100%/3) 50%;
-  animation: l3 1s infinite linear;
+	width: 40px;
+	aspect-ratio: 2;
+	--_g: no-repeat
+		radial-gradient(
+			circle closest-side,
+			rgb(124, 92, 252) 90%,
+			rgba(91, 63, 219, 0)
+		);
+	background:
+		var(--_g) 0% 50%,
+		var(--_g) 50% 50%,
+		var(--_g) 100% 50%;
+	background-size: calc(100% / 3) 50%;
+	animation: l3 1s infinite linear;
 }
 
 @keyframes l3 {
-  20% { background-position: 0% 0%,   50% 50%,  100% 50%; }
-  40% { background-position: 0% 100%, 50% 0%,   100% 50%; }
-  60% { background-position: 0% 50%,  50% 100%, 100% 0%; }
-  80% { background-position: 0% 50%,  50% 50%,  100% 100%; }
+	20% {
+		background-position:
+			0% 0%,
+			50% 50%,
+			100% 50%;
+	}
+	40% {
+		background-position:
+			0% 100%,
+			50% 0%,
+			100% 50%;
+	}
+	60% {
+		background-position:
+			0% 50%,
+			50% 100%,
+			100% 0%;
+	}
+	80% {
+		background-position:
+			0% 50%,
+			50% 50%,
+			100% 100%;
+	}
 }
 
 .pendingState {
-  width: 20px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  border: 3px solid #7C5CFC;
-  animation:
-    l20-1 0.8s infinite linear alternate,
-    l20-2 1.6s infinite linear;
+	width: 20px;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	border: 3px solid #7c5cfc;
+	animation:
+		l20-1 0.8s infinite linear alternate,
+		l20-2 1.6s infinite linear;
 }
-@keyframes l20-1{
-   0%    {clip-path: polygon(50% 50%,0       0,  50%   0%,  50%    0%, 50%    0%, 50%    0%, 50%    0% )}
-   12.5% {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100%   0%, 100%   0%, 100%   0% )}
-   25%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 100% 100%, 100% 100% )}
-   50%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
-   62.5% {clip-path: polygon(50% 50%,100%    0, 100%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
-   75%   {clip-path: polygon(50% 50%,100% 100%, 100% 100%,  100% 100%, 100% 100%, 50%  100%, 0%   100% )}
-   100%  {clip-path: polygon(50% 50%,50%  100%,  50% 100%,   50% 100%,  50% 100%, 50%  100%, 0%   100% )}
+@keyframes l20-1 {
+	0% {
+		clip-path: polygon(50% 50%, 0 0, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
+	}
+	12.5% {
+		clip-path: polygon(
+			50% 50%,
+			0 0,
+			50% 0%,
+			100% 0%,
+			100% 0%,
+			100% 0%,
+			100% 0%
+		);
+	}
+	25% {
+		clip-path: polygon(
+			50% 50%,
+			0 0,
+			50% 0%,
+			100% 0%,
+			100% 100%,
+			100% 100%,
+			100% 100%
+		);
+	}
+	50% {
+		clip-path: polygon(
+			50% 50%,
+			0 0,
+			50% 0%,
+			100% 0%,
+			100% 100%,
+			50% 100%,
+			0% 100%
+		);
+	}
+	62.5% {
+		clip-path: polygon(
+			50% 50%,
+			100% 0,
+			100% 0%,
+			100% 0%,
+			100% 100%,
+			50% 100%,
+			0% 100%
+		);
+	}
+	75% {
+		clip-path: polygon(
+			50% 50%,
+			100% 100%,
+			100% 100%,
+			100% 100%,
+			100% 100%,
+			50% 100%,
+			0% 100%
+		);
+	}
+	100% {
+		clip-path: polygon(
+			50% 50%,
+			50% 100%,
+			50% 100%,
+			50% 100%,
+			50% 100%,
+			50% 100%,
+			0% 100%
+		);
+	}
 }
-@keyframes l20-2{ 
-  0%    {transform:scaleY(1)  rotate(0deg)}
-  49.99%{transform:scaleY(1)  rotate(135deg)}
-  50%   {transform:scaleY(-1) rotate(0deg)}
-  100%  {transform:scaleY(-1) rotate(-135deg)}
+@keyframes l20-2 {
+	0% {
+		transform: scaleY(1) rotate(0deg);
+	}
+	49.99% {
+		transform: scaleY(1) rotate(135deg);
+	}
+	50% {
+		transform: scaleY(-1) rotate(0deg);
+	}
+	100% {
+		transform: scaleY(-1) rotate(-135deg);
+	}
+}
+
+.call.dark {
+	background: linear-gradient(
+		in oklab,
+		rgb(26, 16, 37) 0%,
+		rgb(17, 16, 22) 50%,
+		rgb(13, 13, 16) 100%
+	);
 }

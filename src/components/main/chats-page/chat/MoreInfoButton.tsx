@@ -1,6 +1,8 @@
 import { Button } from '@mui/material'
 import { EllipsisVertical } from 'lucide-react'
 import { useState, type SetStateAction } from 'react'
+import { useSelector } from 'react-redux'
+import type { RootType } from '../../../../store/store'
 import MoreInfoRightClick from './MoreInfoRightClick'
 
 export default function MoreInfoButton({
@@ -18,6 +20,7 @@ export default function MoreInfoButton({
 	messagesLength?: number
 	onSearchClick: (value: SetStateAction<boolean>) => void
 }) {
+	const appTheme = useSelector((state: RootType) => state.theme.mode)
 	const [chatToolsPosition, setChatToolsPosition] = useState<{
 		x: number
 		y: number
@@ -58,11 +61,12 @@ export default function MoreInfoButton({
 					color: '#6B6B80',
 					borderColor: '#333',
 					transition: 'all 0.2s ease-in-out',
+					backgroundColor: 'transparent',
 
 					'&:hover': {
-						backgroundColor: '#1f1f26',
+						backgroundColor: appTheme === 'dark' ? '#1f1f26' : '#EBEBF0',
 						borderColor: '#444',
-						color: '#eee',
+						color: '#af6bfc',
 					},
 				}}
 			>
