@@ -26,7 +26,7 @@ export default function Call() {
 	return (
 		<div
 			className={clsx(
-				'w-screen h-dvh call flex flex-col justify-between items-center bg-[#F5F5F8]',
+				'w-screen overflow-hidden h-dvh call flex flex-col justify-between items-center bg-[#F5F5F8]',
 				appTheme === 'dark' && 'dark',
 			)}
 		>

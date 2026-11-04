@@ -6,7 +6,7 @@ import GroupVideoCallParticipant from '../components/main/chats-page/groups/Grou
 
 export default function GroupVideoCall() {
 	return (
-		<div className='w-screen h-dvh dark:bg-black bg-white flex flex-col gap-4 px-5 py-5 items-center justify-between'>
+		<div className='group-video-call w-screen h-dvh dark:bg-black bg-white flex flex-col gap-4 px-5 py-5 items-center justify-between'>
 			<div className='w-full flex justify-between items-center gap-2'>
 				<div className=''>
 					<span className='font-mono text-[12px] text-[#6B6B80] uppercase select-none'>
@@ -25,8 +25,8 @@ export default function GroupVideoCall() {
 				<CallBadge text='4 participants' />
 			</div>
 
-			<div className='w-full flex flex-1 min-h-0 flex-col md:flex-row gap-4'>
-				<div className='w-full md:flex-1 min-h-0'>
+			<div className='group-video-call-content w-full flex flex-1 min-h-0 flex-col md:flex-row gap-4'>
+				<div className='group-video-call-focus w-full md:flex-1 min-h-0'>
 					<div className='bg-[#7C5CFC]/5 border-[#000000]/8 h-full w-full min-h-0 flex-1 flex flex-col justify-between items-center overflow-hidden shadow-2xl shadow-[#000000]/25 border dark:border-[#FFFFFF]/7 rounded-3xl p-3 sm:p-5'>
 						<div className='font-mono w-fit rounded-full dark:text-white border border-[#000000]/8 dark:border-white/7 dark:bg-[#16161B] p-2 text-[12px] py-1 bg-[#FFFFFF] letter-spacing-[0.5px] shadow-md flex justify-center items-center gap-2 self-start'>
 							<div className='size-2 rounded-full self-end my-auto bg-[#00D4AA]' />
@@ -54,7 +54,7 @@ export default function GroupVideoCall() {
 						</div>
 					</div>
 				</div>
-				<div className='w-full h-[46%] md:w-[30%] md:h-full min-h-0 shrink-0'>
+				<div className='group-video-call-participants w-full h-[46%] md:w-[30%] md:h-full min-h-0 shrink-0'>
 					<div className='dark:bg-[#101014] bg-[#FFFFFF] h-full w-full min-h-0 flex flex-col gap-3 sm:gap-5 items-center overflow-hidden shadow-2xl shadow-[#000000]/25 border border-[#FFFFFF]/7 rounded-3xl p-3 sm:p-5'>
 						<p className='dark:text-white self-start text-black font-bold font-inter text-lg sm:text-xl'>
 							All participants
