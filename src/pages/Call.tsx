@@ -4,9 +4,24 @@ import clsx from 'clsx'
 import CallBadge from '../components/main/chats-page/calls/CallBadge'
 import { User } from 'lucide-react'
 import Dial from '../components/main/chats-page/calls/Dial'
+import { useGSAP } from '@gsap/react'
+import gsap from 'gsap'
 
 export default function Call() {
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
+
+	useGSAP(() => {
+		gsap.fromTo(
+			'.connecting',
+			{ boxShadow: '0 0 0 0 rgba(175, 107, 252, 0.55)' },
+			{
+				boxShadow: '0 0 0 10px rgba(175, 107, 252, 0)',
+				duration: 1.2,
+				ease: 'sine.inOut',
+				repeat: -1,
+			},
+		)
+	}, [])
 
 	return (
 		<div
@@ -24,7 +39,7 @@ export default function Call() {
 
 			<div className='flex flex-col justify-center items-center'>
 				<div
-					className={`w-30 h-30 rounded-[50%] dark:text-white flex justify-center items-center border-2 border-gray-700 relative shrink-0`.trim()}
+					className={`w-30 h-30 rounded-[50%] connecting dark:text-white flex justify-center items-center border-2 border-gray-700 relative shrink-0`.trim()}
 				>
 					<User size={40} />
 				</div>

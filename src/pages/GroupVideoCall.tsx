@@ -2,7 +2,6 @@ import CallBadge from '../components/main/chats-page/calls/CallBadge'
 import { User } from 'lucide-react'
 import Badge from '../components/main/chats-page/Badge'
 import Dial from '../components/main/chats-page/calls/Dial'
-import GroupCallParticipant from '../components/main/chats-page/groups/GroupCallParticipant'
 import GroupVideoCallParticipant from '../components/main/chats-page/groups/GroupVideoCallParticipant'
 
 export default function GroupVideoCall() {
