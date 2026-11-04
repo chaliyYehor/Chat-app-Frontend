@@ -2,12 +2,15 @@ import { Button } from '@mui/material'
 import { Phone } from 'lucide-react'
 import type { RootType } from '../../../../store/store'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
-export default function CallButon({ size = 20 }: { size?: number }) {
+export default function CallButon({  isGroup, size = 20, chatId }: { size?: number; chatId?: string, isGroup?: boolean }) {
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
+	const navigate = useNavigate()
 	return (
 		<Button
 			type='button'
+			onClick={() => isGroup ? navigate(`/groupCall/${chatId}`) : navigate(`/call/${chatId}`)}
 			aria-label='Start voice call'
 			sx={{
 				width: size === 20 ? '50px' : '40px',

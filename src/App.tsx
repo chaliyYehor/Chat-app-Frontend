@@ -30,7 +30,14 @@ import { useEffect } from 'react'
 import { useIsMobile } from './hooks/useIsMobile'
 import { SetNewPassword } from './pages/SetNewPassword'
 import SetChangePassword from './pages/SetChangePassword'
-import { changePasswordSchema, type ChangePasswordType } from './schemas/auth/changePassword'
+import {
+	changePasswordSchema,
+	type ChangePasswordType,
+} from './schemas/auth/changePassword'
+import Call from './pages/Call'
+import VideoCall from './pages/VideoCall'
+import GroupCall from './pages/GroupCall'
+import GroupVideoCall from './pages/GroupVideoCall'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -145,6 +152,10 @@ function App() {
 						</FormProvider>
 					}
 				/>
+				<Route path='/call/:chatId' element={<Call />} />
+				<Route path='/groupCall/:chatId' element={<GroupCall />} />
+				<Route path='/videoCall/:chatId' element={<VideoCall />} />
+				<Route path='/groupVideoCall/:chatId' element={<GroupVideoCall />} />
 				<Route path='/forgotPassword' element={<ForgotPassword />} />
 				<Route path='/setNewPassword' element={<SetNewPassword />} />
 				<Route path='/resetPassword' element={<ResetPassword />} />
