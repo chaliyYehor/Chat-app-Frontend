@@ -15,7 +15,7 @@ export default function VideoCall() {
 				appTheme === 'dark' && 'dark',
 			)}
 		>
-			<div className='w-full flex items-start justify-between pr-4 md:pr-0 md:px-10 pt-4 md:pt-10'>
+			<div className='w-full overflow-hidden flex items-start justify-between pr-4 md:pr-0 md:px-10 pt-4 md:pt-10'>
 				<div className='flex flex-col justify-between items-start px-5 pt-5'>
 					<CallBadge text='Video Call' />
 					<h2 className='dark:text-white mt-5 text-black font-bold font-inter text-2xl sm:text-3xl'>
