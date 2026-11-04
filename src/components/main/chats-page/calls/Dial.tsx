@@ -1,12 +1,13 @@
-import { Mic, MicOff, Phone, Volume2, VolumeX } from 'lucide-react'
+import { Mic, MicOff, Phone, Video, VideoOff, Volume2, VolumeX } from 'lucide-react'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-type DialType = 'volume' | 'microphone' | 'endCall'
+type DialType = 'volume' | 'microphone' | 'endCall' | 'camera'
 
 const dialOptions = {
 	volume: { label: 'Toggle speaker', on: Volume2, off: VolumeX },
 	microphone: { label: 'Toggle microphone', on: Mic, off: MicOff },
+	camera: { label: 'Toggle camera', on: Video, off: VideoOff },
 	endCall: { label: 'End call', on: Phone, off: Phone },
 }
 

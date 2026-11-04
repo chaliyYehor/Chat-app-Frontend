@@ -342,7 +342,7 @@ export function Chat() {
 					) : (
 						<>
 							<CallButon chatId={chatId as string} size={16} />
-							<VideoCallBtn size={16} />
+							<VideoCallBtn chatId={chatId as string} size={16} />
 							<MoreInfoButton
 								messagesLength={messagesState.length}
 								onSearchClick={() => setIsSearchOpened(true)}
