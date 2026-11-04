@@ -301,31 +301,42 @@ export default function Group() {
 						className='cursor-pointer hover:outline-2 hover:outline-[#7C5CFC] transition-all duration-200 ease-in-out rounded-2xl'
 						aria-label='Open Group information'
 					>
-						<GroupPfp groupName={groupInfo?.group.groupName!} />
+						<GroupPfp
+							groupName={groupInfo?.group.groupName ?? ''}
+							isLoading={isGroupLoading}
+						/>
 					</button>
 					<div className='flex min-w-0 flex-1 flex-col'>
-						<p className='font-semibold font-inter text-md truncate dark:text-white text-black'>
-							{groupInfo?.group.groupName}
+						<p className={`${isGroupLoading ? 'skeleton-shimmer' : ''} font-semibold font-inter text-md truncate dark:text-white text-black h-6 min-w-30 rounded-md`}>
+							{!isGroupLoading && groupInfo?.group.groupName}
 						</p>
-						<p className='text-[#6B6B80] text-[13px] font-inter text-xs'>
-							{groupInfo?.group.memberIds.length === 1
+						<p className={`${isGroupLoading ? 'skeleton-shimmer' : ''} text-[#6B6B80] text-[13px] font-inter text-xs h-4 min-w-10 rounded-md capitalize`}>
+							{!isGroupLoading && (groupInfo?.group.memberIds.length === 1
 								? '1 member'
-								: `${groupInfo?.group.memberIds.length} members`}
+								: `${groupInfo?.group.memberIds.length} members`)}
 						</p>
 					</div>
 				</div>
 				<div className='h-full shrink-0 flex justify-center items-center gap-1 md:gap-2'>
-					<CallButon size={16} />
-					<VideoCallBtn size={16} />
-					{groupInfo?.group && (
-						<MoreInfoButton
-							messagesLength={messagesState?.length}
-							isAdmin={groupInfo.groupUser.role === 'admin'}
-							onSearchClick={setIsSearchOpened}
-							isPinned={false}
-							isGroup={true}
-							chatId={groupInfo.group.id}
-						/>
+					{isGroupLoading ? (
+						<div className='w-full h-full flex justify-center items-center'>
+							<div className='loader' role='status' aria-label='Loading group information' />
+						</div>
+					) : (
+						<>
+							<CallButon isGroup={true} chatId={groupInfo?.group.id} size={16} />
+							<VideoCallBtn size={16} />
+							{groupInfo?.group && (
+								<MoreInfoButton
+									messagesLength={messagesState?.length}
+									isAdmin={groupInfo.groupUser.role === 'admin'}
+									onSearchClick={setIsSearchOpened}
+									isPinned={false}
+									isGroup={true}
+									chatId={groupInfo.group.id}
+								/>
+							)}
+						</>
 					)}
 				</div>
 				{isSearchOpened && (
