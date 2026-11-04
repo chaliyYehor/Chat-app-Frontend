@@ -37,6 +37,7 @@ import {
 import Call from './pages/Call'
 import VideoCall from './pages/VideoCall'
 import GroupCall from './pages/GroupCall'
+import GroupVideoCall from './pages/GroupVideoCall'
 
 function App() {
 	const signUpMethods = useForm<SignUpType>({
@@ -154,6 +155,7 @@ function App() {
 				<Route path='/call/:chatId' element={<Call />} />
 				<Route path='/groupCall/:chatId' element={<GroupCall />} />
 				<Route path='/videoCall/:chatId' element={<VideoCall />} />
+				<Route path='/groupVideoCall/:chatId' element={<GroupVideoCall />} />
 				<Route path='/forgotPassword' element={<ForgotPassword />} />
 				<Route path='/setNewPassword' element={<SetNewPassword />} />
 				<Route path='/resetPassword' element={<ResetPassword />} />
