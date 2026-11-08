@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import type { RootType } from '../../../../store/store'
 import { useNavigate } from 'react-router-dom'
 
-export default function VideoCallBtn({isGroup, chatId, size = 20 }: { isGroup?: boolean; chatId?: string; size?: number }) {
+export default function VideoCallBtn({isGroup, groupName, chatId, size = 20 }: { isGroup?: boolean; groupName?: string; chatId?: string; size?: number }) {
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 
 	const navigate = useNavigate()
@@ -14,7 +14,9 @@ export default function VideoCallBtn({isGroup, chatId, size = 20 }: { isGroup?: 
 			aria-label='Start video call'
 			onClick={() => {
 				if (chatId)
-				navigate(isGroup ? `/groupVideoCall/${chatId}` : `/videoCall/${chatId}`)
+				navigate(isGroup ? `/groupVideoCall/${chatId}` : `/videoCall/${chatId}`, {
+			state: groupName ?? ''
+		})
 			}}
 			sx={{
 				width: size === 20 ? '50px' : '40px',

@@ -325,7 +325,7 @@ export default function Group() {
 					) : (
 						<>
 							<CallButon isGroup={true} chatId={groupInfo?.group.id} size={16} />
-							<VideoCallBtn isGroup={true} chatId={groupInfo?.group.id} size={16} />
+							<VideoCallBtn  isGroup={true} groupName={groupInfo?.group.groupName ?? ''} chatId={groupInfo?.group.id} size={16} />
 							{groupInfo?.group && (
 								<MoreInfoButton
 									messagesLength={messagesState?.length}
