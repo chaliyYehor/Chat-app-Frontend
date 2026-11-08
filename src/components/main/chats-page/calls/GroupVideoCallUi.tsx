@@ -278,6 +278,7 @@ export default function ({
 					<Dial type='endCall' />
 					<Dial type='shareScreen' />
 					<Dial type='camera' />
+					<Dial type='cameraSwitch' />
 				</div>
 			</div>
 		</div>
