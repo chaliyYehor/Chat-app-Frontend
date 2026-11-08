@@ -11,16 +11,53 @@ import {
 } from '@livekit/components-react'
 import { useEffect, useState } from 'react'
 import { LogLevel, RoomEvent, setLogLevel, Track } from 'livekit-client'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useGetGroupMembers } from '../../../../hooks/useGetGroupMembers'
+import { useGetGroups } from '../../../../hooks/useGetGroups'
 import { useDispatch } from 'react-redux'
 import type { AppDispatch } from '../../../../store/store'
 import { setPopUpError } from '../../../../store/slices/popUpSlice'
 import type { GetGroupMembersResponse } from '../../../../schemas/main/getGroupMembersResponse'
 
-export default function ({ groupId }: { groupId: string }) {
+export default function ({
+	groupId,
+	callStartedAt,
+	serverTimeOffset,
+}: {
+	groupId: string
+	callStartedAt: number
+	serverTimeOffset: number
+}) {
 	const room = useRoomContext()
 	const navigate = useNavigate()
+	const [now, setNow] = useState(() => Date.now())
+
+	useEffect(() => {
+		const intervalId = window.setInterval(() => setNow(Date.now()), 1000)
+		return () => window.clearInterval(intervalId)
+	}, [])
+
+	const elapsedSeconds = Math.max(
+		0,
+		Math.floor((now + serverTimeOffset - callStartedAt) / 1000),
+	)
+	const duration = `${String(Math.floor(elapsedSeconds / 60)).padStart(2, '0')}:${String(elapsedSeconds % 60).padStart(2, '0')}`
+
+	const locationState: unknown = useLocation().state
+	const routeName =
+		typeof locationState === 'string'
+			? locationState
+		: locationState &&
+			  typeof locationState === 'object' &&
+			  'name' in locationState &&
+			  typeof locationState.name === 'string'
+				? locationState.name
+				: undefined
+	const { data: groupsData } = useGetGroups()
+	const name =
+		routeName ||
+		groupsData?.groups.find(group => group.group.id === groupId)?.group.groupName ||
+		'Group video call'
 
 	const {
 		data: groupMembers,
@@ -65,16 +102,12 @@ export default function ({ groupId }: { groupId: string }) {
 		setFilteredParticipants(connectedGroupMembers)
 
 		setActiveParticipantId(currentId => {
-			// Keep a manually selected focus while that participant is still connected.
 			if (
 				currentId &&
 				connectedGroupMembers.some(member => member.userId === currentId)
 			) {
 				return currentId
 			}
-
-			// If the focused participant left, prefer a remaining remote participant;
-			// when alone, fall back to the local participant.
 			const nextParticipant =
 				(connectedGroupMembers.length > 1 &&
 					participantsArray.find(participant => !participant.isLocal)) ||
@@ -151,11 +184,11 @@ export default function ({ groupId }: { groupId: string }) {
 						</span>
 						<div className='flex items-center w-fit gap-2 sm:gap-3'>
 							<h2 className='dark:text-white mt-1 self-end text-black font-bold font-inter text-lg sm:text-2xl md:text-3xl whitespace-nowrap'>
-								Design Team
+								{name}
 							</h2>
 							<div className='size-2 rounded-full self-end my-auto bg-[#00D4AA]' />
 							<p className='text-[#6B6B80] mt-1 font-mono text-sm sm:text-lg whitespace-nowrap'>
-								08:13
+								{duration}
 							</p>
 						</div>
 					</div>
@@ -242,8 +275,8 @@ export default function ({ groupId }: { groupId: string }) {
 				<div className='flex items-center gap-4 rounded-full border border-black/8 bg-white/90 px-3 py-3 shadow-2xl shadow-black/15 mb-5 dark:border-white/6 dark:bg-[#111115]/95 dark:shadow-black/50'>
 					<Dial type='volume' />
 					<Dial type='microphone' />
-					<Dial type='shareScreen' />
 					<Dial type='endCall' />
+					<Dial type='shareScreen' />
 					<Dial type='camera' />
 				</div>
 			</div>

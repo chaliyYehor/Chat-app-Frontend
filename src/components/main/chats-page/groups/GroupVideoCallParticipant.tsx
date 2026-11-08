@@ -49,8 +49,8 @@ export default function GroupVideoCallParticipant({
 			</div>
 
 			<div className='flex gap-1'>
-				{isCameraOn ? <Video color='#6B6B80' /> : <VideoOff color='#6B6B80' />}
-				{isMicOn ? <Mic color='#6B6B80' /> : <MicOff color='#6B6B80' />}
+				{isCameraOn ? <Video color='#6B6B80' strokeWidth={1} /> : <VideoOff color='#6B6B80' strokeWidth={1} />}
+				{isMicOn ? <Mic color='#6B6B80' strokeWidth={1} /> : <MicOff color='#6B6B80' strokeWidth={1} />}
 			</div>
 		</li>
 	)

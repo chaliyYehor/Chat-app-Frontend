@@ -17,6 +17,8 @@ export default function GroupVideoCall() {
 	const [isLoading, setIsLoading] = useState(true)
 
 	const [token, setToken] = useState<string | null>(null)
+	const [callStartedAt, setCallStartedAt] = useState<number | null>(null)
+	const [serverTimeOffset, setServerTimeOffset] = useState(0)
 
 	const groupId = useParams().chatId
 	const { data: session, isPending } = authClient.useSession()
@@ -90,15 +92,19 @@ export default function GroupVideoCall() {
 					success,
 					error,
 					token,
+					startedAt,
+					serverNow,
 				}: {
 					success: boolean
 					error?: string
 					token?: string
+					startedAt?: number
+					serverNow?: number
 				}) => {
 					if (settled) return
 					settled = true
 					window.clearTimeout(timeout)
-					if (!success || !token) {
+					if (!success || !token || !startedAt || !serverNow) {
 						setIsLoading(false)
 						dispatch(
 							setPopUpError({
@@ -110,6 +116,8 @@ export default function GroupVideoCall() {
 						return
 					}
 					setToken(token)
+					setCallStartedAt(startedAt)
+					setServerTimeOffset(serverNow - Date.now())
 					setIsLoading(false)
 				},
 			)
@@ -133,7 +141,7 @@ export default function GroupVideoCall() {
 		return connectToRoom()
 	}, [connectToRoom, groupId, isPending, session?.user.id])
 
-	if (isPending || isLoading || !token)
+	if (isPending || isLoading || !token || !callStartedAt)
 		return (
 			<div className='w-screen h-screen flex justify-center items-center'>
 				<div className='loader' />
@@ -147,7 +155,11 @@ export default function GroupVideoCall() {
 			serverUrl={import.meta.env.VITE_LIVEKIT_URL}
 			className='contents'
 		>
-			<GroupVideoCallUi groupId={groupId ?? ''} />
+			<GroupVideoCallUi
+				groupId={groupId ?? ''}
+				callStartedAt={callStartedAt}
+				serverTimeOffset={serverTimeOffset}
+			/>
 		</LiveKitRoom>
 	)
 }
