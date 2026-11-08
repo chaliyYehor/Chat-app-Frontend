@@ -32,12 +32,28 @@ const dialOptions = {
 	endCall: { label: 'End call', on: Phone, off: Phone },
 }
 
-export default function Dial({ type }: { type: DialType }) {
+export default function Dial({
+	type,
+	isVolumeMuted,
+	onVolumeToggle,
+}: {
+	type: DialType
+	isVolumeMuted?: boolean
+	onVolumeToggle?: () => void
+}) {
 	const room = useRoomContext()
 
 	const [enabled, setEnabled] = useState(true)
 	const option = dialOptions[type]
-	const Icon = enabled ? option.on : option.off
+	const volumeMuted = isVolumeMuted ?? !enabled
+	const Icon =
+		type === 'volume'
+			? volumeMuted
+				? option.off
+				: option.on
+			: enabled
+				? option.on
+				: option.off
 	const isEndCall = type === 'endCall'
 	const [hasMultipleCameras, setHasMultipleCameras] = useState(false)
 	const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user')
@@ -155,8 +171,11 @@ export default function Dial({ type }: { type: DialType }) {
 			<button
 				type='button'
 				aria-label={option.label}
-				aria-pressed={enabled}
-				onClick={() => setEnabled(value => !value)}
+				aria-pressed={volumeMuted}
+				onClick={() => {
+					if (onVolumeToggle) onVolumeToggle()
+					else setEnabled(value => !value)
+				}}
 				className={buttonClassName}
 			>
 				<Icon size={18} strokeWidth={2} />
