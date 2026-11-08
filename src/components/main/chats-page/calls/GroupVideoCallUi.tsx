@@ -11,7 +11,7 @@ import {
 } from '@livekit/components-react'
 import { useEffect, useState } from 'react'
 import { LogLevel, RoomEvent, setLogLevel, Track } from 'livekit-client'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { useGetGroupMembers } from '../../../../hooks/useGetGroupMembers'
 import { useGetGroups } from '../../../../hooks/useGetGroups'
 import { useDispatch } from 'react-redux'
@@ -29,7 +29,6 @@ export default function ({
 	serverTimeOffset: number
 }) {
 	const room = useRoomContext()
-	const navigate = useNavigate()
 	const [now, setNow] = useState(() => Date.now())
 
 	useEffect(() => {
@@ -246,7 +245,11 @@ export default function ({
 								All participants
 							</p>
 							<ul className='w-full flex-1 min-h-0 flex flex-col gap-2 overflow-y-auto scrollbar-none rounded-md'>
-								{filteredParticipants.map(participant => {
+								{isGroupMembersLoading ? (
+									<li className='flex items-center justify-center py-2'>
+										<p className='text-[#6B6B80]'>Loading...</p>
+									</li>
+								) : filteredParticipants.map(participant => {
 									const isCameraOn = participants.find(
 										par => par.identity === participant.userId,
 									)?.isCameraEnabled
@@ -261,7 +264,6 @@ export default function ({
 											key={participant.userId}
 											isInFocus={isInFocus}
 											onClick={setActiveParticipantId}
-											isListening={true}
 											userInfo={participant}
 											isCameraOn={isCameraOn ?? false}
 											isMicOn={isMicOn ?? false}

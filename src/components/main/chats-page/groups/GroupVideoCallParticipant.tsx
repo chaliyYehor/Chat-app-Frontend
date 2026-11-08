@@ -6,14 +6,12 @@ import type { Dispatch, SetStateAction } from 'react'
 
 export default function GroupVideoCallParticipant({
 	isInFocus,
-	isListening,
 	userInfo,
 	isCameraOn,
 	isMicOn,
 	onClick,
 }: {
 	isInFocus: boolean
-	isListening: boolean
 	userInfo: GroupMember
 	isCameraOn: boolean
 	isMicOn: boolean
