@@ -17,8 +17,6 @@ import { useDispatch } from 'react-redux'
 import type { AppDispatch } from '../../../../store/store'
 import { setPopUpError } from '../../../../store/slices/popUpSlice'
 import type { GetGroupMembersResponse } from '../../../../schemas/main/getGroupMembersResponse'
-import Avatar from '../../Avatar'
-import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
 import { User } from 'lucide-react'
 
 export default function ({
