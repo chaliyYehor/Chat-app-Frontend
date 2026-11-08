@@ -1,4 +1,3 @@
-import { User } from 'lucide-react'
 import GroupVideoCallParticipant from '../groups/GroupVideoCallParticipant'
 import Dial from './Dial'
 import Badge from '../Badge'
@@ -18,6 +17,7 @@ import { useDispatch } from 'react-redux'
 import type { AppDispatch } from '../../../../store/store'
 import { setPopUpError } from '../../../../store/slices/popUpSlice'
 import type { GetGroupMembersResponse } from '../../../../schemas/main/getGroupMembersResponse'
+import { User } from 'lucide-react'
 
 export default function ({
 	groupId,
@@ -30,6 +30,7 @@ export default function ({
 }) {
 	const room = useRoomContext()
 	const [now, setNow] = useState(() => Date.now())
+	const [isSpeakerMuted, setIsSpeakerMuted] = useState(false)
 
 	useEffect(() => {
 		const intervalId = window.setInterval(() => setNow(Date.now()), 1000)
@@ -46,16 +47,17 @@ export default function ({
 	const routeName =
 		typeof locationState === 'string'
 			? locationState
-		: locationState &&
-			  typeof locationState === 'object' &&
-			  'name' in locationState &&
-			  typeof locationState.name === 'string'
+			: locationState &&
+				  typeof locationState === 'object' &&
+				  'name' in locationState &&
+				  typeof locationState.name === 'string'
 				? locationState.name
 				: undefined
 	const { data: groupsData } = useGetGroups()
 	const name =
 		routeName ||
-		groupsData?.groups.find(group => group.group.id === groupId)?.group.groupName ||
+		groupsData?.groups.find(group => group.group.id === groupId)?.group
+			.groupName ||
 		'Group video call'
 
 	const {
@@ -168,25 +170,29 @@ export default function ({
 			!track.publication.isMuted,
 	)
 	const trackToDisplay = activeScreenShareTrack ?? activeCameraTrack
+	const activeUser = filteredParticipants.find(
+		participant => participant.userId === activeParticipantId,
+	)
 	const isActiveParticipantMicOn =
-		participants.find(participant => participant.identity === activeParticipantId)
-			?.isMicrophoneEnabled ?? false
+		participants.find(
+			participant => participant.identity === activeParticipantId,
+		)?.isMicrophoneEnabled ?? false
 
 	return (
 		<div>
-			<RoomAudioRenderer />
+			<RoomAudioRenderer muted={isSpeakerMuted} />
 			<div className='group-video-call w-screen h-dvh dark:bg-black bg-white flex flex-col gap-4 px-5 py-5 items-center justify-between'>
-				<div className='w-full flex justify-between items-center gap-2'>
+				<div className='w-full flex justify-between items-center gap-1.5 sm:gap-2'>
 					<div className=''>
-						<span className='font-mono text-[12px] text-[#6B6B80] uppercase select-none'>
+						<span className='font-mono text-[10px] md:text-[12px] text-[#6B6B80] uppercase select-none'>
 							GROUP VIDEO CALL
 						</span>
-						<div className='flex items-center w-fit gap-2 sm:gap-3'>
-							<h2 className='dark:text-white mt-1 self-end text-black font-bold font-inter text-lg sm:text-2xl md:text-3xl whitespace-nowrap'>
+						<div className='flex items-center w-fit gap-1.5 sm:gap-3'>
+							<h2 className='dark:text-white mt-0.5 sm:mt-1 self-end text-black font-bold font-inter text-base sm:text-2xl md:text-3xl whitespace-nowrap'>
 								{name}
 							</h2>
-							<div className='size-2 rounded-full self-end my-auto bg-[#00D4AA]' />
-							<p className='text-[#6B6B80] mt-1 font-mono text-sm sm:text-lg whitespace-nowrap'>
+							<div className='size-1.5 sm:size-2 rounded-full self-end my-auto bg-[#00D4AA]' />
+							<p className='text-[#6B6B80] mt-0.5 sm:mt-1 font-mono text-xs sm:text-lg whitespace-nowrap'>
 								{duration}
 							</p>
 						</div>
@@ -215,7 +221,15 @@ export default function ({
 										<div
 											className={`w-20 h-20 sm:w-30 sm:h-30 rounded-[50%] dark:text-white flex justify-center items-center border-2 border-gray-700 relative shrink-0`.trim()}
 										>
-											<User size={40} />
+											{activeUser?.imageUrl ? (
+												<img
+													src={activeUser.imageUrl}
+													alt='Profile'
+													className='w-full h-full object-cover rounded-[50%]'
+												/>
+											) : (
+												<User />
+											)}
 										</div>
 										<Badge
 											noMargin
@@ -227,11 +241,7 @@ export default function ({
 
 							<div className='self-start'>
 								<h2 className='dark:text-white mt-2 sm:mt-5 text-black font-bold font-inter text-xl sm:text-2xl md:text-3xl'>
-									{
-										filteredParticipants.find(
-											p => p.userId === activeParticipantId,
-										)?.name
-									}
+									{activeUser?.name}
 								</h2>
 								<p className='text-[#6B6B80] mt-1 font-mono text-sm sm:text-md'>
 									Presenting to the group
@@ -249,33 +259,39 @@ export default function ({
 									<li className='flex items-center justify-center py-2'>
 										<p className='text-[#6B6B80]'>Loading...</p>
 									</li>
-								) : filteredParticipants.map(participant => {
-									const isCameraOn = participants.find(
-										par => par.identity === participant.userId,
-									)?.isCameraEnabled
-									const isMicOn = participants.find(
-										par => par.identity === participant.userId,
-									)?.isMicrophoneEnabled
+								) : (
+									filteredParticipants.map(participant => {
+										const isCameraOn = participants.find(
+											par => par.identity === participant.userId,
+										)?.isCameraEnabled
+										const isMicOn = participants.find(
+											par => par.identity === participant.userId,
+										)?.isMicrophoneEnabled
 
-									const isInFocus = participant.userId === activeParticipantId
+										const isInFocus = participant.userId === activeParticipantId
 
-									return (
-										<GroupVideoCallParticipant
-											key={participant.userId}
-											isInFocus={isInFocus}
-											onClick={setActiveParticipantId}
-											userInfo={participant}
-											isCameraOn={isCameraOn ?? false}
-											isMicOn={isMicOn ?? false}
-										/>
-									)
-								})}
+										return (
+											<GroupVideoCallParticipant
+												key={participant.userId}
+												isInFocus={isInFocus}
+												onClick={setActiveParticipantId}
+												userInfo={participant}
+												isCameraOn={isCameraOn ?? false}
+												isMicOn={isMicOn ?? false}
+											/>
+										)
+									})
+								)}
 							</ul>
 						</div>
 					</div>
 				</div>
 				<div className='flex items-center gap-4 rounded-full border border-black/8 bg-white/90 px-3 py-3 shadow-2xl shadow-black/15 mb-5 dark:border-white/6 dark:bg-[#111115]/95 dark:shadow-black/50'>
-					<Dial type='volume' />
+					<Dial
+						type='volume'
+						isVolumeMuted={isSpeakerMuted}
+						onVolumeToggle={() => setIsSpeakerMuted(value => !value)}
+					/>
 					<Dial type='microphone' />
 					<Dial type='endCall' />
 					<Dial type='shareScreen' />
