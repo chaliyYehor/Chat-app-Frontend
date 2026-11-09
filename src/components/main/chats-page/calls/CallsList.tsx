@@ -8,9 +8,16 @@ import CallsPreview from './CallsPreview'
 
 function CallsListSkeleton() {
 	return (
-		<div className='flex flex-col gap-2 px-2' role='status' aria-label='Loading call history'>
+		<div
+			className='flex flex-col gap-2 px-2'
+			role='status'
+			aria-label='Loading call history'
+		>
 			{Array.from({ length: 6 }, (_, index) => (
-				<div key={index} className='flex h-18 items-center gap-3 rounded-lg px-2'>
+				<div
+					key={index}
+					className='flex h-18 items-center gap-3 rounded-lg px-2'
+				>
 					<div className='skeleton-shimmer size-15 shrink-0 rounded-full' />
 					<div className='flex min-w-0 flex-1 flex-col gap-2'>
 						<div className='skeleton-shimmer h-4 w-2/3 rounded-md' />
@@ -33,20 +40,30 @@ function CallsListSkeleton() {
 export default function CallsList() {
 	const [, setIsAdding] = useState(false)
 	const [selected, setSelected] = useState<'allCalls' | 'missed'>('allCalls')
-	const { data: calls, isError: isCallsError, isPending: isCallsPending } = useGetPreviousCalls()
+	const {
+		data: calls,
+		isError: isCallsError,
+		isPending: isCallsPending,
+	} = useGetPreviousCalls()
 	const theme = useSelector((state: RootType) => state.theme.mode)
 	const visibleCalls = useMemo(
-		() => calls?.filter(call => selected === 'allCalls' || call.currentUser.status === 'missed' || call.currentUser.status === 'declined') ?? [],
+		() =>
+			calls?.filter(
+				call =>
+					selected === 'allCalls' ||
+					call.currentUser.status === 'missed' ||
+					call.currentUser.status === 'declined',
+			) ?? [],
 		[calls, selected],
 	)
 
 	return (
 		<div className='chatListContainer flex h-full min-h-0 w-full min-w-0 flex-col bg-white pb-15 dark:bg-[#16161b]'>
-			<div className='upper mb-5 mt-5 flex shrink-0 flex-col gap-4'>
-				<div className='flex items-center justify-between px-4 py-2'>
-					<h2 className='text-3xl font-bold text-black dark:text-white'>Calls</h2>
-				</div>
-				<div className='px-4'>
+			<div className='flex items-center  justify-between px-4 py-2 mt-5'>
+				<h2 className='text-3xl font-bold text-black dark:text-white'>Calls</h2>
+			</div>
+			<div className='upper self-center mb-5 mt-5 flex shrink-0 flex-col gap-4 '>
+				<div className='px-4 '>
 					<ToggleButtonGroup
 						aria-label='Call history filter'
 						exclusive
@@ -72,8 +89,14 @@ export default function CallsList() {
 								transition: '0.3s ease',
 							},
 							'& .Mui-selected': {
-								bgcolor: theme === 'dark' ? '#16161B !important' : '#FFFFFF !important',
-								color: theme === 'dark' ? '#F0F0F5 !important' : '#000000 !important',
+								bgcolor:
+									theme === 'dark'
+										? '#16161B !important'
+										: '#FFFFFF !important',
+								color:
+									theme === 'dark'
+										? '#F0F0F5 !important'
+										: '#000000 !important',
 								borderRadius: '8px',
 							},
 						}}
@@ -95,11 +118,15 @@ export default function CallsList() {
 					selected === 'allCalls' ? (
 						<NoConvosYet isCall onClick={setIsAdding} />
 					) : (
-						<div className='flex h-full items-center justify-center text-sm text-[#6B6B80]'>No missed calls</div>
+						<div className='flex h-full items-center justify-center text-sm text-[#6B6B80]'>
+							No missed calls
+						</div>
 					)
 				) : (
 					<div className='flex flex-col gap-2'>
-						{visibleCalls.map(call => <CallsPreview key={call.id} callInfo={call} />)}
+						{visibleCalls.map(call => (
+							<CallsPreview key={call.id} callInfo={call} />
+						))}
 					</div>
 				)}
 			</section>

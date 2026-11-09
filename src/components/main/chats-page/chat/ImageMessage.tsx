@@ -192,7 +192,7 @@ export default function ImageMessage({
 							{messageInfo.imageUrl && (
 								<button
 									type='button'
-									className='w-full max-h-120 cursor-pointer'
+									className='w-full max-h-120 cursor-pointer flex justify-center items-center overflow-hidden'
 									aria-label='Open image preview'
 									onClick={() => {
 										setIsPreviewOpen(true)
