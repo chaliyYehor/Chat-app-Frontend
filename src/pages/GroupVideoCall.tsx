@@ -81,7 +81,7 @@ export default function GroupVideoCall() {
 		function join() {
 			socket.off('connect_error', onConnectError)
 			socket.emit(
-				'group_call:join',
+				'group_video_call:join',
 				{ userId: session?.user.id, groupId },
 				({
 					success,
@@ -146,6 +146,7 @@ export default function GroupVideoCall() {
 	return (
 		<LiveKitRoom
 			connect
+			audio
 			token={token}
 			serverUrl={import.meta.env.VITE_LIVEKIT_URL}
 			className='contents'

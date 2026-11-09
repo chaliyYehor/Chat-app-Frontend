@@ -10,11 +10,11 @@ import {
 } from '@livekit/components-react'
 import { useEffect, useState } from 'react'
 import { LogLevel, RoomEvent, setLogLevel, Track } from 'livekit-client'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useGetGroupMembers } from '../../../../hooks/useGetGroupMembers'
 import { useGetGroups } from '../../../../hooks/useGetGroups'
-import { useDispatch } from 'react-redux'
-import type { AppDispatch } from '../../../../store/store'
+import { useDispatch, useSelector } from 'react-redux'
+import type { AppDispatch, RootType } from '../../../../store/store'
 import { setPopUpError } from '../../../../store/slices/popUpSlice'
 import type { GetGroupMembersResponse } from '../../../../schemas/main/getGroupMembersResponse'
 import { User } from 'lucide-react'
@@ -68,6 +68,8 @@ export default function ({
 
 	const dispatch = useDispatch<AppDispatch>()
 
+	const navigate = useNavigate()
+
 	useEffect(() => {
 		if (isGroupMembersError) {
 			dispatch(
@@ -89,6 +91,20 @@ export default function ({
 	const [activeParticipantId, setActiveParticipantId] = useState<string | null>(
 		null,
 	)
+
+	const isSocketError = useSelector((state: RootType) => state.socketState.globalSocketError)
+
+	useEffect(() => {
+		if (isSocketError) {
+			dispatch(
+				setPopUpError({
+					heading: 'Error',
+					text: 'A socket error occurred. Please try again.',
+				}),
+			)
+			navigate(-1)
+		}
+	}, [isSocketError])
 
 	useEffect(() => {
 		if (!groupMembers) return

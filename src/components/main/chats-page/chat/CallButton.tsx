@@ -4,13 +4,31 @@ import type { RootType } from '../../../../store/store'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
-export default function CallButon({  isGroup, size = 20, chatId }: { size?: number; chatId?: string, isGroup?: boolean }) {
+export default function CallButon({
+	isGroup,
+	groupName,
+	size = 20,
+	chatId,
+}: {
+	size?: number
+	chatId?: string
+	groupName?: string
+	isGroup?: boolean
+}) {
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 	const navigate = useNavigate()
 	return (
 		<Button
 			type='button'
-			onClick={() => isGroup ? navigate(`/groupCall/${chatId}`) : navigate(`/call/${chatId}`)}
+			onClick={() => {
+				if (chatId)
+					navigate(
+						isGroup ? `/groupCall/${chatId}` : `/call/${chatId}`,
+						{
+							state: groupName ?? '',
+						},
+					)
+			}}
 			aria-label='Start voice call'
 			sx={{
 				width: size === 20 ? '50px' : '40px',
@@ -22,7 +40,7 @@ export default function CallButon({  isGroup, size = 20, chatId }: { size?: numb
 				color: '#6B6B80',
 				borderColor: '#333',
 				transition: 'all 0.2s ease-in-out',
-			backgroundColor: 'transparent',
+				backgroundColor: 'transparent',
 
 				'&:hover': {
 					backgroundColor: appTheme === 'dark' ? '#1f1f26' : '#EBEBF0',
