@@ -2,8 +2,6 @@ import { Link } from 'react-router-dom'
 import { PhoneIncoming, PhoneOutgoing, Users, Video } from 'lucide-react'
 import Avatar from '../../Avatar'
 import GroupPfp from '../groups/GroupPfp'
-import CallButton from '../chat/CallButton'
-import VideoCallBtn from '../chat/VideoCallBtn'
 import { useSelector } from 'react-redux'
 import type { RootType } from '../../../../store/store'
 import type { PreviousCall } from '../../../../schemas/main/getPreviousCallsResponse'
@@ -25,7 +23,6 @@ export default function CallsPreview({ callInfo }: { callInfo: PreviousCall }) {
 	const title = isGroup
 		? callInfo.group?.name || 'Group call'
 		: directOtherParticipant?.name || 'Unknown user'
-	const callTarget = callInfo.groupId ?? callInfo.conversationId ?? undefined
 	const callLabel = isMissed ? 'Missed' : isDeclined ? 'Declined' : isIncoming ? 'Incoming' : 'Outgoing'
 	const CallIcon = isGroup
 		? Users
