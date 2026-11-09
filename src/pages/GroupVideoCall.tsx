@@ -13,6 +13,7 @@ export default function GroupVideoCall() {
 
 	const [token, setToken] = useState<string | null>(null)
 	const [callStartedAt, setCallStartedAt] = useState<number | null>(null)
+	const [callId, setCallId] = useState<string | null>(null)
 	const [serverTimeOffset, setServerTimeOffset] = useState(0)
 
 	const groupId = useParams().chatId
@@ -89,12 +90,14 @@ export default function GroupVideoCall() {
 					token,
 					startedAt,
 					serverNow,
+					callId,
 				}: {
 					success: boolean
 					error?: string
 					token?: string
 					startedAt?: number
 					serverNow?: number
+					callId?: string
 				}) => {
 					if (settled) return
 					settled = true
@@ -112,6 +115,7 @@ export default function GroupVideoCall() {
 					}
 					setToken(token)
 					setCallStartedAt(startedAt)
+					setCallId(callId ?? null)
 					setServerTimeOffset(serverNow - Date.now())
 					setIsLoading(false)
 				},
@@ -136,7 +140,7 @@ export default function GroupVideoCall() {
 		return connectToRoom()
 	}, [connectToRoom, groupId, isPending, session?.user.id])
 
-	if (isPending || isLoading || !token || !callStartedAt)
+	if (isPending || isLoading || !token || !callStartedAt || !callId)
 		return (
 			<div className='w-screen h-screen flex justify-center items-center'>
 				<div className='loader' />
@@ -153,6 +157,7 @@ export default function GroupVideoCall() {
 		>
 			<GroupVideoCallUi
 				groupId={groupId ?? ''}
+				callId={callId}
 				callStartedAt={callStartedAt}
 				serverTimeOffset={serverTimeOffset}
 			/>

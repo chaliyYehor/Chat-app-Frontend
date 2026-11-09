@@ -397,6 +397,7 @@ export function Chat() {
 								{message.type === 'image' ? (
 									<ImageMessage
 										isFetching={isUserInfoPending}
+										isSeen={message.read}
 										messageInfo={message}
 										userInfo={userInfo}
 										isMe={message.senderId === userId}

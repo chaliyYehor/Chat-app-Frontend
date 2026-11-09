@@ -21,10 +21,12 @@ import { User } from 'lucide-react'
 
 export default function ({
 	groupId,
+	callId,
 	callStartedAt,
 	serverTimeOffset,
 }: {
 	groupId: string
+	callId: string
 	callStartedAt: number
 	serverTimeOffset: number
 }) {
@@ -309,7 +311,7 @@ export default function ({
 						onVolumeToggle={() => setIsSpeakerMuted(value => !value)}
 					/>
 					<Dial type='microphone' />
-					<Dial type='endCall' />
+					<Dial type='endCall' callId={callId} />
 					<Dial type='shareScreen' />
 					<Dial type='camera' />
 					<Dial type='cameraSwitch' />

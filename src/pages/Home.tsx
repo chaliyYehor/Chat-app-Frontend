@@ -32,7 +32,7 @@ type IncomingVideoCallData = {
 }
 
 type IncomingVideoCall = IncomingVideoCallData & {
-	acknowledge: (response: { status: 'accepted' | 'rejected' }) => void
+	acknowledge: (response: { status: 'accepted' | 'rejected' | 'timeout' }) => void
 }
 
 type AcceptedVideoCall = {
@@ -107,7 +107,7 @@ export default function Home() {
 		}
 	}, [navigate])
 
-	const respondToCall = (status: 'accepted' | 'rejected') => {
+	const respondToCall = (status: 'accepted' | 'rejected' | 'timeout') => {
 		incomingCall?.acknowledge({ status })
 		setIncomingCall(null)
 	}
@@ -162,6 +162,7 @@ export default function Home() {
 					timeoutMs={incomingCall.timeoutMs}
 					onAccept={() => respondToCall('accepted')}
 					onReject={() => respondToCall('rejected')}
+					onTimeout={() => respondToCall('timeout')}
 				/>
 			)}
 			<div className='w-screen h-dvh flex flex-col-reverse md:flex-row'>

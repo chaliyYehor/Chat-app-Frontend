@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { socket } from '../../../../socket'
 
 type DialType =
 	| 'volume'
@@ -36,10 +37,12 @@ export default function Dial({
 	type,
 	isVolumeMuted,
 	onVolumeToggle,
+	callId,
 }: {
 	type: DialType
 	isVolumeMuted?: boolean
 	onVolumeToggle?: () => void
+	callId?: string
 }) {
 	const room = useRoomContext()
 
@@ -188,6 +191,12 @@ export default function Dial({
 			type='button'
 			aria-label={option.label}
 			onClick={() => {
+				if (callId) {
+					socket.emit('call:leave', {
+						callId,
+						userId: room.localParticipant.identity,
+					})
+				}
 				disconnect()
 				navigate(-1)
 			}}
