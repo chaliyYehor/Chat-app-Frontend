@@ -39,6 +39,9 @@ function DirectVideoCallUi({ conversationId }: { conversationId: string }) {
 	const screenShareTracks = useTracks([Track.Source.ScreenShare])
 	const visibleCameraTracks = cameraTracks.filter(track => !track.publication.isMuted)
 	const visibleScreenShares = screenShareTracks.filter(track => !track.publication.isMuted)
+	const remoteCameraTrack = visibleCameraTracks.find(track => !track.participant.isLocal)
+	const localCameraTrack = visibleCameraTracks.find(track => track.participant.isLocal)
+	const remoteScreenShareTrack = visibleScreenShares.find(track => !track.participant.isLocal)
 
 	useEffect(() => {
 		let hasEnded = false
@@ -62,7 +65,7 @@ function DirectVideoCallUi({ conversationId }: { conversationId: string }) {
 		}
 	}, [conversationId, dispatch, navigate, room])
 
-	const displayedTrack = visibleScreenShares[0] ?? visibleCameraTracks[0]
+	const displayedTrack = remoteScreenShareTrack ?? visibleScreenShares[0] ?? remoteCameraTrack
 
 	return (
 		<div className='relative w-screen h-dvh overflow-hidden bg-black'>
@@ -81,6 +84,12 @@ function DirectVideoCallUi({ conversationId }: { conversationId: string }) {
 					</div>
 				)}
 				{displayedTrack && <span className='absolute top-3 left-3 sm:top-auto sm:bottom-4 sm:left-4 rounded-lg bg-black/55 px-2.5 py-1 text-xs sm:text-sm text-white'>{displayedTrack.participant.name || displayedTrack.participant.identity}</span>}
+				{localCameraTrack && (
+					<div className='absolute z-10 right-3 bottom-24 sm:right-6 sm:bottom-8 w-[28vw] min-w-24 max-w-60 aspect-video overflow-hidden rounded-xl border border-white/30 bg-[#202027] shadow-xl shadow-black/40'>
+						<VideoTrack trackRef={localCameraTrack} className='w-full h-full object-cover' />
+						<span className='absolute bottom-1 left-1.5 rounded bg-black/55 px-1.5 py-0.5 text-[10px] text-white'>You</span>
+					</div>
+				)}
 				<div className='absolute bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 sm:gap-4 rounded-full border border-white/10 bg-[#111115]/90 px-2 sm:px-3 py-2 sm:py-3 shadow-2xl shadow-black/40 backdrop-blur-md'>
 					<Dial type='volume' isVolumeMuted={isSpeakerMuted} onVolumeToggle={() => setIsSpeakerMuted(value => !value)} />
 					<Dial type='microphone' />
