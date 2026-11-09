@@ -44,6 +44,10 @@ export function useAppSocket(enabled: boolean) {
 			void queryClient.invalidateQueries({ queryKey: ['chats'] })
 		}
 
+		const invalidatePreviousCalls = () => {
+			void queryClient.invalidateQueries({ queryKey: ['previousCalls'] })
+		}
+
 		const handlePresenceChanged = () => {
 			void queryClient.invalidateQueries({ queryKey: ['chats'] })
 		}
@@ -56,6 +60,7 @@ export function useAppSocket(enabled: boolean) {
 		socket.on('message:received', invalidateChats)
 		socket.on('message:deleted', invalidateChats)
 		socket.on('presence:changed', handlePresenceChanged)
+		socket.on('call:history:updated', invalidatePreviousCalls)
 
 		socket.connect()
 
@@ -68,6 +73,7 @@ export function useAppSocket(enabled: boolean) {
 			socket.off('message:received', invalidateChats)
 			socket.off('message:deleted', invalidateChats)
 			socket.off('presence:changed', handlePresenceChanged)
+			socket.off('call:history:updated', invalidatePreviousCalls)
 			socket.disconnect()
 		}
 	}, [dispatch, enabled, queryClient])
