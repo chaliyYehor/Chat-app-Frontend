@@ -18,12 +18,36 @@ import PopUpError from '../components/PopUpError'
 import PopUpSuccess from '../components/PopUpSuccess'
 import PopUpLoading from '../components/PopUpLoading'
 import { setPopUpError } from '../store/slices/popUpSlice'
-import { useAppSocket } from '../hooks/useAppSocket'
+import IncomingCall from '../components/IncomingCall'
+import { socket } from '../socket'
 gsap.registerPlugin(useGSAP)
+
+type IncomingVideoCallData = {
+	callId: string
+	conversationId: string
+	callerId: string
+	callerName: string
+	type: 'video' | 'audio'
+	timeoutMs: number
+}
+
+type IncomingVideoCall = IncomingVideoCallData & {
+	acknowledge: (response: { status: 'accepted' | 'rejected' }) => void
+}
+
+type AcceptedVideoCall = {
+	conversationId: string
+	token: string
+	startedAt: number
+	serverNow: number
+}
+
+type AcceptedAudioCall = AcceptedVideoCall
 
 export default function Home() {
 	const navigationRef = useRef<HTMLDivElement>(null)
 	const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
+	const [incomingCall, setIncomingCall] = useState<IncomingVideoCall | null>(null)
 
 	const navigate = useNavigate()
 	const dispatch = useDispatch<AppDispatch>()
@@ -57,7 +81,36 @@ export default function Home() {
 	}, [isMobile])
 
 	const { data: session, isPending } = authClient.useSession()
-	useAppSocket(!isPending && Boolean(session))
+
+	useEffect(() => {
+		const handleIncomingCall = (
+			call: IncomingVideoCallData,
+			acknowledge: IncomingVideoCall['acknowledge'],
+		) => setIncomingCall({ ...call, acknowledge })
+
+		const handleVideoCallAccepted = (call: AcceptedVideoCall) => {
+			setIncomingCall(null)
+			navigate(`/videoCall/${call.conversationId}`, { state: call })
+		}
+		const handleAudioCallAccepted = (call: AcceptedAudioCall) => {
+			setIncomingCall(null)
+			navigate(`/call/${call.conversationId}`, { state: call })
+		}
+
+		socket.on('call:incoming', handleIncomingCall)
+		socket.on('video_call:accepted', handleVideoCallAccepted)
+		socket.on('audio_call:accepted', handleAudioCallAccepted)
+		return () => {
+			socket.off('call:incoming', handleIncomingCall)
+			socket.off('video_call:accepted', handleVideoCallAccepted)
+			socket.off('audio_call:accepted', handleAudioCallAccepted)
+		}
+	}, [navigate])
+
+	const respondToCall = (status: 'accepted' | 'rejected') => {
+		incomingCall?.acknowledge({ status })
+		setIncomingCall(null)
+	}
 
 	useEffect(() => {
 		if (!isPending && !session) {
@@ -102,6 +155,15 @@ export default function Home() {
 			>
 				Skip to main content
 			</a>
+			{incomingCall && (
+				<IncomingCall
+					type={incomingCall.type}
+					callerName={incomingCall.callerName}
+					timeoutMs={incomingCall.timeoutMs}
+					onAccept={() => respondToCall('accepted')}
+					onReject={() => respondToCall('rejected')}
+				/>
+			)}
 			<div className='w-screen h-dvh flex flex-col-reverse md:flex-row'>
 				<PopUpError />
 				<PopUpSuccess />

@@ -307,25 +307,44 @@ export default function Group() {
 						/>
 					</button>
 					<div className='flex min-w-0 flex-1 flex-col'>
-						<p className={`${isGroupLoading ? 'skeleton-shimmer' : ''} font-semibold font-inter text-md truncate dark:text-white text-black h-6 min-w-30 rounded-md`}>
+						<p
+							className={`${isGroupLoading ? 'skeleton-shimmer' : ''} font-semibold font-inter text-md truncate dark:text-white text-black h-6 min-w-30 rounded-md`}
+						>
 							{!isGroupLoading && groupInfo?.group.groupName}
 						</p>
-						<p className={`${isGroupLoading ? 'skeleton-shimmer' : ''} text-[#6B6B80] text-[13px] font-inter text-xs h-4 min-w-10 rounded-md capitalize`}>
-							{!isGroupLoading && (groupInfo?.group.memberIds.length === 1
-								? '1 member'
-								: `${groupInfo?.group.memberIds.length} members`)}
+						<p
+							className={`${isGroupLoading ? 'skeleton-shimmer' : ''} text-[#6B6B80] text-[13px] font-inter text-xs h-4 min-w-10 rounded-md capitalize`}
+						>
+							{!isGroupLoading &&
+								(groupInfo?.group.memberIds.length === 1
+									? '1 member'
+									: `${groupInfo?.group.memberIds.length} members`)}
 						</p>
 					</div>
 				</div>
 				<div className='h-full shrink-0 flex justify-center items-center gap-1 md:gap-2'>
 					{isGroupLoading ? (
 						<div className='w-full h-full flex justify-center items-center'>
-							<div className='loader' role='status' aria-label='Loading group information' />
+							<div
+								className='loader'
+								role='status'
+								aria-label='Loading group information'
+							/>
 						</div>
 					) : (
 						<>
-							<CallButon isGroup={true} chatId={groupInfo?.group.id} size={16} />
-							<VideoCallBtn  isGroup={true} groupName={groupInfo?.group.groupName ?? ''} chatId={groupInfo?.group.id} size={16} />
+							<CallButon
+								groupName={groupInfo?.group.groupName ?? ''}
+								isGroup={true}
+								chatId={groupInfo?.group.id}
+								size={16}
+							/>
+							<VideoCallBtn
+								isGroup={true}
+								groupName={groupInfo?.group.groupName ?? ''}
+								chatId={groupInfo?.group.id}
+								size={16}
+							/>
 							{groupInfo?.group && (
 								<MoreInfoButton
 									messagesLength={messagesState?.length}

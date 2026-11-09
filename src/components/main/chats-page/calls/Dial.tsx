@@ -63,7 +63,7 @@ export default function Dial({
 	}
 
 	const navigate = useNavigate()
-	const buttonClassName = `flex cursor-pointer ${isEndCall ? 'size-13' : 'size-12'} shrink-0 items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:focus-visible:outline-white ${
+	const buttonClassName = `flex cursor-pointer ${isEndCall ? 'size-11 sm:size-13' : 'size-10 sm:size-12'} shrink-0 items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:focus-visible:outline-white ${
 		isEndCall
 			? 'bg-[#FB2C36] text-white hover:bg-[#e9232d]'
 			: 'bg-[#EBEBF0] text-[#111118] hover:bg-[#dedee5] dark:bg-[#202027] dark:text-white dark:hover:bg-[#2b2b34]'
@@ -127,7 +127,7 @@ export default function Dial({
 				}}
 				className={buttonClassName}
 			>
-				<Icon size={18} strokeWidth={2} />
+				<Icon size={16} className='sm:size-[18px]' strokeWidth={2} />
 			</button>
 		)
 	}
@@ -144,7 +144,7 @@ export default function Dial({
 				className={buttonClassName}
 				onChange={setEnabled}
 			>
-				<Icon size={18} strokeWidth={2} />
+				<Icon size={16} className='sm:size-[18px]' strokeWidth={2} />
 			</TrackToggle>
 		)
 	}
@@ -161,7 +161,7 @@ export default function Dial({
 				className={buttonClassName}
 				onChange={setEnabled}
 			>
-				<Icon size={18} strokeWidth={2} />
+				<Icon size={16} className='sm:size-[18px]' strokeWidth={2} />
 			</TrackToggle>
 		)
 	}
@@ -193,7 +193,7 @@ export default function Dial({
 			}}
 			className={buttonClassName}
 		>
-			<Icon size={20} strokeWidth={2} />
+				<Icon size={18} className='sm:size-5' strokeWidth={2} />
 		</button>
 	)
 }
