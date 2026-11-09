@@ -1,45 +1,217 @@
-import { useSelector } from 'react-redux'
-import type { RootType } from '../store/store'
-import clsx from 'clsx'
-import CallBadge from '../components/main/chats-page/calls/CallBadge'
+import { LiveKitRoom, RoomAudioRenderer, VideoTrack, useRoomContext, useTracks } from '@livekit/components-react'
+import { useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { RoomEvent, Track } from 'livekit-client'
 import { User } from 'lucide-react'
+import CallBadge from '../components/main/chats-page/calls/CallBadge'
 import Dial from '../components/main/chats-page/calls/Dial'
+import { authClient } from '../lib/auth-client'
+import { socket } from '../socket'
+import { useDispatch } from 'react-redux'
+import type { AppDispatch } from '../store/store'
+import { setPopUpError } from '../store/slices/popUpSlice'
 
-export default function VideoCall() {
-	const appTheme = useSelector((state: RootType) => state.theme.mode)
+type CallCredentials = {
+	token: string
+	startedAt: number
+	serverNow: number
+}
+
+function getCallCredentials(state: unknown): CallCredentials | null {
+	if (!state || typeof state !== 'object') return null
+	const value = state as Partial<CallCredentials>
+	if (
+		typeof value.token !== 'string' ||
+		typeof value.startedAt !== 'number' ||
+		typeof value.serverNow !== 'number'
+	) {
+		return null
+	}
+	return value as CallCredentials
+}
+
+function DirectVideoCallUi({ conversationId }: { conversationId: string }) {
+	const room = useRoomContext()
+	const navigate = useNavigate()
+	const dispatch = useDispatch<AppDispatch>()
+	const [isSpeakerMuted, setIsSpeakerMuted] = useState(false)
+	const cameraTracks = useTracks([Track.Source.Camera])
+	const screenShareTracks = useTracks([Track.Source.ScreenShare])
+	const visibleCameraTracks = cameraTracks.filter(track => !track.publication.isMuted)
+	const visibleScreenShares = screenShareTracks.filter(track => !track.publication.isMuted)
+
+	useEffect(() => {
+		let hasEnded = false
+		let disconnectCheckId: number | undefined
+		const handleParticipantDisconnected = () => {
+			// LiveKit may dispatch ParticipantDisconnected before its participant
+			// map has been updated, so check on the next task.
+			window.clearTimeout(disconnectCheckId)
+			disconnectCheckId = window.setTimeout(() => {
+				if (hasEnded || room.remoteParticipants.size > 0) return
+				hasEnded = true
+				room.disconnect()
+				dispatch(setPopUpError({ heading: 'Call ended', text: 'The other participant left the call.' }))
+				navigate(`/chats/${conversationId}`, { replace: true })
+			}, 0)
+		}
+		room.on(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected)
+		return () => {
+			window.clearTimeout(disconnectCheckId)
+			room.off(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected)
+		}
+	}, [conversationId, dispatch, navigate, room])
+
+	const displayedTrack = visibleScreenShares[0] ?? visibleCameraTracks[0]
 
 	return (
-		<div
-			className={clsx(
-				'w-screen h-dvh call flex flex-col justify-between items-center bg-[#F5F5F8]',
-				appTheme === 'dark' && 'dark',
-			)}
-		>
-			<div className='w-full overflow-hidden flex items-start justify-between pr-4 md:pr-0 md:px-10 pt-4 md:pt-10'>
-				<div className='flex flex-col justify-between items-start px-5 pt-5'>
-					<CallBadge text='Video Call' />
-					<h2 className='dark:text-white mt-5 text-black font-bold font-inter text-2xl sm:text-3xl'>
-						Sofia Chen
-					</h2>
-					<p className='text-[#6B6B80] mt-1 font-mono text-md'>08:13</p>
-				</div>
-
-				<div className='relative flex h-46 w-34 flex-col justify-center items-center dark:bg-[#16161B]/90 bg-[#FFFFFF]/90 rounded-xl border border-black/8 dark:border-white/6 shadow-2xl shadow-black/15 dark:shadow-black/50'>
-					<div
-						className={`w-20 h-20 rounded-[50%] dark:text-white flex justify-center items-center border-2 border-gray-700 relative shrink-0`.trim()}
-					>
-						<User size={30} />
-					</div>
-					<span className='absolute bottom-2 left-2 font-inter rounded-md px-1.5 py-0.5 dark:bg-black/40 text-[#F5F5F8] text-[11px] backdrop-blur-sm shadow-xl'>You</span>
-				</div>
+		<div className='relative w-screen h-dvh overflow-hidden bg-black'>
+			<RoomAudioRenderer muted={isSpeakerMuted} />
+			<div className='absolute z-10 top-2 sm:top-5 left-2 right-2 sm:left-5 sm:right-5 flex justify-between items-center'>
+				<CallBadge text='Video Call' />
+				<span className='font-mono text-[10px] sm:text-xs text-[#6B6B80]'>CONNECTED</span>
 			</div>
-
-			<div className='flex items-center gap-4 rounded-full border border-black/8 bg-white/90 px-3 py-3 shadow-2xl shadow-black/15 mb-5 dark:border-white/6 dark:bg-[#111115]/95 dark:shadow-black/50'>
-				<Dial type='volume' />
-				<Dial type='microphone' />
-				<Dial type='endCall' />
-				<Dial type='camera' />
+			<div className='absolute inset-0 flex items-center justify-center overflow-hidden bg-black'>
+				{displayedTrack ? (
+					<VideoTrack trackRef={displayedTrack} className='w-full h-full object-contain' />
+				) : (
+					<div className='flex flex-col items-center gap-3 text-white'>
+						<div className='size-20 sm:size-32 rounded-full border border-white/20 bg-[#202027] flex items-center justify-center'><User size={36} /></div>
+						<p className='text-[#A1A1AA] text-sm'>Camera is off</p>
+					</div>
+				)}
+				{displayedTrack && <span className='absolute top-3 left-3 sm:top-auto sm:bottom-4 sm:left-4 rounded-lg bg-black/55 px-2.5 py-1 text-xs sm:text-sm text-white'>{displayedTrack.participant.name || displayedTrack.participant.identity}</span>}
+				<div className='absolute bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 sm:gap-4 rounded-full border border-white/10 bg-[#111115]/90 px-2 sm:px-3 py-2 sm:py-3 shadow-2xl shadow-black/40 backdrop-blur-md'>
+					<Dial type='volume' isVolumeMuted={isSpeakerMuted} onVolumeToggle={() => setIsSpeakerMuted(value => !value)} />
+					<Dial type='microphone' />
+					<Dial type='endCall' />
+					<Dial type='shareScreen' />
+					<Dial type='camera' />
+					<Dial type='cameraSwitch' />
+				</div>
 			</div>
 		</div>
+	)
+}
+export default function VideoCall() {
+	const conversationId = useParams().chatId
+	const location = useLocation()
+	const incomingCredentials = useMemo(
+		() => getCallCredentials(location.state),
+		[location.state],
+	)
+	const [credentials, setCredentials] = useState<CallCredentials | null>(incomingCredentials)
+	const { data: session, isPending } = authClient.useSession()
+	const navigate = useNavigate()
+	const dispatch = useDispatch<AppDispatch>()
+
+	useEffect(() => {
+		if (incomingCredentials) {
+			setCredentials(incomingCredentials)
+			return
+		}
+		if (isPending) return
+		if (!session?.user.id || !conversationId) {
+			navigate('/chats', { replace: true })
+			return
+		}
+
+		let settled = false
+		const timeoutId = window.setTimeout(() => {
+			if (settled) return
+			settled = true
+			dispatch(setPopUpError({ heading: 'Call timed out', text: 'No response was received.' }))
+			navigate(`/chats/${conversationId}`)
+		}, 35_000)
+
+		const fail = (message: string) => {
+			if (settled) return
+			settled = true
+			window.clearTimeout(timeoutId)
+			dispatch(setPopUpError({ heading: 'Video call', text: message }))
+			navigate(`/chats/${conversationId}`)
+		}
+
+		const useCredentials = (value: Partial<CallCredentials>) => {
+			if (
+				settled ||
+				typeof value.token !== 'string' ||
+				typeof value.startedAt !== 'number' ||
+				typeof value.serverNow !== 'number'
+			) return
+
+			settled = true
+			window.clearTimeout(timeoutId)
+			setCredentials(value as CallCredentials)
+		}
+
+		const handleCallReady = (call: CallCredentials & { conversationId: string }) => {
+			if (call.conversationId === conversationId) useCredentials(call)
+		}
+		socket.on('video_call:ready', handleCallReady)
+
+		const join = () => {
+			socket.off('connect_error', onConnectError)
+			socket.emit(
+				'video_call:join',
+				{ userId: session.user.id, conversationId },
+				(response: {
+					success: boolean
+					error?: string
+					token?: string
+					startedAt?: number
+					serverNow?: number
+				}) => {
+					if (settled) return
+					if (!response?.success) {
+						fail(response?.error || 'The server did not return call credentials.')
+						return
+					}
+					useCredentials(response)
+				},
+			)
+		}
+
+		function onConnectError() {
+			fail('Could not connect to the call server.')
+		}
+
+		if (!socket.connected) {
+			socket.once('connect', join)
+			socket.once('connect_error', onConnectError)
+			socket.connect()
+		} else {
+			join()
+		}
+
+		return () => {
+			settled = true
+			window.clearTimeout(timeoutId)
+			socket.off('video_call:ready', handleCallReady)
+			socket.off('connect', join)
+			socket.off('connect_error', onConnectError)
+		}
+	}, [conversationId, dispatch, incomingCredentials, isPending, navigate, session?.user.id])
+
+	if (isPending || !credentials) {
+		return (
+			<div className='w-screen h-dvh flex flex-col gap-3 justify-center items-center'>
+				<div className='loader' />
+				<p className='text-[#6B6B80]'>Calling…</p>
+			</div>
+		)
+	}
+
+	return (
+		<LiveKitRoom
+			connect
+			audio
+			video
+			token={credentials.token}
+			serverUrl={import.meta.env.VITE_LIVEKIT_URL}
+			className='contents'
+		>
+			<DirectVideoCallUi conversationId={conversationId ?? ''} />
+		</LiveKitRoom>
 	)
 }

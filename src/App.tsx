@@ -38,8 +38,13 @@ import Call from './pages/Call'
 import VideoCall from './pages/VideoCall'
 import GroupCall from './pages/GroupCall'
 import GroupVideoCall from './pages/GroupVideoCall'
+import { authClient } from './lib/auth-client'
+import { useAppSocket } from './hooks/useAppSocket'
 
 function App() {
+	const { data: session, isPending } = authClient.useSession()
+	useAppSocket(!isPending && Boolean(session))
+
 	const signUpMethods = useForm<SignUpType>({
 		resolver: zodResolver(signUpSchema),
 		defaultValues: {

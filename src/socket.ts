@@ -5,6 +5,6 @@ export const socket = io(import.meta.env.VITE_SERVER_URL || 'http://localhost:50
 	autoConnect: false,
 	withCredentials: true,
 	reconnection: true,
-	reconnectionAttempts: 5,
+	reconnectionAttempts: Infinity,
 	reconnectionDelay: 1000,
 })
