@@ -15,6 +15,7 @@ type CallCredentials = {
 	token: string
 	startedAt: number
 	serverNow: number
+	callId?: string
 }
 
 function getCallCredentials(state: unknown): CallCredentials | null {
@@ -30,7 +31,7 @@ function getCallCredentials(state: unknown): CallCredentials | null {
 	return value as CallCredentials
 }
 
-function DirectVideoCallUi({ conversationId }: { conversationId: string }) {
+function DirectVideoCallUi({ conversationId, callId }: { conversationId: string; callId?: string }) {
 	const room = useRoomContext()
 	const navigate = useNavigate()
 	const dispatch = useDispatch<AppDispatch>()
@@ -53,6 +54,7 @@ function DirectVideoCallUi({ conversationId }: { conversationId: string }) {
 			disconnectCheckId = window.setTimeout(() => {
 				if (hasEnded || room.remoteParticipants.size > 0) return
 				hasEnded = true
+				if (callId) socket.emit('call:leave', { callId, userId: room.localParticipant.identity })
 				room.disconnect()
 				dispatch(setPopUpError({ heading: 'Call ended', text: 'The other participant left the call.' }))
 				navigate(`/chats/${conversationId}`, { replace: true })
@@ -63,7 +65,7 @@ function DirectVideoCallUi({ conversationId }: { conversationId: string }) {
 			window.clearTimeout(disconnectCheckId)
 			room.off(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected)
 		}
-	}, [conversationId, dispatch, navigate, room])
+	}, [callId, conversationId, dispatch, navigate, room])
 
 	const displayedTrack = remoteScreenShareTrack ?? visibleScreenShares[0] ?? remoteCameraTrack
 
@@ -93,7 +95,7 @@ function DirectVideoCallUi({ conversationId }: { conversationId: string }) {
 				<div className='absolute bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 sm:gap-4 rounded-full border border-white/10 bg-[#111115]/90 px-2 sm:px-3 py-2 sm:py-3 shadow-2xl shadow-black/40 backdrop-blur-md'>
 					<Dial type='volume' isVolumeMuted={isSpeakerMuted} onVolumeToggle={() => setIsSpeakerMuted(value => !value)} />
 					<Dial type='microphone' />
-					<Dial type='endCall' />
+					<Dial type='endCall' callId={callId} />
 					<Dial type='shareScreen' />
 					<Dial type='camera' />
 					<Dial type='cameraSwitch' />
@@ -126,6 +128,7 @@ export default function VideoCall() {
 		}
 
 		let settled = false
+		let joinTimerId: number | undefined
 		const timeoutId = window.setTimeout(() => {
 			if (settled) return
 			settled = true
@@ -170,6 +173,7 @@ export default function VideoCall() {
 					token?: string
 					startedAt?: number
 					serverNow?: number
+					callId?: string
 				}) => {
 					if (settled) return
 					if (!response?.success) {
@@ -184,20 +188,25 @@ export default function VideoCall() {
 		function onConnectError() {
 			fail('Could not connect to the call server.')
 		}
+		const scheduleJoin = () => {
+			window.clearTimeout(joinTimerId)
+			joinTimerId = window.setTimeout(join, 0)
+		}
 
 		if (!socket.connected) {
-			socket.once('connect', join)
+			socket.once('connect', scheduleJoin)
 			socket.once('connect_error', onConnectError)
 			socket.connect()
 		} else {
-			join()
+			scheduleJoin()
 		}
 
 		return () => {
 			settled = true
 			window.clearTimeout(timeoutId)
+			window.clearTimeout(joinTimerId)
 			socket.off('video_call:ready', handleCallReady)
-			socket.off('connect', join)
+			socket.off('connect', scheduleJoin)
 			socket.off('connect_error', onConnectError)
 		}
 	}, [conversationId, dispatch, incomingCredentials, isPending, navigate, session?.user.id])
@@ -220,7 +229,7 @@ export default function VideoCall() {
 			serverUrl={import.meta.env.VITE_LIVEKIT_URL}
 			className='contents'
 		>
-			<DirectVideoCallUi conversationId={conversationId ?? ''} />
+			<DirectVideoCallUi conversationId={conversationId ?? ''} callId={credentials.callId} />
 		</LiveKitRoom>
 	)
 }

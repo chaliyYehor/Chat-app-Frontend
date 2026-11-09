@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux'
 import type { AppDispatch } from '../store/store'
 import { setPopUpError } from '../store/slices/popUpSlice'
 
-type CallCredentials = { token: string; startedAt: number; serverNow: number; participantName?: string }
+type CallCredentials = { token: string; startedAt: number; serverNow: number; participantName?: string; callId?: string }
 
 function getCallCredentials(state: unknown): CallCredentials | null {
 	if (!state || typeof state !== 'object') return null
@@ -20,7 +20,7 @@ function getCallCredentials(state: unknown): CallCredentials | null {
 	return value as CallCredentials
 }
 
-function DirectAudioCallUi({ conversationId, startedAt, serverOffset, participantName }: { conversationId: string; startedAt: number; serverOffset: number; participantName?: string }) {
+function DirectAudioCallUi({ conversationId, startedAt, serverOffset, participantName, callId }: { conversationId: string; startedAt: number; serverOffset: number; participantName?: string; callId?: string }) {
 	const room = useRoomContext()
 	const navigate = useNavigate()
 	const dispatch = useDispatch<AppDispatch>()
@@ -54,6 +54,7 @@ function DirectAudioCallUi({ conversationId, startedAt, serverOffset, participan
 			checkId = window.setTimeout(() => {
 				if (ended || room.remoteParticipants.size > 0) return
 				ended = true
+				if (callId) socket.emit('call:leave', { callId, userId: room.localParticipant.identity })
 				room.disconnect()
 				dispatch(setPopUpError({ heading: 'Call ended', text: 'The other participant left the call.' }))
 				navigate(`/chats/${conversationId}`, { replace: true })
@@ -64,7 +65,7 @@ function DirectAudioCallUi({ conversationId, startedAt, serverOffset, participan
 			window.clearTimeout(checkId)
 			room.off(RoomEvent.ParticipantDisconnected, handleParticipantDisconnected)
 		}
-	}, [conversationId, dispatch, navigate, room])
+	}, [callId, conversationId, dispatch, navigate, room])
 
 	return (
 		<div className='group-audio-call w-screen h-dvh dark:bg-black bg-white flex flex-col gap-3 px-3 py-3 sm:gap-4 sm:px-5 sm:py-5 items-center justify-between'>
@@ -97,7 +98,7 @@ function DirectAudioCallUi({ conversationId, startedAt, serverOffset, participan
 			</div>
 			<div className='flex items-center gap-2 sm:gap-4 rounded-full border border-black/8 bg-white/90 px-2 sm:px-3 py-2 sm:py-3 shadow-2xl shadow-black/15 mb-2 sm:mb-5 dark:border-white/6 dark:bg-[#111115]/95 dark:shadow-black/50'>
 				<Dial type='volume' isVolumeMuted={isSpeakerMuted} onVolumeToggle={() => setIsSpeakerMuted(value => !value)} />
-				<Dial type='endCall' />
+				<Dial type='endCall' callId={callId} />
 				<Dial type='microphone' />
 			</div>
 		</div>
@@ -130,6 +131,7 @@ export default function Call() {
 		}
 
 		let settled = false
+		let joinTimerId: number | undefined
 		const timeoutId = window.setTimeout(() => {
 			if (settled) return
 			settled = true
@@ -144,15 +146,15 @@ export default function Call() {
 			navigate(`/chats/${conversationId}`, { replace: true })
 		}
 		const acceptCredentials = (response: {
-			token?: string; startedAt?: number; serverNow?: number; participantName?: string
+			token?: string; startedAt?: number; serverNow?: number; participantName?: string; callId?: string
 		}) => {
 			if (settled || !response.token || typeof response.startedAt !== 'number' || typeof response.serverNow !== 'number') return
 			settled = true
 			window.clearTimeout(timeoutId)
-			setCredentials({ token: response.token, startedAt: response.startedAt, serverNow: response.serverNow, participantName: response.participantName })
+			setCredentials({ token: response.token, startedAt: response.startedAt, serverNow: response.serverNow, participantName: response.participantName, callId: response.callId })
 		}
 		const handleCallReady = (call: {
-			conversationId: string; token?: string; startedAt?: number; serverNow?: number; participantName?: string
+			conversationId: string; token?: string; startedAt?: number; serverNow?: number; participantName?: string; callId?: string
 		}) => {
 			if (call.conversationId === conversationId) acceptCredentials(call)
 		}
@@ -164,7 +166,7 @@ export default function Call() {
 		const join = () => {
 			socket.off('connect_error', onConnectError)
 			socket.emit('audio_call:join', { userId: session.user.id, conversationId }, (response: {
-				success: boolean; error?: string; token?: string; startedAt?: number; serverNow?: number; participantName?: string
+				success: boolean; error?: string; token?: string; startedAt?: number; serverNow?: number; participantName?: string; callId?: string
 			}) => {
 				if (settled) return
 				if (!response?.success) {
@@ -175,17 +177,22 @@ export default function Call() {
 			})
 		}
 		function onConnectError() { fail('Could not connect to the call server.') }
+		const scheduleJoin = () => {
+			window.clearTimeout(joinTimerId)
+			joinTimerId = window.setTimeout(join, 0)
+		}
 		if (!socket.connected) {
-			socket.once('connect', join)
+			socket.once('connect', scheduleJoin)
 			socket.once('connect_error', onConnectError)
 			socket.connect()
-		} else join()
+		} else scheduleJoin()
 		return () => {
 			settled = true
 			window.clearTimeout(timeoutId)
+			window.clearTimeout(joinTimerId)
 			socket.off('audio_call:ready', handleCallReady)
 			socket.off('audio_call:failed', handleCallFailed)
-			socket.off('connect', join)
+			socket.off('connect', scheduleJoin)
 			socket.off('connect_error', onConnectError)
 		}
 	}, [conversationId, dispatch, incomingCredentials, isPending, navigate, session?.user.id])
@@ -193,7 +200,7 @@ export default function Call() {
 	if (isPending || !credentials) return <div className='w-screen h-dvh flex justify-center items-center'><div className='loader' /></div>
 	return (
 		<LiveKitRoom connect audio token={credentials.token} serverUrl={import.meta.env.VITE_LIVEKIT_URL} className='contents'>
-			<DirectAudioCallUi conversationId={conversationId ?? ''} startedAt={credentials.startedAt} serverOffset={credentials.serverNow - Date.now()} participantName={credentials.participantName || participantName} />
+			<DirectAudioCallUi conversationId={conversationId ?? ''} startedAt={credentials.startedAt} serverOffset={credentials.serverNow - Date.now()} participantName={credentials.participantName || participantName} callId={credentials.callId} />
 		</LiveKitRoom>
 	)
 }

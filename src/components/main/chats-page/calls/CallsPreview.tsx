@@ -1,119 +1,95 @@
 import { Link } from 'react-router-dom'
+import { PhoneIncoming, PhoneOutgoing, Users, Video } from 'lucide-react'
 import Avatar from '../../Avatar'
-import { Video, PhoneOutgoing, PhoneIncoming, Users } from 'lucide-react'
-import CallButon from '../chat/CallButton'
+import GroupPfp from '../groups/GroupPfp'
+import CallButton from '../chat/CallButton'
 import VideoCallBtn from '../chat/VideoCallBtn'
-import { useDispatch, useSelector } from 'react-redux'
-import type { AppDispatch, RootType } from '../../../../store/store'
-import { useGetUserInfo } from '../../../../hooks/useGetUserInfo'
-import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
-import { setPopUpError } from '../../../../store/slices/popUpSlice'
-import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import type { RootType } from '../../../../store/store'
+import type { PreviousCall } from '../../../../schemas/main/getPreviousCallsResponse'
 
-interface CallsPreviewProps {
-	isIncoming: boolean
-	isVideoCall: boolean
-	missed?: boolean
-	groupUsers?: string[]
-}
-
-export default function CallsPreview({
-	isIncoming,
-	isVideoCall,
-	missed,
-	groupUsers,
-}: CallsPreviewProps) {
-	const items = {
-		isIncoming: {
-			icon: isVideoCall ? Video : PhoneIncoming,
-			color: missed ? '#FF6467' : '#00D4AA',
-			label: missed ? 'Missed' : 'Incoming',
-		},
-		isOutgoing: {
-			icon: isVideoCall ? Video : PhoneOutgoing,
-			color: '#6B6B80',
-			label: 'Outgoing',
-		},
-		isGroup: {
-			icon: Users,
-			color:
-				isIncoming && missed ? '#FF6467' : isIncoming ? '#00D4AA' : '#6B6B80',
-			label: missed ? 'Missed' : isIncoming ? 'Incoming' : 'Outgoing',
-		},
+export default function CallsPreview({ callInfo }: { callInfo: PreviousCall }) {
+	const appTheme = useSelector((state: RootType) => state.theme.mode)
+	const isGroup = callInfo.groupId !== null
+	const isIncoming = callInfo.currentUser.role !== 'initiator'
+	const isMissed = callInfo.currentUser.status === 'missed'
+	const isDeclined = callInfo.currentUser.status === 'declined'
+	const otherParticipants = callInfo.participants.filter(
+		participant => participant.userId !== callInfo.currentUser.userId,
+	)
+	const directOtherParticipant =
+		otherParticipants[0] ??
+		callInfo.participants.find(
+			participant => participant.role !== callInfo.currentUser.role,
+		)
+	const title = isGroup
+		? callInfo.group?.name || 'Group call'
+		: directOtherParticipant?.name || 'Unknown user'
+	const callTarget = callInfo.groupId ?? callInfo.conversationId ?? undefined
+	const callLabel = isMissed ? 'Missed' : isDeclined ? 'Declined' : isIncoming ? 'Incoming' : 'Outgoing'
+	const CallIcon = isGroup
+		? Users
+		: callInfo.callType === 'video'
+			? Video
+			: isIncoming
+				? PhoneIncoming
+				: PhoneOutgoing
+	const callColor = isMissed || isDeclined
+		? '#FF6467'
+		: isIncoming
+			? '#00D4AA'
+			: '#6B6B80'
+	const groupParticipants = otherParticipants.map(participant => participant.name)
+	const durationSeconds = callInfo.endedAt && !isMissed && !isDeclined
+		? Math.max(0, Math.floor((callInfo.endedAt.getTime() - callInfo.startedAt.getTime()) / 1000))
+		: null
+	const duration = durationSeconds === null
+		? null
+		: `${String(Math.floor(durationSeconds / 60)).padStart(2, '0')}:${String(durationSeconds % 60).padStart(2, '0')}`
+	const formatCallDate = (date: Date) => {
+		const today = new Date()
+		const isToday = date.toDateString() === today.toDateString()
+		const yesterday = new Date(today)
+		yesterday.setDate(today.getDate() - 1)
+		if (isToday) return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+		if (date.toDateString() === yesterday.toDateString()) return 'Yesterday'
+		return date.toLocaleDateString([], { day: '2-digit', month: '2-digit', year: 'numeric' })
 	}
 
-	const itemsToDisplay = groupUsers
-		? items.isGroup
-		: !groupUsers && isIncoming
-			? items.isIncoming
-			: !groupUsers && !isIncoming
-				? items.isOutgoing
-				: null
-
-	const IconComponent = itemsToDisplay ? itemsToDisplay.icon : null
-
-	const appTheme = useSelector((state: RootType) => state.theme.mode)
-
-	const { data: userInfo, isError: isUserInfoError } = useGetUserInfo()
-
-	const dispatch = useDispatch<AppDispatch>()
-
-	useEffect(() => {
-		if (isUserInfoError) {
-			dispatch(
-				setPopUpError({
-					heading: 'Error',
-					text: 'Failed to load user info. Please try again.',
-				}),
-			)
-		}
-	}, [isUserInfoError])
 	return (
-		<Link
-			to={'/chats/123'}
-			style={{
-				padding: '0',
-			}}
-			className='chatPreview w-full h-17.5 flex justify-center items-center gap-3 dark:hover:bg-[#1e1e26] hover:bg-[#f0f0f4] rounded-lg transition-all duration-200 ease-in-out'
-		>
-			<Avatar
-				state={getDisplayedStatus(
-					userInfo?.status,
-					userInfo?.previouslySetStatus,
+		<div className='w-full min-h-18 flex items-center gap-3 rounded-lg px-2 py-2 transition-colors dark:hover:bg-[#1e1e26] hover:bg-[#f0f0f4]'>
+			<Link
+				to={isGroup ? `/groups/${callInfo.groupId}` : `/chats/${callInfo.conversationId}`}
+				className='flex min-w-0 flex-1 items-center gap-3'
+			>
+				{isGroup ? (
+					<GroupPfp groupName={title} />
+				) : (
+					<Avatar isMe state='offline' imageUrl={directOtherParticipant?.imageUrl ?? undefined} />
 				)}
-			/>
-			<div className='flex-1 min-w-0 flex flex-col gap-1 items-start text-white'>
-				<p
-					style={{
-						color: missed ? '#FF6467' : appTheme === 'dark' ? 'white' : '#333',
-					}}
-					className='truncate max-w-[60%] font-semibold text-[18px]'
-				>
-					Sofia Chen
-				</p>
-				<p className='text-[#6B6B80] text-sm font-mono text-[12px] flex justify-center items-center gap-1'>
-					{IconComponent && (
-						<>
-							<IconComponent size={15} color={itemsToDisplay?.color} />
-							{itemsToDisplay?.label} · 24:13
-						</>
-					)}
-				</p>
-				{groupUsers && (
-					<p className='text-[#6B6B80] text-sm font-mono text-[12px] max-w-[60%] truncate'>
-						{groupUsers.join(', ')}
+				<div className='flex min-w-0 flex-1 flex-col gap-1'>
+					<p className={`truncate font-semibold text-[16px] sm:text-[18px] ${isMissed || isDeclined ? 'text-[#FF6467]' : appTheme === 'dark' ? 'text-white' : 'text-[#333]'}`}>
+						{title}
 					</p>
-				)}
-			</div>
-			<div className='flex flex-col justify-between items-center gap-1'>
-				<p className='text-[#6B6B80] mr-1 self-end text-sm font-mono text-[12px] flex justify-center items-center gap-1'>
-					Today
-				</p>
-				<div className='flex justify-center items-center gap-2 mt-1'>
-					<CallButon size={18} />
-					<VideoCallBtn size={18} />
+					<p className='flex items-center gap-1 text-xs font-mono text-[#6B6B80]'>
+						<CallIcon size={14} color={callColor} />
+						<span>{callLabel}</span>
+						<span aria-hidden='true'>·</span>
+						<span>{callInfo.callType === 'video' ? 'Video' : 'Audio'}</span>
+						{duration && <><span aria-hidden='true'>·</span><span>{duration}</span></>}
+					</p>
+					{isGroup && (
+						<p className='truncate text-xs font-mono text-[#6B6B80]'>
+							{groupParticipants.length > 0 ? groupParticipants.join(', ') : 'No other participants'}
+						</p>
+					)}
 				</div>
+			</Link>
+			<div className='flex shrink-0 flex-col items-end gap-1'>
+				<time dateTime={callInfo.startedAt.toISOString()} className='text-right text-[11px] sm:text-xs font-mono text-[#6B6B80]'>
+					{formatCallDate(callInfo.startedAt)}
+				</time>
 			</div>
-		</Link>
+		</div>
 	)
 }

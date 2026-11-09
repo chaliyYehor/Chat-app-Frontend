@@ -8,12 +8,14 @@ export default function IncomingCall({
 	timeoutMs,
 	onAccept,
 	onReject,
+	onTimeout,
 }: {
 	type: 'video' | 'audio'
 	callerName: string
 	timeoutMs: number
 	onAccept: () => void
 	onReject: () => void
+	onTimeout: () => void
 }) {
 	const [secondsLeft, setSecondsLeft] = useState(Math.ceil(timeoutMs / 1000))
 
@@ -21,12 +23,12 @@ export default function IncomingCall({
 		const intervalId = window.setInterval(() => {
 			setSecondsLeft(seconds => Math.max(0, seconds - 1))
 		}, 1000)
-		const timeoutId = window.setTimeout(onReject, timeoutMs)
+		const timeoutId = window.setTimeout(onTimeout, timeoutMs)
 		return () => {
 			window.clearInterval(intervalId)
 			window.clearTimeout(timeoutId)
 		}
-	}, [onReject, timeoutMs])
+	}, [onTimeout, timeoutMs])
 
 	return (
 		<div className='z-200 fixed w-screen h-dvh inset-0 bg-black/70 flex items-center justify-center backdrop-blur-xs'>

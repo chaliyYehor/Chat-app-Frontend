@@ -20,10 +20,12 @@ import { LogLevel, RoomEvent } from 'livekit-client'
 
 export default function GroupCallUi({
 	groupId,
+	callId,
 	callStartedAt,
 	serverTimeOffset,
 }: {
 	groupId: string
+	callId: string
 	callStartedAt: number
 	serverTimeOffset: number
 }) {
@@ -274,7 +276,7 @@ export default function GroupCallUi({
 					isVolumeMuted={isSpeakerMuted}
 					onVolumeToggle={() => setIsSpeakerMuted(value => !value)}
 				/>
-				<Dial type='endCall' />
+				<Dial type='endCall' callId={callId} />
 				<Dial type='microphone' />
 			</div>
 		</div>
