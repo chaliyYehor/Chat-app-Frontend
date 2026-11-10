@@ -81,7 +81,7 @@ export default function GroupList() {
 
 			{!groups && isGroupsLoading ? (
 				<div className='flex min-h-0 flex-1 items-center justify-center'>
-					<div className='loader bg-black dark:bg-white' />
+					<div className='loader bg-white dark:bg-black' />
 				</div>
 			) : !groups || groups.groups.length === 0 ? (
 				<NoConvosYet isGroup onClick={setIsAdding} />

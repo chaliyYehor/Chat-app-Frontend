@@ -439,7 +439,7 @@ export default function Group() {
 						{hasNextPage && isFetchingNextPage && (
 							<div className='w-full flex justify-center items-center py-2'>
 								<div
-									className='loader bg-black dark:bg-white'
+								className='loader bg-white dark:bg-black'
 									role='status'
 									aria-label='Loading older messages'
 								/>
