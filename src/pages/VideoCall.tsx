@@ -10,6 +10,8 @@ import { socket } from '../socket'
 import { useDispatch } from 'react-redux'
 import type { AppDispatch } from '../store/store'
 import { setPopUpError } from '../store/slices/popUpSlice'
+import OutgoingCallScreen from '../components/main/chats-page/calls/OutgoingCallScreen'
+import { useGetUserInfoChat } from '../hooks/useGetUserInfoChat'
 
 type CallCredentials = {
 	token: string
@@ -106,6 +108,7 @@ function DirectVideoCallUi({ conversationId, callId }: { conversationId: string;
 }
 export default function VideoCall() {
 	const conversationId = useParams().chatId
+	const { data: contact } = useGetUserInfoChat(conversationId)
 	const location = useLocation()
 	const incomingCredentials = useMemo(
 		() => getCallCredentials(location.state),
@@ -128,6 +131,8 @@ export default function VideoCall() {
 		}
 
 		let settled = false
+		let callAccepted = false
+		const requestId = crypto.randomUUID()
 		let joinTimerId: number | undefined
 		const timeoutId = window.setTimeout(() => {
 			if (settled) return
@@ -153,6 +158,7 @@ export default function VideoCall() {
 			) return
 
 			settled = true
+			callAccepted = true
 			window.clearTimeout(timeoutId)
 			setCredentials(value as CallCredentials)
 		}
@@ -166,7 +172,7 @@ export default function VideoCall() {
 			socket.off('connect_error', onConnectError)
 			socket.emit(
 				'video_call:join',
-				{ userId: session.user.id, conversationId },
+				{ userId: session.user.id, conversationId, requestId },
 				(response: {
 					success: boolean
 					error?: string
@@ -202,6 +208,7 @@ export default function VideoCall() {
 		}
 
 		return () => {
+			if (!callAccepted) socket.emit('call:cancel', { requestId })
 			settled = true
 			window.clearTimeout(timeoutId)
 			window.clearTimeout(joinTimerId)
@@ -211,10 +218,11 @@ export default function VideoCall() {
 		}
 	}, [conversationId, dispatch, incomingCredentials, isPending, navigate, session?.user.id])
 
+	if (!isPending && !credentials) return <OutgoingCallScreen name={contact?.name} imageUrl={contact?.imageUrl} type='video' onCancel={() => navigate(`/chats/${conversationId}`, { replace: true })} />
 	if (isPending || !credentials) {
 		return (
 			<div className='w-screen h-dvh flex flex-col gap-3 justify-center items-center'>
-				<div className='loader' />
+				<div className='loader' role='status' aria-label='Connecting to video call' />
 				<p className='text-[#6B6B80]'>Calling…</p>
 			</div>
 		)
