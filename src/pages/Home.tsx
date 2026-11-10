@@ -20,6 +20,7 @@ import PopUpLoading from '../components/PopUpLoading'
 import { setPopUpError } from '../store/slices/popUpSlice'
 import IncomingCall from '../components/IncomingCall'
 import { socket } from '../socket'
+import { useIncomingCallSound } from '../hooks/useIncomingCallSound'
 gsap.registerPlugin(useGSAP)
 
 type IncomingVideoCallData = {
@@ -48,6 +49,7 @@ export default function Home() {
 	const navigationRef = useRef<HTMLDivElement>(null)
 	const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
 	const [incomingCall, setIncomingCall] = useState<IncomingVideoCall | null>(null)
+	useIncomingCallSound(Boolean(incomingCall))
 
 	const navigate = useNavigate()
 	const dispatch = useDispatch<AppDispatch>()

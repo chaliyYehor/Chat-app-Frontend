@@ -12,6 +12,7 @@ import type { AppDispatch } from '../store/store'
 import { setPopUpError } from '../store/slices/popUpSlice'
 import OutgoingCallScreen from '../components/main/chats-page/calls/OutgoingCallScreen'
 import { useGetUserInfoChat } from '../hooks/useGetUserInfoChat'
+import { useOutgoingCallSound } from '../hooks/useOutgoingCallSound'
 
 type CallCredentials = { token: string; startedAt: number; serverNow: number; participantName?: string; callId?: string }
 
@@ -119,6 +120,7 @@ export default function Call() {
 	}, [location.state])
 	const [credentials, setCredentials] = useState<CallCredentials | null>(incomingCredentials)
 	const { data: session, isPending } = authClient.useSession()
+	useOutgoingCallSound(!isPending && Boolean(session?.user.id) && !credentials)
 	const navigate = useNavigate()
 	const dispatch = useDispatch<AppDispatch>()
 
