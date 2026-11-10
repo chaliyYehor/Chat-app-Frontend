@@ -1,6 +1,7 @@
 import { useGSAP } from '@gsap/react'
 import gsap from 'gsap'
 import { useEffect, useRef, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
 import { RiMessage2Fill } from 'react-icons/ri'
 import { Outlet, useNavigate } from 'react-router-dom'
 import CallsSectionBtn from '../components/main/CallsSectionBtn'
@@ -24,6 +25,7 @@ import { useIncomingCallSound } from '../hooks/useIncomingCallSound'
 import { useGetChats } from '../hooks/useGetChats'
 import { useGetGroups } from '../hooks/useGetGroups'
 import { useGetPreviousCalls } from '../hooks/useGetPreviousCalls'
+import { useGetUserPreferences } from '../hooks/useGetUserPreferences'
 gsap.registerPlugin(useGSAP)
 
 type IncomingVideoCallData = {
@@ -56,6 +58,7 @@ export default function Home() {
 
 	const navigate = useNavigate()
 	const dispatch = useDispatch<AppDispatch>()
+	const queryClient = useQueryClient()
 
 	const isMobile = useIsMobile()
 
@@ -86,9 +89,21 @@ export default function Home() {
 	}, [isMobile])
 
 	const { data: session, isPending } = authClient.useSession()
-	useGetChats(Boolean(session))
+	const { data: chatsData } = useGetChats(Boolean(session))
 	useGetGroups(Boolean(session))
 	useGetPreviousCalls(Boolean(session))
+	useGetUserPreferences(Boolean(session))
+
+	useEffect(() => {
+		if (!chatsData) return
+
+		for (const chat of chatsData) {
+			queryClient.setQueryData(['chatInfo', chat.conversation.id], {
+				conversationData: chat.conversation,
+				conversationUserData: chat.conversationUser,
+			})
+		}
+	}, [chatsData, queryClient])
 
 	useEffect(() => {
 		const handleIncomingCall = (

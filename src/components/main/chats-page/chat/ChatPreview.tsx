@@ -6,6 +6,8 @@ import MessagesIndicator from './MessagesIndicator'
 import { getDisplayedStatus } from '../../../../lib/getDisplayedStatus'
 import type z from 'zod'
 import type { chatUserSchema } from '../../../../schemas/main/getChatsResponse'
+import { useQueryClient } from '@tanstack/react-query'
+import { getUserInfoChat } from '../../../../api/getUserInfoChat'
 
 export interface ChatMenuPosition {
 	x: number
@@ -37,6 +39,8 @@ export default function ChatPreview({
 }: ChatPreviewProps) {
 	const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 	const longPressTriggered = useRef(false)
+	const profilePrefetchTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+	const queryClient = useQueryClient()
 
 	const [isLoading, setIsLoading] = useState(false)
 
@@ -71,6 +75,24 @@ export default function ChatPreview({
 		}
 	}
 
+	function prefetchProfile() {
+		if (profilePrefetchTimer.current) clearTimeout(profilePrefetchTimer.current)
+		profilePrefetchTimer.current = setTimeout(() => {
+			void queryClient.prefetchQuery({
+				queryKey: ['userInfoChat', chatId],
+				queryFn: () => getUserInfoChat({ conversationId: chatId }),
+				staleTime: 30_000,
+			})
+		}, 120)
+	}
+
+	function cancelProfilePrefetch() {
+		if (profilePrefetchTimer.current) {
+			clearTimeout(profilePrefetchTimer.current)
+			profilePrefetchTimer.current = null
+		}
+	}
+
 	if (!userInfo) {
 		return null
 	}
@@ -100,6 +122,10 @@ export default function ChatPreview({
 	return (
 		<Link
 			to={`/chats/${chatId}`}
+			onMouseEnter={prefetchProfile}
+			onMouseLeave={cancelProfilePrefetch}
+			onFocus={prefetchProfile}
+			onBlur={cancelProfilePrefetch}
 			onContextMenu={handleContextMenu}
 			onPointerDown={handlePointerDown}
 			onPointerUp={cancelLongPress}
