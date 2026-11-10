@@ -25,8 +25,8 @@ export default function SettingsAccount() {
 		},
 		{
 			icon: CircleQuestionMark,
-			label: 'Help & Support',
-			isLink: false,
+			label: 'Privacy policy',
+			link: 'privacy',
 		},
 		{
 			icon: LogOut,
