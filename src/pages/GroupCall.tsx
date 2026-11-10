@@ -143,7 +143,7 @@ export default function GroupCall() {
 	if (isPending || isLoading || !token || !callStartedAt || !callId)
 		return (
 			<div className='w-screen h-screen flex justify-center items-center'>
-				<div className='loader' />
+				<div className='loader' role='status' aria-label='Connecting to group call' />
 			</div>
 		)
 	return (

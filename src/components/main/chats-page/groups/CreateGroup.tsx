@@ -307,7 +307,7 @@ export default function CreateGroup({
 								})}
 							{isPeopleLoading && (
 								<div className='flex justify-center items-center h-full'>
-									<div className='loader bg-black dark:bg-white' />
+									<div className='loader bg-white dark:bg-black' />
 								</div>
 							)}
 						</div>

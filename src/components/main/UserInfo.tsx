@@ -276,7 +276,7 @@ export default function UserInfo({
 						{isSharedMediaLoading && !isYourProfile && (
 							<div className='w-full h-20 flex justify-center items-center'>
 								<div
-									className='loader dark:bg-white bg-black'
+									className='loader bg-white dark:bg-black'
 									role='status'
 									aria-label='Loading shared media'
 								/>

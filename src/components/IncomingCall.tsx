@@ -1,6 +1,8 @@
 import { Phone, PhoneOff } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import Badge from './main/chats-page/Badge'
+import { useSelector } from 'react-redux'
+import type { RootType } from '../store/store'
 
 export default function IncomingCall({
 	type,
@@ -18,6 +20,7 @@ export default function IncomingCall({
 	onTimeout: () => void
 }) {
 	const [secondsLeft, setSecondsLeft] = useState(Math.ceil(timeoutMs / 1000))
+	const appTheme = useSelector((state: RootType) => state.theme.mode)
 
 	useEffect(() => {
 		const intervalId = window.setInterval(() => {
@@ -32,10 +35,10 @@ export default function IncomingCall({
 
 	return (
 		<div className='z-200 fixed w-screen h-dvh inset-0 bg-black/70 flex items-center justify-center backdrop-blur-xs'>
-			<div className='bg-[#16161B] md:w-sm max-w-[90%] border border-white/10 shadow-2xl shadow-black/25 rounded-3xl w-full px-6 py-7 flex flex-col items-center gap-4'>
+			<div className={`${appTheme === 'dark' ? 'bg-[#16161B] border-white/10' : 'bg-white border-black/10'} md:w-sm max-w-[90%] border shadow-2xl shadow-black/25 rounded-3xl w-full px-6 py-7 flex flex-col items-center gap-4`}>
 				<Badge text={type === 'video' ? 'INCOMING VIDEO CALL' : 'INCOMING AUDIO CALL'} />
-				<p className='text-white text-xl font-semibold'>{callerName}</p>
-				<p className='text-[#A1A1AA] text-sm'>Answering in {secondsLeft}s</p>
+				<p className={`${appTheme === 'dark' ? 'text-white' : 'text-[#18181B]'} text-xl font-semibold`}>{callerName}</p>
+				<p className={`${appTheme === 'dark' ? 'text-[#A1A1AA]' : 'text-[#6B6B80]'} text-sm`}>Answering in {secondsLeft}s</p>
 				<div className='flex items-center gap-5 mt-2'>
 					<button
 						type='button'

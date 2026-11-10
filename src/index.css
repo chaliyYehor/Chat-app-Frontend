@@ -7,6 +7,10 @@
 	}
 }
 
+html {
+	scroll-behavior: smooth;
+}
+
 html,
 body {
 	width: 100%;
@@ -84,6 +88,11 @@ body {
 	font-optical-sizing: auto;
 }
 
+.font-ibm {
+	font-family: 'IBM Plex Serif', serif;
+	font-style: normal;
+}
+
 :focus {
 	outline: none;
 }
@@ -138,10 +147,14 @@ input:-webkit-autofill:active {
 	width: 28px;
 	aspect-ratio: 1;
 	border-radius: 50%;
-	border: 3px solid white;
+	border: 3px solid #18181b;
 	animation:
 		l20-1 0.8s infinite linear alternate,
 		l20-2 1.6s infinite linear;
+}
+
+.dark .loader {
+	border-color: white;
 }
 @keyframes l20-1 {
 	0% {
@@ -307,6 +320,10 @@ input:-webkit-autofill:active {
 .skeleton-shimmer {
 	position: relative;
 	overflow: hidden;
+	background: rgba(0, 0, 0, 0.08);
+}
+
+.dark .skeleton-shimmer {
 	background: rgba(255, 255, 255, 0.08);
 }
 
@@ -525,8 +542,16 @@ input:-webkit-autofill:active {
 		flex: 0 0 22px;
 	}
 
-	.group-video-call-participants li > div:first-child > div:first-child > div:last-child,
-	.group-audio-call-participants li > div:first-child > div:first-child > div:last-child {
+	.group-video-call-participants
+		li
+		> div:first-child
+		> div:first-child
+		> div:last-child,
+	.group-audio-call-participants
+		li
+		> div:first-child
+		> div:first-child
+		> div:last-child {
 		width: 8px;
 		height: 8px;
 		right: -1px;
@@ -622,5 +647,30 @@ input:-webkit-autofill:active {
 		margin: 0;
 		padding: 8px;
 		gap: 8px;
+	}
+}
+@keyframes outgoing-call-pulse {
+	0% {
+		transform: scale(0.82);
+		opacity: 0.8;
+	}
+	100% {
+		transform: scale(1.2);
+		opacity: 0;
+	}
+}
+
+.outgoing-call-rings > :first-child {
+	animation: outgoing-call-pulse 2s ease-out infinite;
+}
+
+.outgoing-call-rings > :nth-child(2) {
+	animation: outgoing-call-pulse 2s ease-out 0.65s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.outgoing-call-rings > :first-child,
+	.outgoing-call-rings > :nth-child(2) {
+		animation: none;
 	}
 }

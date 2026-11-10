@@ -10,6 +10,9 @@ import { socket } from '../socket'
 import { useDispatch } from 'react-redux'
 import type { AppDispatch } from '../store/store'
 import { setPopUpError } from '../store/slices/popUpSlice'
+import OutgoingCallScreen from '../components/main/chats-page/calls/OutgoingCallScreen'
+import { useGetUserInfoChat } from '../hooks/useGetUserInfoChat'
+import { useOutgoingCallSound } from '../hooks/useOutgoingCallSound'
 
 type CallCredentials = { token: string; startedAt: number; serverNow: number; participantName?: string; callId?: string }
 
@@ -107,6 +110,7 @@ function DirectAudioCallUi({ conversationId, startedAt, serverOffset, participan
 
 export default function Call() {
 	const conversationId = useParams().chatId
+	const { data: contact } = useGetUserInfoChat(conversationId)
 	const location = useLocation()
 	const incomingCredentials = useMemo(() => getCallCredentials(location.state), [location.state])
 	const participantName = useMemo(() => {
@@ -116,6 +120,7 @@ export default function Call() {
 	}, [location.state])
 	const [credentials, setCredentials] = useState<CallCredentials | null>(incomingCredentials)
 	const { data: session, isPending } = authClient.useSession()
+	useOutgoingCallSound(!isPending && Boolean(session?.user.id) && !credentials)
 	const navigate = useNavigate()
 	const dispatch = useDispatch<AppDispatch>()
 
@@ -131,6 +136,8 @@ export default function Call() {
 		}
 
 		let settled = false
+		let callAccepted = false
+		const requestId = crypto.randomUUID()
 		let joinTimerId: number | undefined
 		const timeoutId = window.setTimeout(() => {
 			if (settled) return
@@ -150,6 +157,7 @@ export default function Call() {
 		}) => {
 			if (settled || !response.token || typeof response.startedAt !== 'number' || typeof response.serverNow !== 'number') return
 			settled = true
+			callAccepted = true
 			window.clearTimeout(timeoutId)
 			setCredentials({ token: response.token, startedAt: response.startedAt, serverNow: response.serverNow, participantName: response.participantName, callId: response.callId })
 		}
@@ -165,7 +173,7 @@ export default function Call() {
 		socket.on('audio_call:failed', handleCallFailed)
 		const join = () => {
 			socket.off('connect_error', onConnectError)
-			socket.emit('audio_call:join', { userId: session.user.id, conversationId }, (response: {
+			socket.emit('audio_call:join', { userId: session.user.id, conversationId, requestId }, (response: {
 				success: boolean; error?: string; token?: string; startedAt?: number; serverNow?: number; participantName?: string; callId?: string
 			}) => {
 				if (settled) return
@@ -187,6 +195,7 @@ export default function Call() {
 			socket.connect()
 		} else scheduleJoin()
 		return () => {
+			if (!callAccepted) socket.emit('call:cancel', { requestId })
 			settled = true
 			window.clearTimeout(timeoutId)
 			window.clearTimeout(joinTimerId)
@@ -197,7 +206,8 @@ export default function Call() {
 		}
 	}, [conversationId, dispatch, incomingCredentials, isPending, navigate, session?.user.id])
 
-	if (isPending || !credentials) return <div className='w-screen h-dvh flex justify-center items-center'><div className='loader' /></div>
+	if (isPending) return <div className='w-screen h-dvh flex justify-center items-center' role='status' aria-label='Loading call'><div className='loader' aria-hidden='true' /></div>
+	if (!credentials) return <OutgoingCallScreen name={contact?.name} imageUrl={contact?.imageUrl} type='audio' onCancel={() => navigate(`/chats/${conversationId}`, { replace: true })} />
 	return (
 		<LiveKitRoom connect audio token={credentials.token} serverUrl={import.meta.env.VITE_LIVEKIT_URL} className='contents'>
 			<DirectAudioCallUi conversationId={conversationId ?? ''} startedAt={credentials.startedAt} serverOffset={credentials.serverNow - Date.now()} participantName={credentials.participantName || participantName} callId={credentials.callId} />

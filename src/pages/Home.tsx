@@ -20,6 +20,7 @@ import PopUpLoading from '../components/PopUpLoading'
 import { setPopUpError } from '../store/slices/popUpSlice'
 import IncomingCall from '../components/IncomingCall'
 import { socket } from '../socket'
+import { useIncomingCallSound } from '../hooks/useIncomingCallSound'
 gsap.registerPlugin(useGSAP)
 
 type IncomingVideoCallData = {
@@ -48,6 +49,7 @@ export default function Home() {
 	const navigationRef = useRef<HTMLDivElement>(null)
 	const [isKeyboardOpen, setIsKeyboardOpen] = useState(false)
 	const [incomingCall, setIncomingCall] = useState<IncomingVideoCall | null>(null)
+	useIncomingCallSound(Boolean(incomingCall))
 
 	const navigate = useNavigate()
 	const dispatch = useDispatch<AppDispatch>()
@@ -87,6 +89,13 @@ export default function Home() {
 			call: IncomingVideoCallData,
 			acknowledge: IncomingVideoCall['acknowledge'],
 		) => setIncomingCall({ ...call, acknowledge })
+		const handleCallCancelled = (call: { callId: string }) => {
+			setIncomingCall(current => {
+				if (current?.callId !== call.callId) return current
+				current.acknowledge({ status: 'timeout' })
+				return null
+			})
+		}
 
 		const handleVideoCallAccepted = (call: AcceptedVideoCall) => {
 			setIncomingCall(null)
@@ -98,10 +107,12 @@ export default function Home() {
 		}
 
 		socket.on('call:incoming', handleIncomingCall)
+		socket.on('call:cancelled', handleCallCancelled)
 		socket.on('video_call:accepted', handleVideoCallAccepted)
 		socket.on('audio_call:accepted', handleAudioCallAccepted)
 		return () => {
 			socket.off('call:incoming', handleIncomingCall)
+			socket.off('call:cancelled', handleCallCancelled)
 			socket.off('video_call:accepted', handleVideoCallAccepted)
 			socket.off('audio_call:accepted', handleAudioCallAccepted)
 		}
@@ -142,7 +153,7 @@ export default function Home() {
 				role='status'
 				aria-label='Loading'
 			>
-				<div className='loader dark:bg-white bg-black' aria-hidden='true' />
+				<div className='loader bg-white dark:bg-black' aria-hidden='true' />
 			</div>
 		)
 	}
