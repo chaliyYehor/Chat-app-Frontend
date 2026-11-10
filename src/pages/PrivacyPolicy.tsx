@@ -204,6 +204,14 @@ export default function PrivacyPolicy() {
 											<td className={cell}>Google and GitHub</td>
 											<td className={cell}>Optional sign-in (OAuth)</td>
 										</tr>
+							<tr>
+								<td className={cell}>Cloudinary</td>
+								<td className={cell}>Image storage and delivery</td>
+							</tr>
+							<tr>
+								<td className={cell}>Arcjet</td>
+								<td className={cell}>Security and abuse protection</td>
+							</tr>
 									</tbody>
 								</table>
 							</div>

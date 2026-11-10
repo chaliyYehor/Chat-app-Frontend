@@ -1,78 +1,62 @@
-# React + TypeScript + Vite
+# Pulse
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Pulse is the frontend for a pet project with real-time chat and voice and video calls. The backend is in a [separate repository](https://github.com/chaliyYehor/Chat-app-Backend); the deployed frontend is at [chat-app.erxxue.dev](https://chat-app.erxxue.dev).
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+React, TypeScript, Vite, React Router, Redux Toolkit, TanStack Query, Socket.IO Client, and LiveKit.
 
-## React Compiler
+## Requirements
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+Node.js 20.19+ or 22.12+, and a running instance of the [backend](https://github.com/chaliyYehor/Chat-app-Backend).
 
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
+## Setup
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```sh
+git clone https://github.com/chaliyYehor/Chat-app-Frontend.git
+cd Chat-app-Frontend
+npm install
+cp .env.example .env
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Fill in `.env` with the required service URLs, then run:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```sh
+npm run dev
 ```
+
+## Environment variables
+
+- `VITE_SERVER_URL`: backend base URL for REST requests, authentication, and Socket.IO.
+- `VITE_LIVEKIT_URL`: LiveKit server URL used to join calls.
+
+## Scripts
+
+- `npm run dev`: start the Vite development server.
+- `npm run build`: run TypeScript project builds and create the production bundle.
+- `npm run lint`: run ESLint.
+- `npm run preview`: preview the production bundle locally.
+
+## Structure
+
+- `src/api`: REST requests to the backend using Axios.
+- `src/components`: shared and page-specific UI components.
+- `src/features`: chat event hooks and feature logic.
+- `src/hooks`: reusable React hooks.
+- `src/lib`: authentication client and utility functions.
+- `src/pages`: route page components.
+- `src/schemas`: Zod schemas for forms and API data.
+- `src/store`: Redux store and slices.
+- `src/webRTC`: LiveKit room instance; call pages get credentials through Socket.IO and connect with LiveKit React components.
+
+The app uses REST for HTTP API requests and Socket.IO at `/ws` for realtime events. Voice and video media connections use LiveKit.
+
+## API
+
+The API documentation is served by the [backend repository](https://github.com/chaliyYehor/Chat-app-Backend) at its `/docs` path.
+
+## Deployment
+
+The frontend is deployed on Vercel. The existing `vercel.json` rewrite sends all paths to `/` for client-side routing.
+
+See the [LICENSE](LICENSE) file.
