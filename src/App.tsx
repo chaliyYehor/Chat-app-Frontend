@@ -43,30 +43,76 @@ import { authClient } from './lib/auth-client'
 import { useAppSocket } from './hooks/useAppSocket'
 
 function getPageMetadata(path: string): [string, string] {
-	if (path.startsWith('/chats/')) return ['Chat · Pulse', 'Private conversations on Pulse.']
-	if (path.startsWith('/groups/')) return ['Group · Pulse', 'Group conversations on Pulse.']
-	if (path.startsWith('/settings/security')) return ['Security Settings · Pulse', 'Manage your Pulse account security and active sessions.']
-	if (path.startsWith('/settings/privacy')) return ['Privacy Policy · Pulse', 'Learn how Pulse collects, uses, and protects your information.']
-	if (path.startsWith('/settings/changePassword')) return ['Change Password · Pulse', 'Update your Pulse account password.']
-	if (path.startsWith('/settings/editProfile')) return ['Edit Profile · Pulse', 'Update your Pulse profile information.']
-	if (path.startsWith('/settings')) return ['Settings · Pulse', 'Manage your Pulse account and preferences.']
-	if (path.startsWith('/groupVideoCall/')) return ['Group Video Call · Pulse', 'Group video call on Pulse.']
-	if (path.startsWith('/videoCall/')) return ['Video Call · Pulse', 'Video call on Pulse.']
-	if (path.startsWith('/groupCall/')) return ['Group Call · Pulse', 'Group audio call on Pulse.']
-	if (path.startsWith('/call/')) return ['Voice Call · Pulse', 'Voice call on Pulse.']
+	if (path.startsWith('/chats/'))
+		return ['Chat · Pulse', 'Private conversations on Pulse.']
+	if (path.startsWith('/groups/'))
+		return ['Group · Pulse', 'Group conversations on Pulse.']
+	if (path.startsWith('/settings/security'))
+		return [
+			'Security Settings · Pulse',
+			'Manage your Pulse account security and active sessions.',
+		]
+	if (path.startsWith('/settings/privacy'))
+		return [
+			'Privacy Policy · Pulse',
+			'Learn how Pulse collects, uses, and protects your information.',
+		]
+	if (path.startsWith('/settings/changePassword'))
+		return ['Change Password · Pulse', 'Update your Pulse account password.']
+	if (path.startsWith('/settings/editProfile'))
+		return ['Edit Profile · Pulse', 'Update your Pulse profile information.']
+	if (path.startsWith('/settings'))
+		return ['Settings · Pulse', 'Manage your Pulse account and preferences.']
+	if (path.startsWith('/groupVideoCall/'))
+		return ['Group Video Call · Pulse', 'Group video call on Pulse.']
+	if (path.startsWith('/videoCall/'))
+		return ['Video Call · Pulse', 'Video call on Pulse.']
+	if (path.startsWith('/groupCall/'))
+		return ['Group Call · Pulse', 'Group audio call on Pulse.']
+	if (path.startsWith('/call/'))
+		return ['Voice Call · Pulse', 'Voice call on Pulse.']
 	const pages: Record<string, [string, string]> = {
-		'/': ['Pulse · Connect with your world', 'Pulse brings your conversations, groups, and calls together.'],
-		'/login': ['Log In · Pulse', 'Log in to your Pulse account to continue your conversations.'],
-		'/signUp': ['Create Account · Pulse', 'Create a Pulse account to chat, make groups, and call.'],
-		'/forgotPassword': ['Forgot Password · Pulse', 'Request a password reset link for your Pulse account.'],
-		'/resetPassword': ['Reset Password · Pulse', 'Set a new password for your Pulse account.'],
-		'/setNewPassword': ['Reset Password · Pulse', 'Set a new password for your Pulse account.'],
-		'/verify': ['Verify Email · Pulse', 'Verify your email address to finish setting up Pulse.'],
+		'/': [
+			'Pulse · Connect with your world',
+			'Pulse brings your conversations, groups, and calls together.',
+		],
+		'/login': [
+			'Log In · Pulse',
+			'Log in to your Pulse account to continue your conversations.',
+		],
+		'/signUp': [
+			'Create Account · Pulse',
+			'Create a Pulse account to chat, make groups, and call.',
+		],
+		'/forgotPassword': [
+			'Forgot Password · Pulse',
+			'Request a password reset link for your Pulse account.',
+		],
+		'/resetPassword': [
+			'Reset Password · Pulse',
+			'Set a new password for your Pulse account.',
+		],
+		'/setNewPassword': [
+			'Reset Password · Pulse',
+			'Set a new password for your Pulse account.',
+		],
+		'/verify': [
+			'Verify Email · Pulse',
+			'Verify your email address to finish setting up Pulse.',
+		],
 		'/calls': ['Calls · Pulse', 'Review your recent calls on Pulse.'],
-		'/groups': ['Groups · Pulse', 'Browse and manage your Pulse group conversations.'],
+		'/groups': [
+			'Groups · Pulse',
+			'Browse and manage your Pulse group conversations.',
+		],
 		'/chats': ['Chats · Pulse', 'Your private conversations on Pulse.'],
 	}
-	return pages[path] ?? ['Page Not Found · Pulse', 'The requested page could not be found on Pulse.']
+	return (
+		pages[path] ?? [
+			'Page Not Found · Pulse',
+			'The requested page could not be found on Pulse.',
+		]
+	)
 }
 
 function App() {
@@ -128,7 +174,9 @@ function App() {
 		const page = getPageMetadata(location.pathname)
 
 		document.title = page[0]
-		let description = document.querySelector<HTMLMetaElement>('meta[name="description"]')
+		let description = document.querySelector<HTMLMetaElement>(
+			'meta[name="description"]',
+		)
 		if (!description) {
 			description = document.createElement('meta')
 			description.name = 'description'
