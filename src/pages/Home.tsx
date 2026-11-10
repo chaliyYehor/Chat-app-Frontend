@@ -21,6 +21,9 @@ import { setPopUpError } from '../store/slices/popUpSlice'
 import IncomingCall from '../components/IncomingCall'
 import { socket } from '../socket'
 import { useIncomingCallSound } from '../hooks/useIncomingCallSound'
+import { useGetChats } from '../hooks/useGetChats'
+import { useGetGroups } from '../hooks/useGetGroups'
+import { useGetPreviousCalls } from '../hooks/useGetPreviousCalls'
 gsap.registerPlugin(useGSAP)
 
 type IncomingVideoCallData = {
@@ -83,6 +86,9 @@ export default function Home() {
 	}, [isMobile])
 
 	const { data: session, isPending } = authClient.useSession()
+	useGetChats(Boolean(session))
+	useGetGroups(Boolean(session))
+	useGetPreviousCalls(Boolean(session))
 
 	useEffect(() => {
 		const handleIncomingCall = (
