@@ -55,7 +55,7 @@ export default function ForgotPassword() {
 	if (isPending) {
 		return (
 			<div className='w-screen h-screen absolute top-0 left-0 flex justify-center items-center'>
-				<div className='loader dark:bg-white bg-black' role='status' aria-label='Loading session' />
+				<div className='loader bg-white dark:bg-black' role='status' aria-label='Loading session' />
 			</div>
 		)
 	}

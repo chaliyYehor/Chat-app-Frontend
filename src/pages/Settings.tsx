@@ -12,10 +12,12 @@ export default function Settings() {
 	const { pathname } = location
 	const isSettingsRoot = pathname === '/settings' || pathname === '/settings/'
 
+	
 	const isMobile = useIsMobile()
-
+	
 	const { isPending } = authClient.useSession()
 	const currentLocation = location.pathname
+	const isChatDetailsRoute = /^\/settings\//.test(currentLocation)
 	const previousLocation =
 		typeof location.state?.from === 'string' ? location.state.from : undefined
 	const currentIndex = possiblePreviousLocations.indexOf(currentLocation)
@@ -33,7 +35,7 @@ export default function Settings() {
 
 	useGSAP(
 		() => {
-			if (isPending) return
+			if (isPending || isChatDetailsRoute) return
 
 			gsap.from('.chats', {
 				xPercent: isMobile ? animationXPercent : -100,
