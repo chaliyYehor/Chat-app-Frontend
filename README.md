@@ -1,6 +1,6 @@
 # Pulse
 
-Pulse is the frontend for a pet project with real-time chat and voice and video calls. The backend is in a [separate repository](https://github.com/chaliyYehor/Chat-app-Backend); the deployed frontend is at [pulse.erxxue.dev](https://pulse.erxxue.dev).
+Pulse is the frontend for a pet project with real-time chat and voice and video calls. The backend is in a [separate repository](https://github.com/chaliyYehor/Pulse-backend); the deployed frontend is at [pulse.erxxue.dev](https://pulse.erxxue.dev).
 
 ## Stack
 
@@ -8,12 +8,12 @@ React, TypeScript, Vite, React Router, Redux Toolkit, TanStack Query, Socket.IO 
 
 ## Requirements
 
-Node.js 20.19+ or 22.12+, and a running instance of the [backend](https://github.com/chaliyYehor/Chat-app-Backend).
+Node.js 20.19+ or 22.12+, and a running instance of the [backend](https://github.com/chaliyYehor/Pulse-backend).
 
 ## Setup
 
 ```sh
-git clone https://github.com/chaliyYehor/Chat-app-Frontend.git
+git clone https://github.com/chaliyYehor/Pulse-frontend.git
 cd Chat-app-Frontend
 npm install
 cp .env.example .env
@@ -53,7 +53,7 @@ The app uses REST for HTTP API requests and Socket.IO at `/ws` for realtime even
 
 ## API
 
-The API documentation is served by the [backend repository](https://github.com/chaliyYehor/Chat-app-Backend) at its `/docs` path.
+The API documentation is served by the [backend repository](https://github.com/chaliyYehor/Pulse-backend) at its `/docs` path.
 
 ## Deployment
 
