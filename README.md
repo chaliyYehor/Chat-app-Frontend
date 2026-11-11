@@ -1,6 +1,6 @@
 # Pulse
 
-Pulse is the frontend for a pet project with real-time chat and voice and video calls. The backend is in a [separate repository](https://github.com/chaliyYehor/Chat-app-Backend); the deployed frontend is at [chat-app.erxxue.dev](https://chat-app.erxxue.dev).
+Pulse is the frontend for a pet project with real-time chat and voice and video calls. The backend is in a [separate repository](https://github.com/chaliyYehor/Chat-app-Backend); the deployed frontend is at [pulse.erxxue.dev](https://pulse.erxxue.dev).
 
 ## Stack
 
