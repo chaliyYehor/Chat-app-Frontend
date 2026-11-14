@@ -20,31 +20,35 @@ type DisplayedUserInfo = UserProfile | GetUserInfoChat
 const aboutLinkPattern = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)|(https?:\/\/[^\s<>]+)/g
 
 function renderAbout(about: string) {
-	return about.split('\n').map((line, lineIndex) => (
-		<span key={`line-${lineIndex}`}>
-			{lineIndex > 0 && <br />}
-			{line.split(aboutLinkPattern).map((part, partIndex, parts) => {
-				if (!part) return null
-				const isUrl = part.startsWith('http://') || part.startsWith('https://')
-				const isLabel = !isUrl && parts[partIndex + 1]?.startsWith('http')
-				if (isUrl) {
-					const label = isLabel ? undefined : part
-					return (
-						<a
-							key={`${lineIndex}-${partIndex}`}
-							href={part}
-							target='_blank'
-							rel='noopener noreferrer'
-							className='text-[#8B72F8] underline underline-offset-2 break-all hover:text-[#A995FF]'
-						>
-							{label ?? part}
-						</a>
-					)
-				}
-				return isLabel ? <strong key={`${lineIndex}-${partIndex}`} className='font-semibold'>{part}</strong> : part
-			})}
-		</span>
-	))
+	return about.split('\n').map((line, lineIndex) => {
+		const matches = Array.from(line.matchAll(aboutLinkPattern))
+		const content: React.ReactNode[] = []
+		let cursor = 0
+
+		for (const [matchIndex, match] of matches.entries()) {
+			const start = match.index ?? 0
+			if (start > cursor) content.push(line.slice(cursor, start))
+
+			const href = match[2] ?? match[3]
+			if (href) {
+				content.push(
+					<a
+						key={`${lineIndex}-${matchIndex}`}
+						href={href}
+						target='_blank'
+						rel='noopener noreferrer'
+						className='text-[#8B72F8] underline underline-offset-2 break-all hover:text-[#A995FF]'
+					>
+						{match[1] ?? href}
+					</a>,
+				)
+			}
+			cursor = start + match[0].length
+		}
+
+		if (cursor < line.length || matches.length === 0) content.push(line.slice(cursor))
+		return <span key={`line-${lineIndex}`}>{lineIndex > 0 && <br />}{content}</span>
+	})
 }
 
 export default function UserInfo({
