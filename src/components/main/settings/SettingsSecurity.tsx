@@ -12,7 +12,8 @@ export default function SettingsSecurity() {
 	const [hasPassword, setHasPassword] = useState<boolean | null>(
     null,
   );
-	const { isPending } = authClient.useSession()
+	const [hide, setHide] = useState<boolean>(false);
+	const { isPending, data: sessionData } = authClient.useSession()
   useEffect(() => {
     async function checkPassword() {
       const { data: accounts, error } =
@@ -31,6 +32,14 @@ export default function SettingsSecurity() {
 
     void checkPassword();
   }, []);
+
+	useEffect(() => {
+		if (!isPending && sessionData) {
+			if (sessionData.user.email.includes('demo@')) {
+				setHide(true)
+			}
+		}
+	}, [isPending, sessionData]);
 	return (
 		<div className='chats chatListContainer h-full w-full min-w-0 dark:bg-[#16161b] bg-white'>
 			<div className='mb-10 flex flex-col mt-5 gap-2'>
@@ -44,6 +53,10 @@ export default function SettingsSecurity() {
 					<h2 className='dark:text-white text-3xl font-bold '>Security</h2>
 				</div>
 			</div>
+			{hide ?
+				<div className='w-full mt-20 flex justify-center items-center'>
+					<p className='p-4 text-sm text-[#6B6B80] font-inter'>This page has been hidden for demo purposes.</p>
+				</div> :
 			<div className='flex flex-col gap-4'>
 				<div className='flex flex-col md:w-full w-[80%]'>
 					<SettingsLabel label={'Authentication'} />
@@ -60,7 +73,7 @@ export default function SettingsSecurity() {
 					<SettingsLabel label={'danger zone'} />
 					<SettingsDanger />
 				</div>
-			</div>
+			</div>}
 		</div>
 	)
 }
