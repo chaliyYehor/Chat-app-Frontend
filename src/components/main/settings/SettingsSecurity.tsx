@@ -35,7 +35,7 @@ export default function SettingsSecurity() {
 
 	useEffect(() => {
 		if (!isPending && sessionData) {
-			if (sessionData.user.email.includes('demo@erxxue.com')) {
+			if (sessionData.user.email.includes('demo@erxxue.dev')) {
 				setHide(true)
 			}
 		}
