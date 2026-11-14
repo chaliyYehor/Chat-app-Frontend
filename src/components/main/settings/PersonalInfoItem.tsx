@@ -28,6 +28,7 @@ export default function PersonalInfoItem({
 
 	const appTheme = useSelector((state: RootType) => state.theme.mode)
 	const inputId = useId()
+	const isBio = registerName === 'bio'
 	return (
 		<div
 			style={{
@@ -46,6 +47,10 @@ export default function PersonalInfoItem({
 			<TextField
 				id={inputId}
 				variant='standard'
+				multiline={isBio}
+				minRows={isBio ? 3 : undefined}
+				maxRows={isBio ? 6 : undefined}
+				placeholder={isBio ? 'New line: Enter · Link: [label](https://example.com)' : undefined}
 				disabled={isDisabled}
 				{...register(registerName)}
 				sx={{
